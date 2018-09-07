@@ -1,0 +1,73 @@
+
+
+.loginTable td:first-child {
+        /* background-color: #F0F8FE; */
+        width: 80px;
+        height: 30px;
+    }
+    
+.signupTable td:first-child {
+        /* background-color: #F0F8FE; */
+        width: 120px;
+        height: 30px;
+    } 
+     
+
+.tableCell-even {
+  padding: 5px;
+  background: #008AB8;
+  border: 1px solid #ffffff;
+}
+
+.tableCell-odd {
+  padding: 5px;
+  background: #FFCC33;
+  border: 1px solid #ffffff;
+}
+
+
+.panel {
+  background-color: #C3D9FF;
+  border: 1px solid #000000;
+  padding: 3px;
+  margin: 3px;
+  font-weight: normal;  
+  
+}
+ 
+.loginLabel{
+	/* height:20px; */
+	text-align: right;
+}
+
+.loginTable tr:nth-last-child(2){
+	text-align: right;
+}
+.loginTable tr:nth-last-child(1){
+	text-align: right;
+}
+
+.loginTable{
+	position: relative!important;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top:20%;
+}
+
+.statusLabel{
+	color: red;
+}
+
+.loginTitle{
+	color: Black;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    /* background: #F3E2A9; */
+    font-family: Georgia;
+    letter-spacing: 0.2em;
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.6);
+    margin: 5px 10px 10px 20px; 
+}
+
+

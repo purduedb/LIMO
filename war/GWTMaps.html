@@ -1,0 +1,120 @@
+<!doctype html>
+<!-- The DOCTYPE declaration above will set the     -->
+<!-- browser's rendering engine into                -->
+<!-- "Standards Mode". Replacing this declaration   -->
+<!-- with a "Quirks Mode" doctype is not supported. -->
+
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <!--                                                               -->
+    <!-- Consider inlining CSS to reduce the number of requested files -->
+    <!--                                                               -->
+    <link type="text/css" rel="stylesheet" href="GWTMaps.css">
+
+    <!--                                           -->
+    <!-- Any title is fine                         -->
+    <!--                                           -->
+    <title>GWT Maps Prototype</title>
+    
+    <!--                                           -->
+    <!-- This script loads your compiled module.   -->
+    <!-- If you add any GWT meta tags, they must   -->
+    <!-- be added before this line.                -->
+    <!--                                           -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript" language="javascript" src="gwtmaps/gwtmaps.nocache.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+	<script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
+	
+	<script type="text/javascript" src="./jsTest.js"></script>
+	<script src="codemirror/lib/codemirror.js"></script>
+	<link rel="stylesheet" href="codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="codemirror/theme/eclipse.css">
+	<script src="codemirror/mode/python/python.js"></script>
+	
+	<link rel="stylesheet" href="./loading.css">
+	
+	<!-- <script> 
+		$(function(){
+		  $("#header").load("header.html"); 
+		});
+	</script>  -->
+  
+  </head>
+
+<body>
+	
+	<div id="circularG">
+		<div id="circularG_1" class="circularG"></div>
+		<div id="circularG_2" class="circularG"></div>
+		<div id="circularG_3" class="circularG"></div>
+		<div id="circularG_4" class="circularG"></div>
+		<div id="circularG_5" class="circularG"></div>
+		<div id="circularG_6" class="circularG"></div>
+		<div id="circularG_7" class="circularG"></div>
+		<div id="circularG_8" class="circularG"></div>
+	</div>
+	
+	<!-- <div id="header"></div> -->
+	
+	<div id="facade"></div>
+
+
+
+
+	<script>
+	
+		var editor = null;
+		function loadTextAreaFormat() {
+			
+			/* console.log(document.getElementById("code")); */
+			editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+				autofocus: true,
+				mode: "python",
+			    lineNumbers: true,
+			    styleActiveLine: true,
+			    matchBrackets: true,
+			    showCursorWhenSelecting: true,
+			    smartIndent: true,
+			    theme: "eclipse",
+			    lineWrapping: true,
+			    tabSize: 2
+			  }); 
+		}
+		
+		function getEditorValue()
+		{
+			
+			return editor.getValue();
+		}
+		
+		function setEditorValue(contents)
+		{
+			
+			return editor.setValue(contents);
+		}
+		
+		function setEditorOption(key, value)
+		{	
+			editor.setOption(key, value);
+		}
+		
+		function showLoading()
+		{
+			$('#circularG').show();
+		}
+		
+		function hideLoading()
+		{
+			$('#circularG').hide();
+		}
+		
+	</script>
+
+</body>
+
+</html>

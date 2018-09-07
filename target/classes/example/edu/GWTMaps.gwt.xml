@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='gwtmaps'>
+  <!-- Inherit the core Web Toolkit stuff.                        -->
+  <inherits name='com.google.gwt.user.User'/>
+
+  <!-- Inherit the default GWT style sheet.  You can change       -->
+  <!-- the theme of your GWT application by uncommenting          -->
+  <!-- any one of the following lines.                            -->
+  <inherits name='com.google.gwt.user.theme.clean.Clean'/>
+  <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
+  <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+  <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+
+  <!-- <add-linker name="xsiframe" /> -->
+  <set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
+	
+  <!-- Other module inherits                                      -->
+  <inherits name='org.gwtopenmaps.openlayers.OpenLayers'/>
+  <inherits name="com.gwtext.GwtExt" /> 
+  <!-- Specify the app entry point class.                         -->
+  <entry-point class='example.edu.client.GWTMaps'/>
+  <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+  <inherits name='com.nitrous.gwt.earth.GwtEarthAPI'/>
+
+  <!-- Specify the paths for translatable code                    -->
+  <source path='client'/>
+  <source path='shared'/>
+
+</module>
