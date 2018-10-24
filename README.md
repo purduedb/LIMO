@@ -1,1 +1,3 @@
-# purduelimo
+# LIMO
+
+LIMO is a web-based programming  environment  that  is  centered  around  operations  on interactive  geographical  maps,  location-oriented  data, and the operations of synthetic objects that move on the maps. LIMO materializes a low-cost open-ended environment that integrates  interactive  maps  and  spatial  data  (e.g.,  Open-StreetMap). The unique advantage of LIMO is that it relates programming concepts to interactive geographical maps and location data.  LIMO offers an environment for students to learn how to program by providing:  1.  An easy-to-program library of map and spatial operations, 2.  High-quality interactive map graphics, and 3. Example programs that introduce users to writing programs in the LIMO environment.
