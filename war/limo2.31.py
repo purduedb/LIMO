@@ -1,4 +1,4 @@
-#limo module
+#Limo 2.31
 
 from com.ziclix.python.sql import zxJDBC
 from com.vividsolutions.jts.geom import Coordinate
@@ -319,33 +319,61 @@ def rollback_commuter(commuterName):
 
 
 def start_at(commuterName, address = None, direction = 0):
+    # commuterName: String name for the commuter we are about to create
+    # address: csv representation of the address. Typically input from read_address(). Default value: none
+    # direction: representation of direction. use strings "NORTH", "EAST", "SOUTH", "WEST", etc
+         
+    # recieve global `commuters` so we can modify it
     global commuters
-    x = address.find("intersection,")
+    
+    # is the address an address or an intersection of roads(?)
+    # .find(String) is a python string method.
+    
+    x = address.find("intersection,") 
     addressList = []
 
+    # If this is a traditional address?
     if x == 0:
+        
+        # Slice address starting at the 13th element?
+        # a[start:end] # items start through end-1
+        # a[start:]    # items start through the rest of the array
+        # a[:end]      # items from the beginning through end-1
+        # a[:]         # a copy of the whole array
         addr = address [13:]
+        
         addressList = addr.split(',')
+       
+        # Debugging:
         # print addressList
-
+        
+        # For each address element
         for i in range(len(addressList)):
+            # Strip leading and trailing characters
             addressList[i] = addressList[i].rstrip()
             addressList[i] = addressList[i].lstrip()
 
+        # Set globals CITY, STATE, ZIP
+        # Sets locale/scope?? 
         global CITY
         CITY = addressList[3]
         global STATE
         STATE = addressList[2]
         global ZIP
         ZIP = addressList[4]
-
+    
+    # If address is not of form "Intersection of Russel St and University Ave"???
     else:
+        # Split into array by `,`s. Why?
         addressList = address.split(',')
         
+        # Trim leading and trailing characters
         for i in range(len(addressList)):
             addressList[i] = addressList[i].rstrip()
             addressList[i] = addressList[i].lstrip()
-            
+        
+        # Set globals CITY, STATE, ZIP
+        # TODO: Set these per commuters
         global CITY
         CITY = addressList[1]
         global STATE
@@ -353,6 +381,7 @@ def start_at(commuterName, address = None, direction = 0):
         global ZIP
         ZIP = addressList[3]
         
+    # Get the long/lat of the given address
     geolocation = geocode_address(address)
     
 
@@ -451,20 +480,36 @@ def display_message (message, address):
     ExampleServiceImpl.setResultString(instruction) 
 
 
-#returns [lon,lat] of address        
+#returns [lon,lat] of address
 def geocode_address(address):
         query = "";
-        #check whether the address represents an intersection
+        #check whether the address represents an intersection?
         x = address.find("intersection,")
        
+        # If address begins with "intersection, "
         if x == 0:
-               
+                # Trim "intersection,"
                 address = address [13:]
                 addressList = address.split(',')
                 for i in range(len(addressList)):
                         addressList[i] = "'"+addressList[i]+"'"
+                # Debugging
                 #print addressList
+                # query:
+                # ST_AsText
+                # http://www.postgis.org/docs/ST_AsText.html
+                # ST_AsText — Return the Well-Known Text (WKT) representation of the geometry/geography without SRID metadata.
+                # text ST_AsText(geometry g1);
+                
+                # geocode_intersection
+                # https://postgis.net/docs/Geocode_Intersection.html
+                # Geocode_Intersection — Takes in 2 streets that intersect and a state, city, zip, and outputs a set of possible locations on the first cross street that is at the intersection
+                # setof record geocode_intersection(text roadway1, text roadway2, text in_state, text in_city, text in_zip, integer max_results=10, norm_addy OUT addy, geometry OUT geomout, integer OUT rating);
+                # 
+                # There is no equilivent to this in Voltdb... Do we emulate geocode_intersection in python?
                 query =  "SELECT ST_AsText(geomout) FROM geocode_intersection(" + addressList[0] + "," +  addressList[1] + "," + addressList[2] + "," + addressList[3] + "," + addressList[4]+",1)"
+        
+        # If address does not begin with "intersection, "
         else:
                 
                 address = "'"+address+"'"
@@ -1389,6 +1434,7 @@ def get_mtfcc(description):
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
     c = db.cursor()
     return_value  = None
+    print "select mtfcc from tiger_data.mtfcc_Lookup where class_feature = lower('"+description+"')"
     query="select mtfcc from tiger_data.mtfcc_Lookup where class_feature = lower('"+description+"')"
     c.execute(query)
     rowcount = c.rowcount
@@ -1400,7 +1446,7 @@ def get_mtfcc(description):
     c.close()
     db.close()
     
-    #print return_value
+    print return_value
     return return_value
 def TEST():
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
