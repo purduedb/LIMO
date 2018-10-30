@@ -103,15 +103,16 @@ class commuter:
         self.state = ""
         self.zipcode = ""
         
-        # Log of all movements on this street?
+        # Log of all movements before turning?
         # Needs a better name once we figure out what it does
         # Equivalent to commuterName[0]
         self.streetlog = []
+        # log of last street's movements and final position
         # Equivalent to commuterName[4]
-        self.fulllog = []
+        self.laststreetlog = []
         
     def flushlog(self):
-        self.fulllog = append(self.streetlog)
+        self.laststreetlog = [self.streetlog, self.geolocation, self.steet, self.direction]
         self.streetlog = []
 
 # List of all  commuters
@@ -1703,11 +1704,10 @@ def caculate_distance_commuted(commuterName):
         result = result + calculate_distance(commuter[i], commuter[i + 1])
     return round(result, 2)
 
+#calculate the distance commuted
 
-# calculate the distance commuted
 def display_distance(commuterName):
     return caculate_distance_commuted(commuterName)
-
 
 def get_road_names(point):
     if len(point) != 2:
@@ -1720,7 +1720,9 @@ def get_road_names(point):
     return names
 
 
-# move to the next intersection within specified distance
+
+#move to the next intersection within specified distance
+
 def move_to_next_intersection(commuterName):
     commuter = commuters.get(str(commuterName))[0]
     currentPoint = commuters.get(str(commuterName))[1]
@@ -1736,7 +1738,6 @@ def move_to_next_intersection(commuterName):
     # print show_commuter(commuterName)
 
     move_until(commuterName, next[0])
-
 
 def distance_all_roads_in(geo1, geo2, geo3, geo4):
     line = ((geo1, geo2, geo3, geo4))
@@ -1785,7 +1786,6 @@ def distance_all_roads_in(geo1, geo2, geo3, geo4):
     # print sum
 
     return sum
-
 
 def draw_all_roads_in(geo1, geo2, geo3, geo4):
     line = ((geo1, geo2, geo3, geo4))
@@ -1849,7 +1849,6 @@ def draw_all_roads_in(geo1, geo2, geo3, geo4):
 def get_road_names_in(geo1, geo2, geo3, geo4):
     return findAllIntersectionRoads2((geo1, geo2, geo3, geo4))
 
-
 def get_angle_between(a1, a2):
     a = 180 - abs(abs(a1 - a2) - 180)
     return a
@@ -1891,7 +1890,6 @@ def findAllIntersectionRoads2(testCommuter):
 
 
     return roads
-
 
 def findAllIntersectionRoads(currentPoint, eps):
 
@@ -2073,7 +2071,6 @@ def get_total_length_of_street(street, ZIP):
 
     return totalLength
 
-
 def get_current_fraction_on_the_street(lon, lat, street, ZIP):
 
     query = "select ST_Line_Locate_Point(\
@@ -2155,7 +2152,6 @@ def get_all_intersection_name_and_point_on_the_road_with_fraction(fractionFrom, 
 
 
     return ret
-
 
 def move_along_street(lon, lat, street, ZIP, bearing, distance):
 
@@ -2284,7 +2280,6 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         print nextPoint
 
     return nextPoint
-
 
 def move_distance(commuterName, distance, direction=None):
 
