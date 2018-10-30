@@ -12,6 +12,8 @@ from example.edu.server import ExampleServiceImpl
 
 import math
 from copy import deepcopy
+from org.w3c.dom import NameList
+import new
 
 earth_radius = 3960.0
 degrees_to_radians = math.pi/180.0
@@ -38,19 +40,66 @@ CONNECT_STRING = "jdbc:postgresql://" + IP + ":" + PORT + "/" + DB
 #globals
 #bearing = 0
 
+# Address class. Created using read_address(...)
+# could this be better as a dict or another structure?
+class address:
+    # addr init
+    def __init__(self,street, city, state, zipcode):
+        self.street = street
+        self.city = city
+        self.zipcode = zipcode
+    # return formmated address for use with tiger_data and other dbs 
+    def formatted_address(self):
+        return self.street + "," + self.city + "," + self.state + "," + self.zipcode 
+
+# Commuter class. Created by the user using standard object creation
+# new_commuter = commuter(name, geolocation, direction, street)
+# name: name of the commuter. Required
+# geolocation: initial start of the commuter in geolocation format. Optional
+# direction: commuter's initial facing direction. Optional
+# street: commuter's initial facing street. Optional 
+class commuter:
+    # Commuter init. Sets name and default values 
+    def __init__(self, name, direction = -1, street = -1, city = -1, state = -1, zipcode = -1):
+        # Name of the commuter
+        self.name = name     
+        
+        # Set all current states to 0. Create another constructor that sets these?
+        # Equivalent to commuterName[1]
+        self.geolocation = -1
+        # Equivalent to commuterName[3] 
+        self.direction = direction
+        # Equivalent to commuterName[2] 
+        self.street = street
+        
+        self.city = ""
+        self.state = ""
+        self.zipcode = ""
+        
+        # Log of all movements on this street?
+        # Needs a better name once we figure out what it does
+        # Equivalent to commuterName[0]
+        self.streetlog = []
+        # Equivalent to commuterName[4]
+        self.fulllog = []
+        
+    def flushlog(self):
+        self.fulllog = append(self.streetlog)
+        self.streetlog = []
+
 # List of all  commuters
 # commuters are structured as following:
 # dict key: string representation of the commuter's name
-# commuters.get(commuterName)[0] -> array log of all previous geolocations
+# commuters.get(commuterName)[0] -> array log of all previous geolocations on this street
 # commuters.get(commuterName)[1] -> current geolocation
 # commuters.get(commuterName)[2] -> current street
 # commuters.get(commuterName)[3] -> current facing direction
-# commuters.get(commuterName)[4] -> ??
+# commuters.get(commuterName)[4] -> array log of all previous geolocations
 commuters = dict()
 debug = 0
-
 depth = 0
-def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):#, previousCommuterName):
+
+def find_all_roads_within(commuter, currentLength, maxLength, coveredRoads):#, previousCommuterName):
 
     global depth
     print "==================================================== DEPTH ",
@@ -61,12 +110,10 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
     #     return 0
 
     # get how many roads / ways I have
-
-    roadNames = get_road_names(get_current_point(str(commuterName)))
+    point = commuter.geolocation
+    roadNames = get_road_names(point)
     print "all road names : ",
     print roadNames
-
-    point = commuters.get(str(commuterName))[1]
     print "current point : ",
     print point
 
