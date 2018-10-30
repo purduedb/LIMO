@@ -37,6 +37,15 @@ CONNECT_STRING = "jdbc:postgresql://" + IP + ":" + PORT + "/" + DB
 
 #globals
 #bearing = 0
+
+# List of all  commuters
+# commuters are structured as following:
+# dict key: string representation of the commuter's name
+# commuters.get(commuterName)[0] -> array log of all previous geolocations
+# commuters.get(commuterName)[1] -> current geolocation
+# commuters.get(commuterName)[2] -> current street
+# commuters.get(commuterName)[3] -> current facing direction
+# commuters.get(commuterName)[4] -> ??
 commuters = dict()
 debug = 0
 
@@ -291,9 +300,6 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
                 show_on_map(lastCommuterName)
 
 
-       
-
-    
 def cover_all_roads_within(commuterName, length):
     coveredRoads = []
     # get current road name based on the point
@@ -314,9 +320,6 @@ def rollback_commuter(commuterName):
     commuters.get(str(commuterName))[2] = commuters.get(str(commuterName))[4][2]
     commuters.get(str(commuterName))[3] = commuters.get(str(commuterName))[4][3]
     
-
-
-
 
 def start_at(commuterName, address = None, direction = 0):
     # commuterName: String name for the commuter we are about to create
@@ -423,7 +426,6 @@ def start_at(commuterName, address = None, direction = 0):
     return geolocation
     # commuter = [set of Points / current point / current st. name / direction]
     
-
 
 def test():
     return "say something"
@@ -2608,33 +2610,50 @@ def get_current_point(commuterName):
 
 
 def turn_to(commuterName, roadName, direction = None):
-
+    # "Re-orient Commuter towards a new direction, 
+    # e.g., right or left when direction is not empty and Re-orient Commuter towards a road when no direction is given."
+    
+    # Turn_to() Turn the commuter so that it is facing the road? or the direction?
+    # commuterName: String representation of the commuter
+    # roadName: String representation of a nearby road (how close in nearby?)
+    # direction: Typically string representation of a cardinal direction (Only cardinal?)
+    
+    # Set the 4th index of the commuter dict to null array
     commuters.get(str(commuterName))[4] = []
+    # Copy the history of geolocations and append this to the end of the 4th index
     tmp = deepcopy(commuters.get(str(commuterName))[0])
     commuters.get(str(commuterName))[4].append(tmp)
 
+    # Append current geolocation to the 4th index
     tmp = deepcopy(commuters.get(str(commuterName))[1])
     commuters.get(str(commuterName))[4].append(tmp)
 
+    # append current street to 4th index
     tmp = deepcopy(commuters.get(str(commuterName))[2])
     commuters.get(str(commuterName))[4].append(tmp)
 
+    # append current facing direction to the 4th index
     tmp = deepcopy(commuters.get(str(commuterName))[3])
     commuters.get(str(commuterName))[4].append(tmp)
 
+    # get access global ZIP
     global ZIP
     
-    
+    # If direction was not specified
     if direction == None:
+        # Set current street to roadName argument
         commuters.get(str(commuterName))[2] = str(roadName)
 
+        # Move to this street
         nextPoint = move_along_street(commuters.get(str(commuterName))[1][0], commuters.get(str(commuterName))[1][1], str(roadName)\
                             ,ZIP, commuters.get(str(commuterName))[3], 0.01)
+        # Debugging
         # print "123"
         # print nextPoint
         # print "456"
         if nextPoint == None:
             return []
+        # These are the same?
         elif nextPoint[0] == 1:
             direction = nextPoint[3][0]
             commuters.get(str(commuterName))[3] = direction
@@ -2657,11 +2676,11 @@ def turn_to(commuterName, roadName, direction = None):
 
         commuters.get(str(commuterName))[3] = direction
 
-        return [direction]
+        # Debugging 
         # print roadName
         # print direction
-        # print "3"
-    
+        return [direction]
+        
 
 #turn right will increase the bearing by 90 degrees
 def turn_right(street, commuter):
