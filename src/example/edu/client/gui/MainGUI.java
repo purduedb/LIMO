@@ -1879,7 +1879,7 @@ public class MainGUI extends Composite {
 					instructionTextArea.setText("");
 				else if (selectedIndex == 1)
 					instructionTextArea.setText("read_address(street, city, state, zipcode)"
-							+ "\n\nReturns the address.");
+							+ "\n\nReturns the specified address.");
 				else if (selectedIndex == 2)
 					instructionTextArea.setText("start_at(commuterName, address, direction)"
 							+ "\n\nSets Commuter’s start location to address and directs it towards a certain direction.");
