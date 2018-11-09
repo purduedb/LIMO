@@ -1882,80 +1882,80 @@ public class MainGUI extends Composite {
 							+ "\n\nReturns the specified address.");
 				else if (selectedIndex == 2)
 					instructionTextArea.setText("start_at(commuterName, address, direction)"
-							+ "\n\nSets Commuter’s start location to address and directs it towards a certain direction.");
+							+ "\n\nSets the commuter’s start location to the given address and directs the commuter toward a certain direction.");
 //				else if (selectedIndex == 3)
 //					instructionTextArea.setText("orient_to(commuterName, direction)"
 //							+ "\n\nDirect Commuter towards a certain direction, e.g., East, West, North, or South.");
 				else if (selectedIndex == 3)
 					instructionTextArea.setText("move_distance(commuterName, distance)"
-							+ "\n\nMove Commuter for certain distance.");
+							+ "\n\nMoves the commuter with the given name for a specified amount of distance.");
 				else if (selectedIndex == 4)
 					instructionTextArea.setText("move_until(commuterName, street)"
-							+ "\n\nMove Commuter until a street.");
+							+ "\n\nMoves the commuter until a specified street.");
 				else if (selectedIndex == 5)
 					instructionTextArea.setText("move_to_next_intersection(commuterName)"
-							+ "\n\nMove Commuter until next intersection.");
+							+ "\n\nMoves the commuter until the next intersection in his/her path.");
 				
 				else if (selectedIndex == 6)
 					instructionTextArea.setText("turn_to(commuterName, roadName, [direction|None])"
-							+ "\n\nRe-orient Commuter towards a new direction, e.g., right or left when direction is not empty and Re-orient Commuter towards a road when no direction is given.");
+							+ "\n\nRe-orients the commuter toward a new direction, e.g., right or left when direction is not empty or toward a road when no direction is given.");
 				else if (selectedIndex == 7)
 					instructionTextArea.setText("display_message(message, address|location)"
-							+ "\n\nPlace a text message at given address or at geo-location.");
+							+ "\n\nPlaces a text message at the given address or geo-location.");
 				else if (selectedIndex == 8)
 					instructionTextArea.setText("display_marker(address|location)"
-							+ "\n\nPlace a marker on map at given address or at geo-location.");
+							+ "\n\nPlaces a marker on the map at the given address or geo-location.");
 				else if (selectedIndex == 9)
 					instructionTextArea.setText("display_shape(geometric shape)"
-							+ "\n\nDisplay geometric shape (e.g., lake boundary) on map.");
+							+ "\n\nDisplays the specified geometric shape (e.g., lake boundary, state, etc.) on the map.");
 				else if (selectedIndex == 10)
 					instructionTextArea.setText("draw_line(location1, location2)"
-							+ "\n\nDraw a straight line from location1 to location2.");
+							+ "\n\nDraws a straight line from location1 to location2.");
 				else if (selectedIndex == 11)
 					instructionTextArea.setText("show_on_map(commuterName)"
-							+ "\n\nDraws the route traveled by the Commuter.");
+							+ "\n\nDraws the route traveled by the commuter so far.");
 				else if (selectedIndex == 12)
 					instructionTextArea.setText("display_distance(commuter)"
-							+ "\n\nDisplay total distance commuted so far.");
+							+ "\n\nDisplays the total distance commuted so far.");
 				else if (selectedIndex == 13)
 					instructionTextArea.setText("compute_distance(address1|location1, address2|location2)"
-							+ "\n\nReturn the distance between two addresses or geo-locations.");
+							+ "\n\nReturns the distance between two addresses or between geo-locations.");
 				else if (selectedIndex == 14)
 					instructionTextArea.setText("get_current_point(commuterName)"
-							+ "\n\nReturns the geo-coordinate of Commuter.");
+							+ "\n\nReturns the current geo-coordinate of the commuter with the given name.");
 				else if (selectedIndex == 15)
 					instructionTextArea.setText("get_location(address)"
-							+ "\n\nReturns the geo-coordinate of address.");
+							+ "\n\nReturns the current geo-coordinate of the given address.");
 				else if (selectedIndex == 16)
 					instructionTextArea.setText("get(name, description, geometric shape)"
-							+ "\n\nReturn the location (as geometric shape) of the place that matches name and description.");
+							+ "\n\nReturns the location (as geometric shape) of the place that matches the given name and description.");
 				else if (selectedIndex == 17)
 					instructionTextArea.setText("get_all(description, geometric shape)"
-							+ "\n\nReturn a list of locations (as geometric shape) for point of interest.");
+							+ "\n\nReturns a list of locations (as geometric shape) for the points of interest specified by the description (e.g. AIRPORT, STATE).");
 				else if (selectedIndex == 18)
 					instructionTextArea.setText("get_kNN(description, location, k)"
-							+ "\n\nReturn a list of k nearest neighbour to a given geo-location that match the description (e.g., AIRPORT, STATE), each object in the list has geo-coordinate, full name and distance from geo-location.");
+							+ "\n\nReturns a list of k nearest neighbours for a given geo-location that match the description (e.g., AIRPORT, STATE). Each object in the list has a geo-coordinate, full name and distance from the geo-location.");
 				else if (selectedIndex == 19)
 					instructionTextArea.setText("get_all_in_range(description, location, range)"
-							+ "\n\nReturn a list of all points of interest that match the description (e.g., AIRPORT, STATE) which are within the range from a geo-location, each object in the list has geo-coordinate and full name.");
+							+ "\n\nReturns a list of all points of interest that match the description (e.g., AIRPORT, STATE) that are within the range from a specified geo-location. Each object in the list has a geo-coordinate and full name.");
 				else if (selectedIndex == 20)
 					instructionTextArea.setText("overlaps(shape1, shape2)"
-							+ "\n\nBoolean operators that test whether two shapes overlap one another.");
+							+ "\n\nBoolean operator that tests whether two shapes overlap one another.");
 				else if (selectedIndex == 21)
 					instructionTextArea.setText("touches(shape1, shape2)"
-							+ "\n\nBoolean operators that test whether two shapes touch one another.");
+							+ "\n\nBoolean operator that tests whether two shapes touch one another.");
 				else if (selectedIndex == 22)
 					instructionTextArea.setText("intersects(shape1, shape2)"
-							+ "\n\nBoolean operators that test whether two shapes intersect one another.");
+							+ "\n\nBoolean operator that tests whether two shapes intersect one another.");
 				else if (selectedIndex == 23)
 					instructionTextArea.setText("contains(shape1, shape2)"
-							+ "\n\nBoolean operators that test whether two shapes contain one another.");
+							+ "\n\nBoolean operator that tests whether two shapes contain one another.");
 				else if (selectedIndex == 24)
 					instructionTextArea.setText("get_road_names(location)"
-							+ "\n\nReturn all road names near the location.");
+							+ "\n\nReturns all road names near the specified location.");
 				else if (selectedIndex == 25)
 					instructionTextArea.setText("get_road_names_in(location1, location2, location3, location4)"
-							+ "\n\nReturn all road names within the rectangle.");
+							+ "\n\nReturns all road names within the rectangle formed by the four given locations.");
 				
 					
 			}
