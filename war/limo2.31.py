@@ -990,29 +990,47 @@ def show_on_map(commuterName):
        # f.write(instruction)
        # f.close()
         
-                                
+# get(name, description, geometric shape)
+# Return the location (as geometric shape) of the place that matches name and description.
 def get(name, description, geomType):
+        # name: string representation of the desired object
+        # description: string representation of the type of object requested. Case sensitive
+            # Choices: STATE, CITY, COUNTY, RIVER, PRIMARY-ROAD, ROAD
+        # geomType: The type of geom we want returned. Case sensitive
+            # Choices: POLYGON, POINT, POLYLINE
+
+        # TODO: Make this a function
         db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
         c = db.cursor()
+
+        # If a polygon (outline) was requested
         if geomType == "POLYGON":
+                # Can we combine these? Ie - look for a state first, then a city if it is not found, then a county? What order should we look? Is there overlap between city, state, and county names?
                 if description == "STATE":
+                        # Uses GIS calls to DB
                         #query = "SELECT ST_AsText(ST_Simplify(the_geom, 0.05)) FROM tiger_data.state_all where name = '" + name +"'"
                         query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.state_all where name = '" + name +"'"
                         c.execute(query)
+                        # Get the number of rows
                         rowcount = c.rowcount
 
+                        # If we have exactly one result, return it. If not, return NULL
+                        # All states have unique names, should we process this differently?
+                        # TODO: Make this a function
                         if rowcount == 1:
                                 row = c.fetchone()
                                 c.close()
                                 db.close()
                                 #print row[0]
                                 return extract_polygon_v2(str(row))
-                
+
+                # What about Lafayette Louisiana vs Lafayette Indiana?
                 elif description == "CITY":
                     query = "select ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.001)) from tiger_data.in_place where name = '" + name  + "%'"
                     c.execute(query)
                     rowcount = c.rowcount
-
+                    
+                    # See state. Return result iff there was one result.
                     if rowcount == 1:
                         row = c.fetchone()
                         c.close()
@@ -1021,20 +1039,26 @@ def get(name, description, geomType):
                         return extract_polygon_v2(str(row))
                         
                 elif description == "COUNTY":
+                        # `Where name like` - why do we approximate here and not in others?
                         query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all where name like  '" + name +"'"
                         print query
                         c.execute(query)
                         rowcount = c.rowcount
 
+                        # If we have more than one result, return the first one.
+                        # Is there a better way to handle this?
                         if rowcount > 0:
                                 row = c.fetchone()
                                 c.close()
                                 db.close()
                                 #print row[0]
                                 return extract_polygon_v2(str(row))
-
+        # If a geopoint/longlat was requested
         elif geomType == "POINT":
+                # If we want a geopoint of a state
+                # This seems a bit useless?
                 if description == "STATE":
+                        # Why is this query so different? Is it because states are not naturally points?
                         query = "SELECT intptlon, intptlat from tiger_data.state_all where name = '" + name +"'"
                         c.execute(query)
                         rowcount = c.rowcount
