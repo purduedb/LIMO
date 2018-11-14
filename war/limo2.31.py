@@ -2482,60 +2482,41 @@ def turn_to(commuterName, roadName, direction = None):
     # e.g., right or left when direction is not empty and Re-orient Commuter towards a road when no direction is given."
     
     # Turn_to() Turn the commuter so that it is facing the road? or the direction?
-    # commuterName: String representation of the commuter
+    # commuterName: commuter object
     # roadName: String representation of a nearby road (how close in nearby?)
     # direction: Typically string representation of a cardinal direction (Only cardinal?)
     
-    # Set the 4th index of the commuter dict to null array
-    commuters.get(str(commuterName))[4] = []
-    # Copy the history of geolocations and append this to the end of the 4th index
-    tmp = deepcopy(commuters.get(str(commuterName))[0])
-    commuters.get(str(commuterName))[4].append(tmp)
 
-    # Append current geolocation to the 4th index
-    tmp = deepcopy(commuters.get(str(commuterName))[1])
-    commuters.get(str(commuterName))[4].append(tmp)
+    commuterName.flushlog(self)
+    
 
-    # append current street to 4th index
-    tmp = deepcopy(commuters.get(str(commuterName))[2])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    # append current facing direction to the 4th index
-    tmp = deepcopy(commuters.get(str(commuterName))[3])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    # get access global ZIP
-    global ZIP    
     # If direction was not specified
 
     if direction == None:
         # Set current street to roadName argument
-        commuters.get(str(commuterName))[2] = str(roadName)
+        commuterName.street = str(roadName)
 
         # Move to this street
-        nextPoint = move_along_street(commuters.get(str(commuterName))[1][0], commuters.get(str(commuterName))[1][1], str(roadName)\
-                            , ZIP, commuters.get(str(commuterName))[3], 0.01)
-
+        nextPoint = move_along_street(commutername.geolocation[0], commuterName.geolocation[1], str(roadName)\
+                            ,commuterName.zipcode,commuterName.direction, 0.01)
+        # Debugging
         # print "123"
         # print nextPoint
         # print "456"
         if nextPoint == None:
             return []
-        # These are the same?
         elif nextPoint[0] == 1:
             direction = nextPoint[3][0]
             commuters.get(str(commuterName))[3] = direction
             return nextPoint[3]
-
         elif nextPoint[0] == 2:
-
             direction = nextPoint[3][0]
             commuters.get(str(commuterName))[3] = direction
             return nextPoint[3]
 
     else:
-        commuters.get(str(commuterName))[2] = str(roadName)
-
+        commuterName.street = str(roadName)
+        
         if str(direction).isdigit():
             direction = int(direction)
         else:
