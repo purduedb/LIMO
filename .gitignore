@@ -126,7 +126,6 @@ htmlcov/
 .coverage.*
 .cache
 nosetests.xml
-coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
