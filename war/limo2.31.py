@@ -1286,13 +1286,25 @@ def getPolygonRange (geoList):
             Range.append(maxLat)
             Range.append(minLat)
         return Range
-        
+
+# Get k number of nearest neighbors
 def get_kNN_optimized(description,Currentpoint,NumberOfItems,dist,Range):
+    # get_kNN_optimized(description,Currentpoint,NumberOfItems,dist,Range):
+    # description: State, County, or other mtfcc
+    # Currentpoint: geocode/[lon, lat] of current position
+    # NumberOfItems: max number of items to find. None is valid
+    # dist: Distance from the current point to look
+    # Range: Array of 4 floats? None is valid
+
+    # Open the database connection
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
     c = db.cursor()
+
     #print description , NumberOfItems  
     #print Currentpoint
+    # If range is not provided (It is optional??)
     if Range == None:
+        # Create 3 sets of points based on the current pos and the desired distance away
         my_lat = Currentpoint[1]
         my_lon = Currentpoint[0]
         lon1 = my_lon - dist/abs(math.cos(math.radians(my_lat))*69)
@@ -1300,7 +1312,7 @@ def get_kNN_optimized(description,Currentpoint,NumberOfItems,dist,Range):
         lat1 = my_lat-(dist/69.0) 
         lat2 = my_lat+(dist/69.0)
     else:
-        #print "in"
+        #
         lon2 = float(Range[0])
         lon1 = float(Range[1])
         lat2 = float(Range[2])
@@ -1310,31 +1322,36 @@ def get_kNN_optimized(description,Currentpoint,NumberOfItems,dist,Range):
         #print lon1 ,lon2 , lat1 , lat2,  my_lat , my_lon
     query = None
     
-
+    # TODO: Explore bulding the query in a string-builder style since they are so similar
+    # If we are looking in states
     if description == "STATE":
         if NumberOfItems == None:
             query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN(("+str(my_lat)+"- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS("+str(my_lat)+" * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN(("+str(my_lon)+" -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between "+ str(lat1) +" and "+str(lat2) + "AND intptlon::numeric between "+  str(lon1)+" and "+str(lon2)+ " ORDER BY distance "
         else:
             query =  "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN(("+str(my_lat)+"- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS("+str(my_lat)+" * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN(("+str(my_lon)+" -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between "+ str(lat1) +" and "+str(lat2) + "AND intptlon::numeric between "+  str(lon1)+" and "+str(lon2)+ " ORDER BY distance limit "+str( NumberOfItems)
+
+    # If we are looking at counties
     elif description == "COUNTY":
         if NumberOfItems == None:
             query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN(("+str(my_lat)+"- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS("+str(my_lat)+" * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN(("+str(my_lon)+" -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between "+ str(lat1) +" and "+str(lat2) + "AND intptlon::numeric between "+  str(lon1)+" and "+str(lon2)+ " ORDER BY distance "
         else:
             query =  "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN(("+str(my_lat)+"- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS("+str(my_lat)+" * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN(("+str(my_lon)+" -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between "+ str(lat1) +" and "+str(lat2) + "AND intptlon::numeric between "+  str(lon1)+" and "+str(lon2)+ " ORDER BY distance limit "+str( NumberOfItems)  
+    
+   # Check for mtfcc code for non stat/county 
     else:
        mtfcc = get_mtfcc(description)
        if mtfcc != "NULL":
         if NumberOfItems == None:
-            #print "in 2"
             query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN(("+str(my_lat)+"- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS("+str(my_lat)+" * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN(("+str(my_lon)+" -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '"+mtfcc+"'  AND ST_Y(the_geom) between "+str( lat1 )+" and "+ str( lat2)+ " AND ST_X(the_geom) between "+ str( lon1)+" and "+str( lon2) +" ORDER BY distance"
         else:
             query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN(("+str(my_lat)+"- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS("+str(my_lat)+" * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN(("+str(my_lon)+" -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '"+mtfcc+"'  AND ST_Y(the_geom) between "+str( lat1 )+" and "+ str( lat2)+ " AND ST_X(the_geom) between "+ str( lon1)+" and "+str( lon2)+" ORDER BY distance limit "+str( NumberOfItems)
+    
+    # If query was successfully built
     if(query is not None):
-        #print "in3"
         c.execute(query)
         rowcount = c.rowcount
-        #print query
         maxDistance = 0
+        # Assemble long/lat pairs of each item
         if rowcount > 0 :
             lonlatList = []
             for i in range (rowcount):
@@ -1347,6 +1364,7 @@ def get_kNN_optimized(description,Currentpoint,NumberOfItems,dist,Range):
                 lonlatList.append(lonlat)
             c.close()
             db.close()
+            # Return list of lonlats
             return lonlatList
     c.close()
     db.close()   
