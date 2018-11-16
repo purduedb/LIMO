@@ -89,7 +89,7 @@ class commuter:
     # Commuter init. Sets name and default values 
     def __init__(self, name, direction = -1, street = -1, city = -1, state = -1, zipcode = -1):
         # Name of the commuter
-        self.name = name     
+        self.name = name
         
         # Set all current states to 0. Create another constructor that sets these?
         # Equivalent to commuterName[1]
@@ -2474,7 +2474,7 @@ def compute_next_point(lon1, lat1, brng, dist):
     return [lon2, lat2]
 
 def get_current_point(commuterName):
-    return commuters.get(str(commuterName))[1]
+    return commuterName.geolocation
 
 
 def turn_to(commuterName, roadName, direction = None):
@@ -2497,17 +2497,16 @@ def turn_to(commuterName, roadName, direction = None):
         commuterName.street = str(roadName)
 
         # Move to this street
-        nextPoint = move_along_street(commutername.geolocation[0], commuterName.geolocation[1], str(roadName)\
-                            ,commuterName.zipcode,commuterName.direction, 0.01)
-        # Debugging
-        # print "123"
-        # print nextPoint
-        # print "456"
+        # def move_along_street(lon, lat, street, ZIP, bearing, distance):
+        nextPoint = move_along_street(commutername.geolocation[0], commuterName.geolocation[1], commuterName.street
+                            ,commuterName.zipcode, commuterName.direction, 0.01)
+
+        # If the returned point does not exist
         if nextPoint == None:
-            return []
+            return [] # Do we want to return an error instead?
         elif nextPoint[0] == 1:
             direction = nextPoint[3][0]
-            commuters.get(str(commuterName))[3] = direction
+            commuterNmae.direction = direction
             return nextPoint[3]
         elif nextPoint[0] == 2:
             direction = nextPoint[3][0]
@@ -2515,14 +2514,18 @@ def turn_to(commuterName, roadName, direction = None):
             return nextPoint[3]
 
     else:
+        # If a direction was specified
         commuterName.street = str(roadName)
         
+        # Check format of the firection. If a num, simply assign it
         if str(direction).isdigit():
             direction = int(direction)
         else:
+            # If it is not a number, process it
             direction = orient_to(commuterName, direction)
 
-        commuters.get(str(commuterName))[3] = direction
+        # Set new direction
+        commuterName.direction = direction
 
         # Debugging 
         # print roadName
@@ -2631,50 +2634,48 @@ def isReal(txt):
         return False
 
 
-#initialize the bearing, needed for relative instructions
+# Initialize the bearing, needed for relative instructions
 def orient_to(commuterName, direction):
-    global commuters
-    bearing = 0
+        # Orient_to(commuterName, direction)
+        # commuterName: commuter object to change bearing
+        # direction: Direction in degrees or cardinal directions
+        
+        # PRECONDITIONS:
+        # commuterName must be a valid commuter object
+        # direction must be a vaild bearing or a cardinal direction, or left/right
 
-    if isReal(direction):
-        if str(commuterName) in commuters:
-            commuters.get(str(commuterName))[3] = bearing
-        bearing = direction
-        return bearing
-
-    if direction.upper() == "NORTH":
+        # Check to make sure commuter is the correct object
+        if type(commuterName) is not commuter:
+            return -1;
+        # Verify the direction is valid
+        if not (direction in ["NORTH","EAST","SOUTH","WEST","LEFT","RIGHT"] or not (isReal(direction) and direction > 0 and direction < 360)):
+            return -1
+        # Start with a bearing of due north
         bearing = 0
-    elif direction.upper() == "EAST":
-        bearing = 90
-    elif direction.upper() == "SOUTH":
-        bearing = 180
-    elif direction.upper() == "WEST":
-        bearing = 270
-    elif direction.upper() == "LEFT":
-        # print commuters.get(str(commuterName))[3]
-        # print str(commuterName)
-        # print commuters.keys()
-        if str(commuterName) in commuters:
-            commuters.get(str(commuterName))[3] = (
-                float(commuters.get(str(commuterName))[3]) - 90.0) % 360
-            # print "called1"
-
-        # print commuters.get(str(commuterName))[3]
-        return commuters.get(str(commuterName))[3]
-
-    elif direction.upper() == "RIGHT":
-        if str(commuterName) in commuters:
-            commuters.get(str(commuterName))[3] = (
-                float(commuters.get(str(commuterName))[3]) + 90.0) % 360
-        return commuters.get(str(commuterName))[3]
-
-    if str(commuterName) in commuters:
-        # print "called2"
-        commuters.get(str(commuterName))[3] = bearing
-
-    return bearing
-
-
+        
+        # if the direction is in degrees
+        # isReal tests is the obj is not NaN or inf. Is there a better way to do this?
+        if isReal(direction):
+            commuterName.direction = direction;
+            return direction
+       
+        # Set the bearing based on cardinal/relative dir
+        if direction.upper() == "NORTH":
+                bearing = 0
+        elif direction.upper() == "EAST":
+                bearing = 90
+        elif direction.upper() == "SOUTH":
+                bearing = 180
+        elif direction.upper() == "WEST":
+                bearing = 270
+        elif direction.upper() == "LEFT":
+                bearing = float(commuterName.direction - 90) % 360
+        elif direction.upper() == "RIGHT":
+                bearing = float(commuterName.direction + 90) % 360
+        
+        commuterName.direction = bearing;
+        return bearing
+                
 #turn on a specific angle clockwise
 def turn_angle(angle):
     global bearing
