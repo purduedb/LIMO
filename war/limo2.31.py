@@ -35,6 +35,37 @@ STATE = ""
 ZIP = ""
 CONNECT_STRING = "jdbc:postgresql://" + IP + ":" + PORT + "/" + DB
 
+
+# Function query_db
+# query_db( query, results_opt)
+# query: String representation of the db query
+# returns a tuple of db results
+def query_db( query ):
+    
+	# TODO: add debugging support
+	if 0:
+		print query
+    
+	# Precondition checking: Verify the parameters are of the correct type
+	if type(query) != str
+		return -1
+	
+	#TODO: add secondary sql query verification
+	
+	# Connect to the database
+	# Likely taken from here: http://www.jython.org/archive/21/docs/zxjdbc.html
+    
+	db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
+    cursor = db.cursor()
+    cursor.execute(query)
+	
+	toreturn = cursor.fetchall()
+	
+	cursor.close()
+	db.close()
+	
+	return toreturn
+
 #globals
 #bearing = 0
 commuters = dict()
