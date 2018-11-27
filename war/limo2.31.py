@@ -75,7 +75,7 @@ class address:
         self.street = street
         self.city = city
         self.zipcode = zipcode
-    # return formmated address for use with tiger_data and other dbs 
+    # return formatted address for use with tiger_data and other dbs 
     def formatted_address(self):
         return self.street + "," + self.city + "," + self.state + "," + self.zipcode 
 
@@ -1218,7 +1218,7 @@ def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
     # Currentpoint: geocode/[lon, lat] of current position
     # NumberOfItems: max number of items to find. None is valid
     # dist: Distance from the current point to look
-    # Range: Array of 4 floats? None is valid
+    # Range: Array of 4 floats? None is valid.
 
     # Open the database connection
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
