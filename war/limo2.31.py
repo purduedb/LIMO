@@ -547,25 +547,13 @@ def geocode_address(address):
                 query =  "SELECT ST_AsText(geomout) FROM geocode(" + address + ",1)"
 
         
-        #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
         
-        c = db.cursor()
-        c.execute(query)
-        rowcount = c.rowcount
-
-        if rowcount == 1:
-                row = c.fetchone()
-        
-        c.close()
-        db.close()
-
-        if rowcount == 1:
-                return extract_point(str(row))
-        else:
-                raise Exception("Geocode " + address + " returned NULL")
-                return "NULL"
-
+		db_results = query_db(query)
+		if len(db_results) == 1:
+			return extract_point(str(db_results[0])
+		else:
+			raise Exception("Geocode " + address + " returned NULL\n\tFailed db query: " + query)
+            return "NULL"        
 
 #extract the point from the geocode string using ST_AsText(geomout): (u'POINT(-86.882223 40.423635)',)
 def extract_point(geo_output):
@@ -861,24 +849,14 @@ def move_until(commuterName, street2):
 def get_sub_road(road, area_code, start, end):
     
     query = "select ST_asText(tiger_data.get_sub_road('" + road + "' , '" + area_code + "' , " + start + " , " + end + "))"
-    # print query
     
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-        c.close()
-        db.close()
-
-        if row[0] == None:
-            return None
-        # print "row"
-        # print str(row)
-        return extract_line_string(str(row))
+	db_results = query_db(query)
+	
+	if len(db_results) == 1:
+		return extract_line_string(str(db_results[0])
+	else:
+		raise Exception("get_sub_road(" + road + ", " + area_code + ", " + start + ", " + end + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"     
     
 def get_sub_road_distance(road, area_code, brng, point_EWKT, distance):
     
@@ -887,17 +865,12 @@ def get_sub_road_distance(road, area_code, brng, point_EWKT, distance):
     
     query = "select ST_asText( tiger_data.point_at_distance ('"+ road + "' , '" + area_code +"', " + str(brng) +  "," + point_EWKT + "," + str(dist_degrees) +"))"
     
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-        c.close()
-        db.close()
-        return extract_line_string(str(row))
+	db_results = query_db(query)
+	if len(db_results) == 1:
+		return extract_line_string(str(db_results[0])
+	else:
+		raise Exception("get_sub_road_distance(" + road + ", " + area_code + ", " + brng + ", " + point_EWKT + ", " + distance +") returned NULL\n\tFailed query: " + query)
+        return "NULL
 
 def get_intersections2(street, start_geo, end_geo):
 
@@ -913,26 +886,11 @@ def get_intersections2(street, start_geo, end_geo):
         else:
                 query = "select ST_asText(intersection.inters) from ( select distinct (ST_Intersection(a.the_geom, b.the_geom)) inters From tiger_data.in_roads a, (select fullname , the_geom, linearid from tiger_data.in_roads where fullname = '" + street + "' ) as b where st_intersects(a.the_geom, b.the_geom) and geometrytype(ST_Intersection(a.the_geom, b.the_geom)) = 'POINT'::text order by ST_Intersection(a.the_geom, b.the_geom)) intersection"
         
-        #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
+       	db_results = query_db(query)
 
-        c = db.cursor()
-        c.execute(query)
-        rowcount = c.rowcount
-
-        lonlatList = []
-
-        if rowcount > 1:
-                
-                for i in range (rowcount):
-                        row = c.fetchone()      
-                        lonlatList.append(extract_point(str(row)))
-        c.close()
-        db.close()
+		longlatList = list(db_results)
 
         output = test_intersection_points((start_geo[0], start_geo[1]), (end_geo[0], end_geo[1]), lonlatList)
-
-
         
         if (points_bearing >= 0 and points_bearing <= 10) :
                 output = sorted(output, key = lambda x : (x[1], -x[0]))
@@ -950,50 +908,26 @@ def get_intersections2(street, start_geo, end_geo):
 def geocode_intersection(street1, street2):
         query =  "SELECT ST_AsText(geomout) FROM geocode_intersection('" + street1 + "','" + street2 + "','" + STATE + "','" + CITY + "','" + ZIP+"',1)"
 
-        #print query
-        
-        #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        
-        c = db.cursor()
-        c.execute(query)
-        rowcount = c.rowcount
-
-        if rowcount == 1:
-                row = c.fetchone()
-        
-        c.close()
-        db.close()
-
-        if rowcount == 1:
-                return extract_point(str(row))
-        else:
-                raise Exception("Geocode intersection " + street1 + ", " + street2 + " returned NULL")
+        db_results = query_db(query)
+	
+		if len(db_results) == 1:
+			return extract_point(str(db_results[0])
+		else:
+			raise Exception("geocode_intersection(" + street1 + ", " + street2 + ") returned NULL\n\tFailed query: " + query)
+			return "NULL"     
 
 def geocode_intersection2(street1, street2):
         query =  "SELECT ST_AsText(geomout) FROM geocode_intersection('" + street1 + "','" + street2 + "','" + STATE + "','" + CITY + "','" + ZIP+"',1)"
 
         # print query
+        db_results = query_db(query)
+	
+		if len(db_results) == 1:
+			return extract_point(str(db_results[0])
+		else:
+			print "geocode_intersection(2" + street1 + ", " + street2 + ") returned NULL\n\tFailed query: " + query
+			return "NULL"     
 
-        
-        #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        
-        c = db.cursor()
-        c.execute(query)
-        rowcount = c.rowcount
-
-        if rowcount == 1:
-                row = c.fetchone()
-        
-        c.close()
-        db.close()
-
-        if rowcount == 1:
-                return extract_point(str(row))
-        else:
-                #################### this is only difference
-                return ""
 
 def draw_line(geo1, geo2):
     instruction = "POLYLINE,"
@@ -1293,8 +1227,6 @@ def getPolygonRange (geoList):
         return Range
         
 def get_kNN_optimized(description,Currentpoint,NumberOfItems,dist,Range):
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
     #print description , NumberOfItems  
     #print Currentpoint
     if Range == None:
@@ -1313,7 +1245,7 @@ def get_kNN_optimized(description,Currentpoint,NumberOfItems,dist,Range):
         my_lat = (float(lat1)+float(lat2))/2
         my_lon = (float(lon1)+float(lon2))/2
         #print lon1 ,lon2 , lat1 , lat2,  my_lat , my_lon
-    query = None
+    query = ""
     
 
     if description == "STATE":
@@ -1334,46 +1266,38 @@ def get_kNN_optimized(description,Currentpoint,NumberOfItems,dist,Range):
             query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN(("+str(my_lat)+"- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS("+str(my_lat)+" * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN(("+str(my_lon)+" -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '"+mtfcc+"'  AND ST_Y(the_geom) between "+str( lat1 )+" and "+ str( lat2)+ " AND ST_X(the_geom) between "+ str( lon1)+" and "+str( lon2) +" ORDER BY distance"
         else:
             query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN(("+str(my_lat)+"- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS("+str(my_lat)+" * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN(("+str(my_lon)+" -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '"+mtfcc+"'  AND ST_Y(the_geom) between "+str( lat1 )+" and "+ str( lat2)+ " AND ST_X(the_geom) between "+ str( lon1)+" and "+str( lon2)+" ORDER BY distance limit "+str( NumberOfItems)
-    if(query is not None):
-        #print "in3"
-        c.execute(query)
-        rowcount = c.rowcount
-        #print query
-        maxDistance = 0
-        if rowcount > 0 :
+    
+	
+	if query is not "":
+        db_results = query_db(query)
+	
+		if len(db_results) > 0:
+			maxDistance = 0
             lonlatList = []
-            for i in range (rowcount):
-                row = c.fetchone()
+            for result in len(db_results):
+				# Could this be improved?
                 lonlat = []
-                lonlat.append(row[0])
-                lonlat.append(row[1])
-                lonlat.append(row[2])
-                lonlat.append(row[3])
+                lonlat.append(result[0])
+                lonlat.append(result[1])
+                lonlat.append(result[2])
+                lonlat.append(result[3])
                 lonlatList.append(lonlat)
-            c.close()
-            db.close()
             return lonlatList
-    c.close()
-    db.close()   
-    return "NULL"
-#
+	
+	# Either the query returned null or there was no query set
+	raise Exception("get_kNN_optimized(" + description + ", " + Currentpoint + ", " + NumberOfItems + ", " + dist + ", " + Range + "), query: " + query
+	return "NULL"
+    
 
 def get_area(dist,description=None):
     if (description==None):
         if(type(dist) == int or type(dist) == float):
           return math.pi*dist*dist
-        elif(dist[0]=="POLYGON"):
-          corr =get_coordinates(dist)
-          db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-          c = db.cursor()
+        
+		elif(dist[0]=="POLYGON"):
+          corr =g et_coordinates(dist)
+          
           query = "SELECT ST_Area(ST_Transform(the_geom,26986)) FROM (SELECT ST_GeomFromText('POLYGON (("+corr+"))',4326)) As foo(the_geom)"
-          c.execute(query)
-          rowcount = c.rowcount
-          if rowcount == 1:
-            row = c.fetchone()
-          c.close()
-          db.close()
-          return row[0]
   
     else:
         name=dist
@@ -1383,13 +1307,15 @@ def get_area(dist,description=None):
            query = "SELECT ST_Area(ST_Transform(the_geom,26986)) FROM tiger_data.state_all where name = '" + name +"'"
         elif description == "CITY":
            query = "select ST_Area(ST_Transform(the_geom,26986)) from tiger_data.in_place where name like '" + name+ "%'"
-        c.execute(query)
-        rowcount = c.rowcount
-        if rowcount == 1:
-          row = c.fetchone()
-        c.close()
-        db.close()
-        return row[0]
+
+	db_results = query_db(query)
+	
+	if len(db_results) == 1:
+		return db_results[0][0]
+	else:
+		raise Exception("geocode_intersection(" + street1 + ", " + street2 + ") returned NULL\n\tFailed query: " + query)
+
+		return "NULL"     
 
 
 def get_dim(testlist, dim=0):
@@ -1418,9 +1344,7 @@ def get_count(Array):
         return count_array
 
 def get_kNN_unoptimized(description,Currentpoint,NumberOfItems):
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    query=None
+    query = ""
     if description == "STATE":
             query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN(("+str(Currentpoint[1])+"- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS("+str(Currentpoint[1])+" * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN(("+str(Currentpoint[0])+" -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all ORDER BY distance limit "+str( NumberOfItems)
     elif description == "COUNTY":
@@ -1429,26 +1353,28 @@ def get_kNN_unoptimized(description,Currentpoint,NumberOfItems):
        mtfcc = get_mtfcc(description)
        if mtfcc != "NULL":
             query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75* 2 * ASIN(SQRT(POWER(SIN(("+str(Currentpoint[1])+"- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS("+str(Currentpoint[1])+" * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN(("+str(Currentpoint[0])+" -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '"+mtfcc+"' ORDER BY distance limit "+str( NumberOfItems)
-    if(query is not None):
-        c.execute(query)
-        rowcount = c.rowcount
-        maxDistance = 0
-        if rowcount > 0 :
+
+	if query is not "":
+        db_results = query_db(query)
+	
+		if len(db_results) > 0:
+			maxDistance = 0
             lonlatList = []
-            for i in range (rowcount):
-                row = c.fetchone()
+            for result in len(db_results):
+				# Could this be improved?
                 lonlat = []
-                lonlat.append(row[0])
-                lonlat.append(row[1])
-                lonlat.append(row[2])
-                lonlat.append(row[3])
+                lonlat.append(result[0])
+                lonlat.append(result[1])
+                lonlat.append(result[2])
+                lonlat.append(result[3])
                 lonlatList.append(lonlat)
-            c.close()
-            db.close()
             return lonlatList
-    c.close()
-    db.close()   
-    return "NULL"
+	
+	# Either the query returned null or there was no query set
+	raise Exception("get_kNN_unoptimized(" + description + ", " + Currentpoint + ", " + NumberOfItems + ", " + dist + ", " + Range + "), query: " + query
+	return "NULL"
+	
+	
 #get_closest_point Returning N nearest points
 def get_kNN(description,Currentpoint,NumberOfItems): 
         lonlatList = None
@@ -1485,74 +1411,21 @@ def get_all_in_range(description,Currentpoint,dist=None):
     if(lonlatList is not None):
         return lonlatList
     return "NULL"
+	
 def get_mtfcc(description):
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
     return_value  = None
     print "select mtfcc from tiger_data.mtfcc_Lookup where class_feature = lower('"+description+"')"
     query="select mtfcc from tiger_data.mtfcc_Lookup where class_feature = lower('"+description+"')"
-    c.execute(query)
-    rowcount = c.rowcount
-    if rowcount == 1 :
-       row = c.fetchone()
-       return_value = row[0]
+    
+    db_results = query_db(query)
+	
+    if len(db_results) == 1 :
+       return_value = db_results[0][0]
     else :
        return_value= "NULL"
-    c.close()
-    db.close()
-    
+	   
     print return_value
     return return_value
-def TEST():
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    query=None
-    #query = "SELECT table_name ,column_name FROM information_schema.columns WHERE table_name in (SELECT table_name FROM information_schema.tables )"
-    #query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'tiger_data' "
-    #tiger_data.in_pointlm
-    #query ="select  *  from tiger_data.mtfcc_Lookup where mtfcc like 'H%'"
-    #query ="select  DISTINCT statefp , mtfcc from tiger_data.county_all"
-    # ="select  fullname from tiger_data.in_roads where fullname like 'R%'"
-    #query = "SELECT count(*)  from tiger_data.in_pointlm"
-    query = " SELECT *  FROM tiger_data.county_all where name = 'DeKalb'"
-    #query = "SELECT intptlon, intptlat from tiger_data.county_all"
-    #state_all
-    #query ="SELECT rolname FROM pg_roles"
-    #query ="select column_name, data_type, character_maximum_length from INFORMATION_SCHEMA.COLUMNS where table_schema = 'tiger_data' and table_name = 'county_all'" 
-    #query ="CREATE TABLE tiger_data.mtfcc_Lookup (    class_feature varchar(100),    mtfcc      varchar(5)PRIMARY KEY    )"
-    #query = "INSERT INTO tiger_data.mtfcc_Lookup VALUES(lower('Mountain Peak or Summit'),'C3022')"
-    if(query is not None):
-        c.execute(query)
-        rowcount = c.rowcount
-        print rowcount
-        if rowcount > 0 :
-            for i in range (rowcount):
-               row = c.fetchone()
-               print row
-
-    c.close()
-    db.close()   
-    return "NULL"    
-        
-def TEST2():
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    query=None
-    query = "SELECT  ST_CollectionExtract(the_geom,2), name from tiger_data.in_place limit 1"
-    if(query is not None):
-        c.execute(query)
-        rowcount = c.rowcount
-        print rowcount
-        if rowcount > 0 :
-            for i in range (rowcount):
-                row = c.fetchone()
-                print row
-
-    c.close()
-    db.close()   
-    return "NULL"    
-        
-        
       
 
 #get_closest_point Returning point of ck
@@ -1884,20 +1757,18 @@ def distance_all_roads_in(geo1, geo2, geo3, geo4):
 
     #print query
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+	db_results = query_db(query)
+	
+	if len(db_results) ==  0
+		raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+		return "NULL"     
+
     
     roads = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
+    for result in db_results:
+        roads.append(str(result[0]))
 
-    c.close()
-    db.close()
-    
     sum = 0.0
     for road in roads:
         # print road
@@ -1939,19 +1810,17 @@ def draw_all_roads_in(geo1, geo2, geo3, geo4):
 
     #print query
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+	db_results = query_db(query)
+	
+	if len(db_results) ==  0
+		raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+		return "NULL"     
+
     
     roads = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-
-    c.close()
-    db.close()
+    for result in db_results:
+        roads.append(str(result[0]))
 
     # print roads
 
@@ -2015,28 +1884,18 @@ def findAllIntersectionRoads2(testCommuter):
 
     # print query
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    try:
-        c.execute(query)
-    except:
-        print lineString
-        c.close()
-        db.close()
-        return None
-    rowcount = c.rowcount
+	db_results = query_db(query)
+	
+	if len(db_results) ==  0
+		raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+		return "NULL"     
+
     
     roads = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-        
-
-
-    c.close()
-    db.close()
-
+    for result in db_results:
+        roads.append(str(result[0]))
+    
     # print roads
 
     return roads
@@ -2057,22 +1916,18 @@ def findAllIntersectionRoads(currentPoint, eps):
                             
     query = "select distinct fullname from tiger_data.in_roads r where st_intersects(ST_Polygon(ST_GeomFromText('" +lineString+ "'),4269),r.the_geom)"
     # print query
+	
+	db_results = query_db(query)
+	
+	if len(db_results) ==  0
+		raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+		return "NULL"     
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
     
     roads = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-        
-
-
-    c.close()
-    db.close()
+    for result in db_results:
+        roads.append(str(result[0]))
 
     return roads
 
@@ -2169,25 +2024,23 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
                 (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as b            \
             where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1"
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+	db_results = query_db(query)
+	
+	if len(db_results) ==  0
+		raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+		return "NULL"     
+
     
     ret = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        ret.append(str(st[0]))
+    for result in db_results:
+        ret.append(str(result[0]))
 
     #try:
     if len(ret) == 0:
         return None
 
     line = str(ret[0])
-
-    c.close()
-    db.close()
 
     if line[0:5] == "POINT":
         return None
@@ -2210,26 +2063,24 @@ def get_total_length_of_street(street, ZIP):
             where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
 
     # print query
+	
+	db_results = query_db(query)
+	
+	if len(db_results) ==  0
+		raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+		return "NULL"     
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
     
     ret = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        ret.append(str(st[0]))
+    for result in db_results:
+        ret.append(str(result[0]))
 
     #try:
     if len(ret) == 0:
         return None
 
     totalLength = float(ret[0])
-
-    c.close()
-    db.close()
 
     return totalLength
 
@@ -2244,24 +2095,22 @@ def get_current_fraction_on_the_street(lon, lat, street, ZIP):
     
     # print query
     
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+	db_results = query_db(query)
+	
+	if len(db_results) ==  0
+		raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+		return "NULL"     
+
     
     ret = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        ret.append(str(st[0]))
+    for result in db_results:
+        ret.append(str(result[0]))
 
     if len(ret) == 0:
         return None
     
     fraction = float(ret[0])
-
-    c.close()
-    db.close()
 
     return fraction
 
@@ -2279,17 +2128,17 @@ def get_all_intersection_name_and_point_on_the_road(street, ZIP):
                 where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2\
         where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"\
 
+	db_results = query_db(query)
+	
+	if len(db_results) ==  0
+		raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+		return "NULL"     
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
     
     ret = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        ret.append(( str(st[0]), str(st[1]) ) )
+    for result in db_results:
+		ret.append(( str(result[0]), str(result[1]) ) )
 
     return ret
 
@@ -2306,16 +2155,17 @@ def get_all_intersection_name_and_point_on_the_road_with_fraction(fractionFrom, 
                     where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2\
             where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'";
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+	db_results = query_db(query)
+	
+	if len(db_results) ==  0
+		raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+		return "NULL"     
+
     
     ret = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        ret.append(( str(st[0]), str(st[1]) ) )
+    for result in db_results:
+		ret.append(( str(result[0]), str(result[1]) ) )
 
     return ret
 
@@ -2983,42 +2833,6 @@ def cartesianToPolar(x, y):
 
     return lon, lat
 
-def test_query():
-        query = "select ST_asText(ST_Simplify(the_geom, 0.05)) from tiger_data.in_zcta5 where zcta5ce = '47906'"
-        #print query
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        c = db.cursor()
-        c.execute(query)
-        
-        rowcount = c.rowcount
-
-        if rowcount == 1:
-                row = c.fetchone()
-                c.close()
-                db.close()
-
-        return extract_polygon(str(row))
-
-
-def test_query2():
-        query = "select ST_asText(the_geom) from tiger_data.in_roads where linearid = '110168395940'"
-        
-        #print query
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        c = db.cursor()
-        c.execute(query)
-        
-        rowcount = c.rowcount
-        
-        
-        if rowcount == 1:
-                row = c.fetchone()
-                c.close()
-                db.close()
-                
-                print str(row)
-                return extract_polyline(str(row))
-
 #forms a point on EWKT format: 'POINT(lon lat)'
 def get_EWKT(lonlatList):
         return "'POINT (" + str(lonlatList[0])+ " " + str(lonlatList[1]) + ")'"
@@ -3045,204 +2859,3 @@ def change_in_longitude(latitude, miles):
     # Find the radius of a circle around the earth at given latitude.
     r = earth_radius*math.cos(latitude*degrees_to_radians)
     return (miles/r)*radians_to_degrees
-
-
-def test_query3(road, area_code, brng, lonlatList, distance):
-    
-    dist_degrees = change_in_latitude(distance)
-    point_EWKT = get_EWKT(lonlatList)
-    
-    query = "select ST_asText( tiger_data.point_at_distance ('"+ road + "' , '" + area_code +"', " + str(brng) +  "," + point_EWKT + "," + str(dist_degrees) +"))"
-    
-    # print query
-    
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-        c.close()
-        db.close()
-        return extract_line_string(str(row))
-    
-def call():
-    query = "select ST_AsText(ST_LineMerge(a.the_geom)) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-            where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))"
-
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-    
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-    
-    print roads
-
-
-    c.close()
-    db.close()
-
-def call2():
-    query = "select ST_AsText(ST_LineMerge(a.the_geom))         \
-    from (select the_geom from tiger_data.in_roads where fullname = 'N College Ave') as a,    \
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '46220') as b      \
-       where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
-
-
-    # query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) \
-    #         from (select the_geom from tiger_data.in_roads where fullname = 'Sheridan Rd') as a,\
-    #         (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-    #         where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1"
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-    
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-    print "what "
-    print roads
-    return None
-
-
-
-    query = "select (ST_Length(ST_Transform(ST_LineMerge(a.the_geom),2877))/5280) from (select the_geom from tiger_data.in_roads where fullname = 'Sheridan Rd') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-            where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))"
-
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-    
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-    
-    # print roads
-
-    totalLength = float(roads[0])
-    print "total length : " + str(totalLength)
-
-    query = "select ST_Line_Locate_Point(\
-            (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-            where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), ST_GeomFromText('POINT (-86.920866 40.439954)',4269))"
-
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-    
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-    
-    
-
-
-    startFraction = float(roads[0])
-
-
-    print "startFraction " + str(startFraction)
-
-    distance = 0.1
-
-    distanceFraction = distance / totalLength
-
-    nextFraction1 = startFraction - distanceFraction
-    nextFraction2 = startFraction + distanceFraction
-
-    print nextFraction1
-    print nextFraction2
-
-    query = "select ST_AsText(ST_Line_Interpolate_Point(\
-            (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-            where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(nextFraction1) + "))"
-
-
-
-
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-    
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-    
-    print roads
-
-    query = "select ST_AsText(ST_Line_Interpolate_Point(\
-            (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-            where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(nextFraction2) + "))"
-
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-    
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-    
-    print roads
-
-
-
-
-
-    c.close()
-    db.close()
-
-def test_query4():
-        #query = "select ST_asText(the_geom) from tiger_data.in_roads where linearid = '110168395940'"
-        
-        query = "select ST_asText(a.the_geom) from (select linearid, the_geom from tiger_data.in_primaryroads where fullname = 'I- 65') as a, (select the_geom from tiger_data.state_all where name = 'Indiana') as b where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
-        
-        #print query
-        #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        
-        c = db.cursor()
-        c.execute(query)
-
-        rowcount = c.rowcount
-        if rowcount >1:
-            lonlatList = []
-            for i in range (rowcount):
-                row = c.fetchone()      
-                lonlatList.append(extract_polyline(str(row)))
-            c.close()
-            db.close()
-            return lonlatList
-      
-
