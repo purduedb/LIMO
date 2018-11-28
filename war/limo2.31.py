@@ -939,11 +939,8 @@ def draw_line(geo1, geo2):
 
 #display the the list of coordinates on map
 def show_on_map(commuterName):
-        #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
         geoList = commuters.get(str(commuterName))[0]
 
-        # db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        
         instruction = "POLYLINE,"
         for i in range(len(geoList)):
                 instruction += str(geoList[i][0]) + ';' + str(geoList[i][1])+ ','
@@ -970,54 +967,25 @@ def get(name, description, geomType):
 
         # If a polygon (outline) was requested
         if geomType == "POLYGON":
-                # Can we combine these? Ie - look for a state first, then a city if it is not found, then a county? What order should we look? Is there overlap between city, state, and county names?
+                # Can we combine these? IE - look for a state first, then a city if it is not found, then a county? What order should we look? Is there overlap between city, state, and county names?
                 if description == "STATE":
                         # Uses GIS calls to DB
                         #query = "SELECT ST_AsText(ST_Simplify(the_geom, 0.05)) FROM tiger_data.state_all where name = '" + name +"'"
                         query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.state_all where name = '" + name +"'"
-                        c.execute(query)
-                        # Get the number of rows
-                        rowcount = c.rowcount
-
-                        # If we have exactly one result, return it. If not, return NULL
-                        # All states have unique names, should we process this differently?
-                        # TODO: Make this a function
-                        if rowcount == 1:
-                                row = c.fetchone()
-                                c.close()
-                                db.close()
-                                #print row[0]
-                                return extract_polygon_v2(str(row))
 
                 # What about Lafayette Louisiana vs Lafayette Indiana?
                 elif description == "CITY":
                     query = "select ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.001)) from tiger_data.in_place where name = '" + name  + "%'"
-                    c.execute(query)
-                    rowcount = c.rowcount
-                    
-                    # See state. Return result iff there was one result.
-                    if rowcount == 1:
-                        row = c.fetchone()
-                        c.close()
-                        db.close()
-                        #print row[0]
-                        return extract_polygon_v2(str(row))
                         
                 elif description == "COUNTY":
                         # `Where name like` - why do we approximate here and not in others?
                         query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all where name like  '" + name +"'"
                         print query
-                        c.execute(query)
-                        rowcount = c.rowcount
-
-                        # If we have more than one result, return the first one.
-                        # Is there a better way to handle this?
-                        if rowcount > 0:
-                                row = c.fetchone()
-                                c.close()
-                                db.close()
-                                #print row[0]
-                                return extract_polygon_v2(str(row))
+                        
+				db_results = query_db(query)
+				# Return the first result. Behavior copied from old code. Is there a better way to do this?
+				return extract_polygon_v2(str(db_results[0]))
+				
         # If a geopoint/longlat was requested
         elif geomType == "POINT":
                 # If we want a geopoint of a state
@@ -1025,15 +993,14 @@ def get(name, description, geomType):
                 if description == "STATE":
                         # Why is this query so different? Is it because states are not naturally points?
                         query = "SELECT intptlon, intptlat from tiger_data.state_all where name = '" + name +"'"
-                        c.execute(query)
-                        rowcount = c.rowcount
-                        if rowcount == 1:
-                                row = c.fetchone()
-                                c.close()
-                                db.close()
+                        
+						db_results = query_db(query)
+						
+						if len(db_results) == 1:
                                 lonlat = []
-                                lonlat.append(eval(row[0]))
-                                lonlat.append(eval(row[1]))
+                                # Behavior copied from old code. Is there a better way to do this?
+								lonlat.append(eval(db_results[0][0]))
+                                lonlat.append(eval(db_results[0][1]))
                                 
                                 return lonlat
 
@@ -1042,52 +1009,27 @@ def get(name, description, geomType):
                         #query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where fullname = '" + name + "'"
                         query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where lower(fullname) like '" + name + "'"
                         #print query
-                        c.execute(query)
-                        rowcount = c.rowcount
-                        if rowcount >= 1:
-                                lonlatList = []
-                                for i in range (rowcount):
-                                        row = c.fetchone()      
-                                        lonlatList.append(extract_polyline(str(row)))
-                                c.close()
-                                db.close()
-                                return lonlatList
-                        
-                                #row = c.fetchone()
-                                #c.close()
-                                #db.close()
-                                #return extract_polyline(str(row))
-
+                       
                 elif description == "PRIMARY-ROAD":
                         #query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where fullname = '" + name + "'"
                         query = "select ST_AsText(the_geom) from tiger_data.in_primaryroads where fullname = '" + name + "'"
                         #print query
-                        c.execute(query)
-                        rowcount = c.rowcount
-                        if rowcount >1:
-                                lonlatList = []
-                                for i in range (rowcount):
-                                        row = c.fetchone()      
-                                        lonlatList.append(extract_polyline(str(row)))
-                                c.close()
-                                db.close()
-                                return lonlatList
-
+                       
                 elif description == "ROAD":
                         #query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where fullname = '" + name + "'"
                         query = "select ST_AsText(the_geom) from tiger_data.in_roads where fullname = '" + name + "'"
                         #print query
-                        c.execute(query)
-                        rowcount = c.rowcount
-                        if rowcount >1:
-                                lonlatList = []
-                                for i in range (rowcount):
-                                        row = c.fetchone()      
-                                        lonlatList.append(extract_polyline(str(row)))
-                                c.close()
-                                db.close()
-                                return lonlatList
-      
+                       		
+				db_results = query_db(query)
+				if len(db_results) > 1
+                    lonlatList = []
+                    for result in db_results: 
+                        lonlatList.append(extract_polyline(str(result)))
+                        return lonlatList
+				else:
+					raise Exception("get(" name + ", " + description + ", " + geomType + ") returned NULL\n\tFailed query: " + query)
+					return "NULL"
+						
         return "NULL"
 
 def get_all(description, geomType):
