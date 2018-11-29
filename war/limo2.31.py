@@ -47,8 +47,8 @@ def query_db(query):
         print query
     
     # Precondition checking: Verify the parameters are of the correct type
-    if type(query) != str:
-        return -1
+    #if type(query) != str:
+    #    return -1
     
     # TODO: add secondary sql query verification
     
@@ -943,14 +943,14 @@ def get(name, description, geomType):
 
                 # What about Lafayette Louisiana vs Lafayette Indiana?
                 elif description == "CITY":
-                    query = "select ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.001)) from tiger_data.in_place where name = '" + name + "%'"
+                    query = "select ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.001)) from tiger_data.in_place where name = '" + name + "'"
                         
                 elif description == "COUNTY":
                         # `Where name like` - why do we approximate here and not in others?
                         query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all where name like  '" + name + "'"
-                        print query
                         
                 db_results = query_db(query)
+                
                 # Return the first result. Behavior copied from old code. Is there a better way to do this?
                 return extract_polygon_v2(str(db_results[0]))
                 
@@ -1184,11 +1184,11 @@ def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
     
     if query is not "":
         db_results = query_db(query)
-    
+        
         if len(db_results) > 0:
             maxDistance = 0
             lonlatList = []
-            for result in len(db_results):
+            for result in db_results:
                 # Could this be improved?
                 lonlat = []
                 lonlat.append(result[0])
@@ -1199,7 +1199,8 @@ def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
             return lonlatList
     
     # Either the query returned null or there was no query set
-    raise Exception("get_kNN_optimized(" + description + ", " + Currentpoint + ", " + NumberOfItems + ", " + dist + ", " + Range + "), query: " + query)
+    # Occasionally this still needs to work if nothing is found. Don't asl
+    #raise Exception("get_kNN_optimized(" + str(description) + ", " + str(Currentpoint) + ", " + str(NumberOfItems) + ", " + str(dist) + ", " + str(Range) + ")\n\tquery: " + str(query))
     return "NULL"
     
 
@@ -1333,7 +1334,7 @@ def get_all_in_range(description, Currentpoint, dist=None):
     
 def get_mtfcc(description):
     return_value = None
-    print "select mtfcc from tiger_data.mtfcc_Lookup where class_feature = lower('" + description + "')"
+    # print "select mtfcc from tiger_data.mtfcc_Lookup where class_feature = lower('" + description + "')"
     query = "select mtfcc from tiger_data.mtfcc_Lookup where class_feature = lower('" + description + "')"
     
     db_results = query_db(query)
@@ -1343,7 +1344,7 @@ def get_mtfcc(description):
     else :
        return_value = "NULL"
        
-    print return_value
+    # print return_value
     return return_value
       
 
