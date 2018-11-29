@@ -1014,7 +1014,7 @@ def get_all(description, geomType):
             
             if len(db_results) > 1:
                 # convert each item in the result list to a polygon
-                for i in range(len(db_results):
+                for i in range(len(db_results)):
                     db_results[i] = extract_polygon_v2(str(db_results[i]))
                
                 return db_results
@@ -1037,8 +1037,8 @@ def get_all(description, geomType):
                 i = 0
                 for result in db_results:
                     longlatList[i] = [eval(result[0]), eval(result[1])]
-                    i++
-               
+                    i = i + 1
+                
                 return longlatList
             
             
@@ -1057,7 +1057,7 @@ def get_all(description, geomType):
                     i = 0
                     for result in db_results:
                         longlatList[i] = [result[0], result[1], str(result[2])]
-                        i++
+                        i = i + 1
                    
                     return longlatList
 
