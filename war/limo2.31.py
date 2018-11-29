@@ -961,10 +961,6 @@ def get(name, description, geomType):
         # geomType: The type of geom we want returned. Case sensitive
             # Choices: POLYGON, POINT, POLYLINE
 
-        # TODO: Make this a function
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        c = db.cursor()
-
         # If a polygon (outline) was requested
         if geomType == "POLYGON":
                 # Can we combine these? IE - look for a state first, then a city if it is not found, then a county? What order should we look? Is there overlap between city, state, and county names?
