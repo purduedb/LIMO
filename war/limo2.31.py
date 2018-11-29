@@ -1002,87 +1002,65 @@ def get(name, description, geomType):
 
 
 def get_all(description, geomType):
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        c = db.cursor()
         if geomType == "POLYGON":
-                if description == "STATE":
-                        query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.state_all"
-                        c.execute(query)
-                        rowcount = c.rowcount
+            if description == "STATE":
+                query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.state_all"
 
-                        if rowcount > 1:
-                                lonlatList = []
-                                for i in range (rowcount):
-                                        row = c.fetchone()      
-                                        lonlatList.append(extract_polygon_v2(str(row)))
-                                c.close()
-                                db.close()
-                                return lonlatList
-                elif description == "COUNTY":
-                        query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all"
-                        c.execute(query)
-                        rowcount = c.rowcount
-
-                        if rowcount > 1:
-                                lonlatList = []
-                                for i in range (rowcount):
-                                        row = c.fetchone()      
-                                        lonlatList.append(extract_polygon_v2(str(row)))
-                                c.close()
-                                db.close()
-                                return lonlatList
-
+            elif description == "COUNTY":
+                query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all"
+			
+            # Query database
+            db_results = query_db(query)
+            
+            if len(db_results) > 1:
+                # convert each item in the result list to a polygon
+                for i in range(len(db_results):
+                    db_results[i] = extract_polygon_v2(str(db_results[i]))
+               
+                return db_results
+			
+								
         elif geomType == "POINT":
             if description == "STATE":
-                        query = "SELECT intptlon, intptlat from tiger_data.state_all"
-                        c.execute(query)
-                        rowcount = c.rowcount
-                        if rowcount > 1:
-                                lonlatList = []
-                                for i in range (rowcount):
-                                        row = c.fetchone()
-                                        lonlat = []
-                                        lonlat.append(eval(row[0]))
-                                        lonlat.append(eval(row[1]))
-                                        lonlatList.append(lonlat)
-                                c.close()
-                                db.close()
-                                return lonlatList
+                query = "SELECT intptlon, intptlat from tiger_data.state_all"
+                
             elif description == "COUNTY":
-                        query = "SELECT intptlon, intptlat from tiger_data.county_all"
-                        c.execute(query)
-                        rowcount = c.rowcount
-                        if rowcount > 1:
-                                lonlatList = []
-                                for i in range (rowcount):
-                                        row = c.fetchone()
-                                        lonlat = []
-                                        lonlat.append(eval(row[0]))
-                                        lonlat.append(eval(row[1]))
-                                        lonlatList.append(lonlat)
-                                c.close()
-                                db.close()
-                                return lonlatList                        
-            else:
-                mtfcc = get_mtfcc(description)
-                if mtfcc != "NULL":
-                    query = "select  ST_X(the_geom), ST_Y(the_geom), fullname  from tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'"
-                    c.execute(query)
-                    rowcount = c.rowcount
-        
-                    if rowcount > 1:
-                        lonlatList = []
-                        for i in range (rowcount):
-                            row = c.fetchone()
-                            lonlat = []
-                            lonlat.append(row[0])
-                            lonlat.append(row[1])
-                            lonlat.append(str(row[2]))
-                            lonlatList.append(lonlat)
-                        c.close()
-                        db.close()
-                        return lonlatList
-                                
+                query = "SELECT intptlon, intptlat from tiger_data.county_all"
+            
+            # Query database with built query
+            db_results = query_db(query)
+            
+            if len(db_results) > 1:
+                # Blank list to insert items into
+                lonlatList = []
+                # Convert each item in the result list to a polygon
+                i = 0
+                for result in db_results:
+                    longlatList[i] = [eval(result[0]), eval(result[1])]
+                    i++
+               
+                return longlatList
+            
+            
+            # Default case - if the description is not a state or a county
+            mtfcc = get_mtfcc(description)
+            if mtfcc !="NULL":
+                query = "select  ST_X(the_geom), ST_Y(the_geom), fullname  from tiger_data.in_pointlm where mtfcc = '"+mtfcc+"'"
+            
+                # Query database with built query
+                db_results = query_db(query)
+                
+                if len(db_results) > 1:
+                    # Blank list to insert items into
+                    lonlatList = []
+                    # Convert each item in the result list to a polygon
+                    i = 0
+                    for result in db_results:
+                        longlatList[i] = [result[0], result[1], str(result[2])]
+                        i++
+                   
+                    return longlatList
+
         return "NULL"
 
 
