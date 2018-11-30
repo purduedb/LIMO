@@ -859,7 +859,7 @@ def get_intersections2(street, start_geo, end_geo):
         
         db_results = query_db(query)
 
-        longlatList = list(db_results)
+        lonlatList = list(db_results)
 
         output = test_intersection_points((start_geo[0], start_geo[1]), (end_geo[0], end_geo[1]), lonlatList)
         
@@ -952,9 +952,10 @@ def get(name, description, geomType):
                 db_results = query_db(query)
                 
                 # Return the first result. Behavior copied from old code. Is there a better way to do this?
+                # Check if anything returned?
                 return extract_polygon_v2(str(db_results[0]))
                 
-        # If a geopoint/longlat was requested
+        # If a geopoint/lonlat was requested
         elif geomType == "POINT":
                 # If we want a geopoint of a state
                 # This seems a bit useless?
@@ -1027,6 +1028,27 @@ def get_all(description, geomType):
             elif description == "COUNTY":
                 query = "SELECT intptlon, intptlat from tiger_data.county_all"
             
+            else:
+                # Default case - if the description is not a state or a county
+                mtfcc = get_mtfcc(description)
+                if mtfcc !="NULL":
+                    query = "select  ST_X(the_geom), ST_Y(the_geom), fullname  from tiger_data.in_pointlm where mtfcc = '"+mtfcc+"'"
+                
+                    # Query database with built query specific for mtfcc queries
+                    db_results = query_db(query)
+                    
+                    if len(db_results) > 1:
+                        # Blank list to insert items into
+                        lonlatList = []
+                        # Convert each item in the result list to a polygon
+                        for result in db_results:
+                            lonlatList.append([result[0], result[1], str(result[2])])
+                       
+                        return lonlatList
+                
+                return "NULL"
+
+            
             # Query database with built query
             db_results = query_db(query)
             
@@ -1036,31 +1058,14 @@ def get_all(description, geomType):
                 # Convert each item in the result list to a polygon
                 i = 0
                 for result in db_results:
-                    longlatList[i] = [eval(result[0]), eval(result[1])]
+                    lonlatList[i] = [eval(result[0]), eval(result[1])]
                     i = i + 1
                 
-                return longlatList
+                return lonlatList
             
             
-            # Default case - if the description is not a state or a county
-            mtfcc = get_mtfcc(description)
-            if mtfcc !="NULL":
-                query = "select  ST_X(the_geom), ST_Y(the_geom), fullname  from tiger_data.in_pointlm where mtfcc = '"+mtfcc+"'"
-            
-                # Query database with built query
-                db_results = query_db(query)
-                
-                if len(db_results) > 1:
-                    # Blank list to insert items into
-                    lonlatList = []
-                    # Convert each item in the result list to a polygon
-                    i = 0
-                    for result in db_results:
-                        longlatList[i] = [result[0], result[1], str(result[2])]
-                        i = i + 1
-                   
-                    return longlatList
 
+            
         return "NULL"
 
 
