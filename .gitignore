@@ -370,3 +370,13 @@ Session.vim
 tags
 # Persistent undo
 [._]*.un~
+
+
+
+# Visual Studio
+###############
+.vs
+
+# Intellij IDEA
+###############
+.idea
