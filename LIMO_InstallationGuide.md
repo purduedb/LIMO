@@ -7,12 +7,18 @@
         1. Paste: <http://storage.googleapis.com/gwt-eclipse-plugin/v3/release>
         2. 'Select All'
         3. Click 'Next' and 'Install'
+3. Install PyDev
+    1. Click Help - Install New Software
+    2. In the 'Work With' textbox
+        1. Paste: <http://www.pydev.org/updates>
+        2. 'PyDev for Eclipse'
+        3. Click 'Next' and 'Install'
 
 ## 2 Importing Source Code
 1. Clone the repository via CLI
     1. SSH: git@github.com:purduedb/LIMO.git
     2. HTML: https://github.com/purduedb/LIMO.git
-2. Import project in Eclipse -> location of cloned repo
+2. Right click in Package Explorer -> Import -> Import project in Eclipse -> Import as Local Git -> location of cloned repo -> import as general project
 3. Right click name of project –> properties –> project facets –> click on “Convert to faceted form” –> Set java version to 8 –> Apply –> OK
     1. If desired, most recent java version should work
 4. Build path settings
