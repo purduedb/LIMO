@@ -1774,13 +1774,11 @@ def distance_all_roads_in(geo1, geo2, geo3, geo4):
         lineString += ","
 
     lineString += str(line[0][0]) + " " + str(line[0][1]) + ")"
+    
+    #Harsh: added some stuff to the query
 
-    query = "select ST_AsText(ST_Intersection(T1.geom, ST_Polygon(ST_GeomFromText('" + lineString + "'),4269))) \
-            from \
-                (select the_geom geom \
-                from tiger_data.in_roads r \
-                where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)) T1"
-
+    query = "select ST_AsText(ST_Intersection(T1.geom, ST_Polygon(ST_GeomFromText('" + lineString + "'),4269))) from (select the_geom geom from tiger_data.in_roads r where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)) T1"
+                    
     #print query
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
@@ -1830,11 +1828,7 @@ def draw_all_roads_in(geo1, geo2, geo3, geo4):
 
     lineString += str(line[0][0]) + " " + str(line[0][1]) + ")"
 
-    query = "select ST_AsText(ST_Intersection(T1.geom, ST_Polygon(ST_GeomFromText('" + lineString + "'),4269))) \
-            from \
-                (select the_geom geom \
-                from tiger_data.in_roads r \
-                where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)) T1"
+    query = "select ST_AsText(ST_Intersection(T1.geom, ST_Polygon(ST_GeomFromText('" + lineString + "'),4269)))  from (select the_geom geom from tiger_data.in_roads r where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)) T1"
 
     #print query
 
@@ -2063,10 +2057,7 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
         fr1 = temp
 
 
-    query = "select ST_AsText(ST_Line_SubString(ST_LineMerge(a.the_geom), "+str(fr1)+", "+str(fr2)+")) line\
-            from (select the_geom from tiger_data.in_roads where fullname = '"+street+"') as a,  \
-                (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as b            \
-            where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1"
+    query = "select ST_AsText(ST_Line_SubString(ST_LineMerge(a.the_geom), "+str(fr1)+", "+str(fr2)+")) line from (select the_geom from tiger_data.in_roads where fullname = '"+street+"') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as b  where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1"
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
     c = db.cursor()
@@ -2103,10 +2094,7 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
 
 
 def get_total_length_of_street(street, ZIP):
-    query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) \
-            from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b \
-            where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
+    query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
 
     # print query
 
@@ -2134,12 +2122,7 @@ def get_total_length_of_street(street, ZIP):
 
 
 def get_current_fraction_on_the_street(lon, lat, street, ZIP):
-    query = "select ST_Line_Locate_Point(\
-                (select ST_LineMerge(st_geometryn(a.the_geom,1)) \
-                from (select the_geom from tiger_data.in_roads where fullname = '" +  street + "') as a,\
-                (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" +  str(ZIP) + "') as b \
-                where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1), \
-            ST_GeomFromText('POINT ("+str(lon) +" " +str(lat)+")',4269))"
+    query = "select ST_Line_Locate_Point( (select ST_LineMerge(st_geometryn(a.the_geom,1)) from (select the_geom from tiger_data.in_roads where fullname = '" +  street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" +  str(ZIP) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1),  ST_GeomFromText('POINT ("+str(lon) +" " +str(lat)+")',4269))"
     
     # print query
     
@@ -2167,16 +2150,7 @@ def get_current_fraction_on_the_street(lon, lat, street, ZIP):
 
 
 def get_all_intersection_name_and_point_on_the_road(street, ZIP):
-    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point from\
-            ( select ST_LineMerge(a.the_geom) geom\
-                from (select the_geom from tiger_data.in_roads where fullname = '" + street+ "') as a,  \
-                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as b            \
-                where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,\
-            ( select ST_LineMerge(c.the_geom) geom, fullname \
-                from (select the_geom, fullname from tiger_data.in_roads) as c,  \
-                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as d   \
-                where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2\
-        where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"\
+    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point from ( select ST_LineMerge(a.the_geom) geom  from (select the_geom from tiger_data.in_roads where fullname = '" + street+ "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as b  where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1, ( select ST_LineMerge(c.the_geom) geom, fullname from (select the_geom, fullname from tiger_data.in_roads) as c, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as d   where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2  where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"
 
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
@@ -2193,17 +2167,7 @@ def get_all_intersection_name_and_point_on_the_road(street, ZIP):
     return ret
 
 def get_all_intersection_name_and_point_on_the_road_with_fraction(fractionFrom, fractionTo, street, ZIP):
-    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point\
-                from \
-                ( select ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fractionFrom) + ", " + str(fractionTo)+ ") geom\
-                    from (select the_geom from tiger_data.in_roads where fullname = '"+street+"') as a,  \
-                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as b            \
-                    where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,\
-                ( select ST_LineMerge(c.the_geom) geom, fullname \
-                    from (select the_geom, fullname from tiger_data.in_roads) as c,  \
-                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as d   \
-                    where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2\
-            where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'";
+    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point   from ( select ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fractionFrom) + ", " + str(fractionTo)+ ") geom    from (select the_geom from tiger_data.in_roads where fullname = '"+street+"') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as b   where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,  ( select ST_LineMerge(c.the_geom) geom, fullname from (select the_geom, fullname from tiger_data.in_roads) as c, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '"+str(ZIP)+"') as d where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2 where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
     c = db.cursor()
@@ -2259,10 +2223,7 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         nextFraction2 = 1
 
     if 0 <= nextFraction1 and nextFraction1 <= 1:
-        query ="select ST_AsText(ST_Line_Interpolate_Point(\
-            (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" +  street + "') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" +  ZIP + "') as b \
-            where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction1) + "))"
+        query ="select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" +  street + "') as a,  (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" +  ZIP + "') as b   where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction1) + "))"
         # print query
         db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
         c = db.cursor()
@@ -2281,10 +2242,7 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         #     print nextPoint1
 
     if 0 <= nextFraction2 and nextFraction2 <= 1:
-        query = "select ST_AsText(ST_Line_Interpolate_Point(\
-            (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" +  street + "') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" +  ZIP + "') as b \
-            where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction2) + "))"
+        query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" +  street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" +  ZIP + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction2) + "))"
 
         # db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
         # c = db.cursor()
@@ -2968,9 +2926,7 @@ def test_query3(road, area_code, brng, lonlatList, distance):
         return extract_line_string(str(row))
     
 def call():
-    query = "select ST_AsText(ST_LineMerge(a.the_geom)) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-            where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))"
+    query = "select ST_AsText(ST_LineMerge(a.the_geom)) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b   where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))"
 
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
@@ -2991,10 +2947,7 @@ def call():
     db.close()
 
 def call2():
-    query = "select ST_AsText(ST_LineMerge(a.the_geom))         \
-    from (select the_geom from tiger_data.in_roads where fullname = 'N College Ave') as a,    \
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '46220') as b      \
-       where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
+    query = "select ST_AsText(ST_LineMerge(a.the_geom))   from (select the_geom from tiger_data.in_roads where fullname = 'N College Ave') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '46220') as b  where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
 
 
     # query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) \
@@ -3018,9 +2971,7 @@ def call2():
 
 
 
-    query = "select (ST_Length(ST_Transform(ST_LineMerge(a.the_geom),2877))/5280) from (select the_geom from tiger_data.in_roads where fullname = 'Sheridan Rd') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-            where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))"
+    query = "select (ST_Length(ST_Transform(ST_LineMerge(a.the_geom),2877))/5280) from (select the_geom from tiger_data.in_roads where fullname = 'Sheridan Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b  where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))"
 
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
@@ -3039,10 +2990,7 @@ def call2():
     totalLength = float(roads[0])
     print "total length : " + str(totalLength)
 
-    query = "select ST_Line_Locate_Point(\
-            (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-            where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), ST_GeomFromText('POINT (-86.920866 40.439954)',4269))"
+    query = "select ST_Line_Locate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b  where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), ST_GeomFromText('POINT (-86.920866 40.439954)',4269))"
 
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
@@ -3074,10 +3022,7 @@ def call2():
     print nextFraction1
     print nextFraction2
 
-    query = "select ST_AsText(ST_Line_Interpolate_Point(\
-            (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-            where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(nextFraction1) + "))"
+    query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b   where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(nextFraction1) + "))"
 
 
 
@@ -3096,10 +3041,7 @@ def call2():
     
     print roads
 
-    query = "select ST_AsText(ST_Line_Interpolate_Point(\
-            (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-            where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(nextFraction2) + "))"
+    query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b  where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(nextFraction2) + "))"
 
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
