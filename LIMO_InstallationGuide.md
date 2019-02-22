@@ -37,3 +37,12 @@
     2. Select GWT – Compile
     3. Compiled files will be located under the war directory
     4. Push to repo
+
+## 4 Installing testing and linting tools
+1. Download and install Postman found here <https://www.getpostman.com/downloads/>
+    1. Optional - install Newman, the Postman CLI. Found here: <https://www.npmjs.com/package/newman> or by running `npm install -g newman`
+    2. Import the Environment and LIMO test configurations found in the `tools` directory
+2. Download and install pip found here <https://pip.pypa.io/en/stable/installing/>
+    1. Installing with the `--user` command is recommended to avoid permissions based issues
+    2. Install yapf via `pip install yapf --user`
+    3. Install pylint via `pip install pylint --user`
