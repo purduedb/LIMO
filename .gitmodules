@@ -1,0 +1,9 @@
+[submodule "tools/pylint"]
+	path = tools/pylint
+	url = git@github.com:PyCQA/pylint.git
+[submodule "tools/astroid"]
+	path = tools/astroid
+	url = git@github.com:PyCQA/astroid.git
+[submodule "tools/yapf"]
+	path = tools/yapf
+	url = git@github.com:google/yapf.git
