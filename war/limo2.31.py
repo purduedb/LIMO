@@ -420,8 +420,7 @@ def display_marker(address):
     else:
         #the address is a list [lon, lat]
         geolocation = address
-    instruction = "MARKER," + str(geolocation[0]) + "," + str(
-        geolocation[1]) + "\n"
+    instruction = "MARKER," + str(geolocation[0]) + "," + str(geolocation[1]) + "\n"
     ExampleServiceImpl.setResultString(instruction)
     # f = open("visualize.txt", 'a')
     # f.write(instruction)
@@ -438,8 +437,7 @@ def display_message(message, address):
     else:
         geolocation = address
 
-    instruction = "MSG," + message + "," + str(geolocation[0]) + "," + str(
-        geolocation[1]) + "\n"
+    instruction = "MSG," + message + "," + str(geolocation[0]) + "," + str(geolocation[1]) + "\n"
     # f = open("visualize.txt", 'a')
     # f.write(instruction)
     # f.close()
@@ -818,8 +816,7 @@ def get_sub_road_distance(road, area_code, brng, point_EWKT, distance):
     dist_degrees = change_in_latitude(distance)
     #point_EWKT = get_EWKT(lonlatList)
 
-    query = "select ST_asText( tiger_data.point_at_distance ('" + road + "' , '" + area_code + "', " + str(
-        brng) + "," + point_EWKT + "," + str(dist_degrees) + "))"
+    query = "select ST_asText( tiger_data.point_at_distance ('" + road + "' , '" + area_code + "', " + str(brng) + "," + point_EWKT + "," + str(dist_degrees) + "))"
 
     #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
@@ -1245,80 +1242,22 @@ def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
 
     if description == "STATE":
         if NumberOfItems == None:
-            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-                my_lat
-            ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-                my_lat
-            ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-                my_lon
-            ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between " + str(
-                lat1) + " and " + str(
-                    lat2) + "AND intptlon::numeric between " + str(
-                        lon1) + " and " + str(lon2) + " ORDER BY distance "
+            query = "SELECT intptlon, intptlat, name, 3958.75 * 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance "
         else:
-            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-                my_lat
-            ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-                my_lat
-            ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-                my_lon
-            ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between " + str(
-                lat1
-            ) + " and " + str(lat2) + "AND intptlon::numeric between " + str(
-                lon1) + " and " + str(
-                    lon2) + " ORDER BY distance limit " + str(NumberOfItems)
+            query = "SELECT intptlon, intptlat, name, 3958.75 * 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance limit " + str(NumberOfItems)
     elif description == "COUNTY":
         if NumberOfItems == None:
-            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-                my_lat
-            ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-                my_lat
-            ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-                my_lon
-            ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(
-                lat1) + " and " + str(
-                    lat2) + "AND intptlon::numeric between " + str(
-                        lon1) + " and " + str(lon2) + " ORDER BY distance "
+            query = "SELECT intptlon, intptlat, name, 3958.75 * 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance "
         else:
-            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-                my_lat
-            ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-                my_lat
-            ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-                my_lon
-            ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(
-                lat1
-            ) + " and " + str(lat2) + "AND intptlon::numeric between " + str(
-                lon1) + " and " + str(
-                    lon2) + " ORDER BY distance limit " + str(NumberOfItems)
+            query = "SELECT intptlon, intptlat, name, 3958.75 * 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance limit " + str(NumberOfItems)
     else:
         mtfcc = get_mtfcc(description)
         if mtfcc != "NULL":
             if NumberOfItems == None:
                 #print "in 2"
-                query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN((" + str(
-                    my_lat
-                ) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(
-                    my_lat
-                ) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(
-                    my_lon
-                ) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'  AND ST_Y(the_geom) between " + str(
-                    lat1) + " and " + str(
-                        lat2) + " AND ST_X(the_geom) between " + str(
-                            lon1) + " and " + str(lon2) + " ORDER BY distance"
+                query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75 * 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'  AND ST_Y(the_geom) between " + str(lat1) + " and " + str(lat2) + " AND ST_X(the_geom) between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance"
             else:
-                query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN((" + str(
-                    my_lat
-                ) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(
-                    my_lat
-                ) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(
-                    my_lon
-                ) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'  AND ST_Y(the_geom) between " + str(
-                    lat1) + " and " + str(
-                        lat2) + " AND ST_X(the_geom) between " + str(
-                            lon1) + " and " + str(
-                                lon2) + " ORDER BY distance limit " + str(
-                                    NumberOfItems)
+                query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'  AND ST_Y(the_geom) between " + str(lat1) + " and " + str(lat2) + " AND ST_X(the_geom) between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance limit " + str(NumberOfItems)
     if (query is not None):
         #print "in3"
         c.execute(query)
@@ -1416,34 +1355,13 @@ def get_kNN_unoptimized(description, Currentpoint, NumberOfItems):
     c = db.cursor()
     query = None
     if description == "STATE":
-        query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-            Currentpoint[1]
-        ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-            Currentpoint[1]
-        ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-            Currentpoint[0]
-        ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all ORDER BY distance limit " + str(
-            NumberOfItems)
+        query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(Currentpoint[1]) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(Currentpoint[1]) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(Currentpoint[0]) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all ORDER BY distance limit " + str(NumberOfItems)
     elif description == "COUNTY":
-        query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-            Currentpoint[1]
-        ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-            Currentpoint[1]
-        ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-            Currentpoint[0]
-        ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all ORDER BY distance limit " + str(
-            NumberOfItems)
+        query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(Currentpoint[1]) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(Currentpoint[1]) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(Currentpoint[0]) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all ORDER BY distance limit " + str(NumberOfItems)
     else:
         mtfcc = get_mtfcc(description)
         if mtfcc != "NULL":
-            query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-                Currentpoint[1]
-            ) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(
-                Currentpoint[1]
-            ) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(
-                Currentpoint[0]
-            ) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "' ORDER BY distance limit " + str(
-                NumberOfItems)
+            query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(Currentpoint[1]) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(Currentpoint[1]) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(Currentpoint[0]) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "' ORDER BY distance limit " + str(NumberOfItems)
     if (query is not None):
         c.execute(query)
         rowcount = c.rowcount
@@ -2208,13 +2126,7 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
         fr2 = fr1
         fr1 = temp
 
-    query = "select ST_AsText(ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(
-        fr1
-    ) + ", " + str(
-        fr2
-    ) + ")) line from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(
-        ZIP
-    ) + "') as b  where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1"
+    query = "select ST_AsText(ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fr1) + ", " + str(fr2) + ")) line from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b  where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1"
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
                         "org.postgresql.Driver")
@@ -2248,9 +2160,7 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
 
 
 def get_total_length_of_street(street, ZIP):
-    query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(
-        ZIP
-    ) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
+    query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
 
     # print query
 
@@ -2279,10 +2189,7 @@ def get_total_length_of_street(street, ZIP):
 
 
 def get_current_fraction_on_the_street(lon, lat, street, ZIP):
-    query = "select ST_Line_Locate_Point( (select ST_LineMerge(st_geometryn(a.the_geom,1)) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(
-        ZIP
-    ) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1),  ST_GeomFromText('POINT (" + str(
-        lon) + " " + str(lat) + ")',4269))"
+    query = "select ST_Line_Locate_Point( (select ST_LineMerge(st_geometryn(a.the_geom,1)) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1),  ST_GeomFromText('POINT (" + str(lon) + " " + str(lat) + ")',4269))"
 
     # print query
 
@@ -2310,11 +2217,7 @@ def get_current_fraction_on_the_street(lon, lat, street, ZIP):
 
 
 def get_all_intersection_name_and_point_on_the_road(street, ZIP):
-    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point from ( select ST_LineMerge(a.the_geom) geom  from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(
-        ZIP
-    ) + "') as b  where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1, ( select ST_LineMerge(c.the_geom) geom, fullname from (select the_geom, fullname from tiger_data.in_roads) as c, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(
-        ZIP
-    ) + "') as d   where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2  where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"
+    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point from ( select ST_LineMerge(a.the_geom) geom  from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b  where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1, ( select ST_LineMerge(c.the_geom) geom, fullname from (select the_geom, fullname from tiger_data.in_roads) as c, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as d   where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2  where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
                         "org.postgresql.Driver")
@@ -2333,15 +2236,7 @@ def get_all_intersection_name_and_point_on_the_road(street, ZIP):
 
 def get_all_intersection_name_and_point_on_the_road_with_fraction(
         fractionFrom, fractionTo, street, ZIP):
-    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point   from ( select ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(
-        fractionFrom
-    ) + ", " + str(
-        fractionTo
-    ) + ") geom    from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(
-        ZIP
-    ) + "') as b   where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,  ( select ST_LineMerge(c.the_geom) geom, fullname from (select the_geom, fullname from tiger_data.in_roads) as c, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(
-        ZIP
-    ) + "') as d where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2 where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"
+    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point   from ( select ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fractionFrom) + ", " + str(fractionTo) + ") geom    from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b   where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,  ( select ST_LineMerge(c.the_geom) geom, fullname from (select the_geom, fullname from tiger_data.in_roads) as c, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as d where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2 where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
                         "org.postgresql.Driver")
@@ -2394,8 +2289,7 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         nextFraction2 = 1
 
     if 0 <= nextFraction1 and nextFraction1 <= 1:
-        query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b   where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(
-            nextFraction1) + "))"
+        query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b   where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction1) + "))"
         # print query
         db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
                             "org.postgresql.Driver")
@@ -2415,8 +2309,7 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         #     print nextPoint1
 
     if 0 <= nextFraction2 and nextFraction2 <= 1:
-        query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(
-            nextFraction2) + "))"
+        query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction2) + "))"
 
         # db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
         # c = db.cursor()
@@ -3125,8 +3018,7 @@ def test_query3(road, area_code, brng, lonlatList, distance):
     dist_degrees = change_in_latitude(distance)
     point_EWKT = get_EWKT(lonlatList)
 
-    query = "select ST_asText( tiger_data.point_at_distance ('" + road + "' , '" + area_code + "', " + str(
-        brng) + "," + point_EWKT + "," + str(dist_degrees) + "))"
+    query = "select ST_asText( tiger_data.point_at_distance ('" + road + "' , '" + area_code + "', " + str(brng) + "," + point_EWKT + "," + str(dist_degrees) + "))"
 
     # print query
 
@@ -3231,12 +3123,10 @@ def call2():
 
     nextFraction1 = startFraction - distanceFraction
     nextFraction2 = startFraction + distanceFraction
-
     print nextFraction1
     print nextFraction2
 
-    query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b   where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(
-        nextFraction1) + "))"
+    query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b   where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(nextFraction1) + "))"
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
                         "org.postgresql.Driver")
@@ -3252,8 +3142,7 @@ def call2():
 
     print roads
 
-    query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b  where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(
-        nextFraction2) + "))"
+    query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b  where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(nextFraction2) + "))"
 
     db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
                         "org.postgresql.Driver")
