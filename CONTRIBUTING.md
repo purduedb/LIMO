@@ -1,5 +1,4 @@
 # Contribution Guide
-#### Below are the current contributing standards agreed upon by Aaron Neustedter and Professor Aref on 10/19/201- Any suggestions are welcome
 
 ## Installing the Development Environment
 - LIMO is primarily developed in Eclipse using GWT extensions. See <https://github.com/purduedb/LIMO/blob/master/LIMO_InstallationGuide.md> for detailed installation instructions
@@ -29,7 +28,8 @@
 - We would like LIMO to follow PEP-8 Style conventions. When adding new code, please follow these conventions
   - Style guide can be found here: <https://www.python.org/dev/peps/pep-0008/>
 - In order to enforce these conventions, we will use pylint to check your code for deviations, and YAPF to attempt to automatically fix these deviations
-- TODO: how to install and use
+- To execute the linter from the command line, use the command `pylint limo2.31.py -r y -f colorized` while in the `war` directory
+- To execute the yapf autoformatting tool, use the command `yapf --style pep8 -i limo2.31.py` while in the  `war` directory
 
 ## Refactoring:
 - The LIMO codebase does not follow our code conventions. Please do you part and add comments and fix glaring issues as you come across them
@@ -40,8 +40,8 @@
 ## Testing
 - LIMO aims to use two methods of testing
   - Postman is used for system and performance testing. This program sends POST requests to a running LIMO server instance
-    - TODO: How to install and use
+    - To execute the Postman tests, please use the Postman test runner in the Postman GUI after importing the configurations found in the `tools` directory
+    - If you would like to execute these tests via CLI and $REPODIR is the directory where you cloned the repository, please execute `newman run $REPODIR/tools/postman/LIMO.postman_collection.json -e $REPODIR/tools/postman/LIMO\ Local.postman_environment.json`
+      - Make sure you have installed newman, the CLI version of postman while installing the LIMO dev environment
   - pytest is used for python-specific unit tests
     - In this context, unit tests will look at external and internal function definitions individually
-
-## Future
