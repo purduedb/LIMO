@@ -1199,8 +1199,6 @@ def get_area(dist, description=None):
   
     else:
         name = dist
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        c = db.cursor()
         if description == "STATE":
            query = "SELECT ST_Area(ST_Transform(the_geom,26986)) FROM tiger_data.state_all where name = '" + name + "'"
         elif description == "CITY":
