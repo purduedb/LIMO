@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 #Limo 2.31
 
 from com.ziclix.python.sql import zxJDBC
