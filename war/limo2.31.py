@@ -1331,18 +1331,17 @@ def get_mtfcc(description):
 
 # get_closest_point Returning point of ck
 def get_closest_point(description, Currentpoint, NumberOfItems):
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        c = db.cursor()
         if description == "STATE":
             query = "SELECT intptlon, intptlat from tiger_data.state_all"
-            c.execute(query)
-            rowcount = c.rowcount
+            results = query_db(query)
+            
+            rowcount = len(results)
             ClosestElement = None
             shortest_Distance = None
             if rowcount > 1:
                     
                     for i in range (rowcount):
-                        row = c.fetchone()
+                        row = results[i]
                         lonlat = []
                         lonlat.append(row[0])
                         lonlat.append(row[1])
@@ -1354,19 +1353,17 @@ def get_closest_point(description, Currentpoint, NumberOfItems):
                         if distance < shortest_Distance:
                             shortest_Distance = distance
                             ClosestElement = lonlat
-                    c.close()
-                    db.close()
                     return ClosestElement
         elif description == "COUNTY":
             query = "SELECT intptlon, intptlat from tiger_data.county_all"
-            c.execute(query)
-            rowcount = c.rowcount
+            results = query_db(query)
+            rowcount = len(results)
             ClosestElement = None
             shortest_Distance = None
             if rowcount > 1:
                     
                     for i in range (rowcount):
-                        row = c.fetchone()
+                        row = results[i]
                         lonlat = []
                         lonlat.append(row[0])
                         lonlat.append(row[1])
@@ -1378,20 +1375,18 @@ def get_closest_point(description, Currentpoint, NumberOfItems):
                         if distance < shortest_Distance:
                             shortest_Distance = distance
                             ClosestElement = lonlat
-                    c.close()
-                    db.close()
                     return ClosestElement
         else :
             mtfcc = get_mtfcc(description)
             if mtfcc != "NULL":
                 query = "select  ST_X(the_geom), ST_Y(the_geom), fullname  from tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'"
-                c.execute(query)
-                rowcount = c.rowcount
+                results = query_db(query)
+                rowcount = len(results)
                 ClosestElement = None
                 shortest_Distance = None
                 if rowcount > 1:
                     for i in range (rowcount):
-                        row = c.fetchone()
+                        row = results[i]
                         lonlat = []
                         lonlat.append(row[0])
                         lonlat.append(row[1])
@@ -1403,8 +1398,6 @@ def get_closest_point(description, Currentpoint, NumberOfItems):
                         if distance < shortest_Distance:
                                 shortest_Distance = distance
                                 ClosestElement = lonlat
-                        c.close()
-                        db.close()
                         return ClosestElement
                                 
         return "NULL"
@@ -2109,15 +2102,13 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
             (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b \
             where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction1) + "))"
         # print query
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        c = db.cursor()
-        c.execute(query)
-        rowcount = c.rowcount
+        results = query_db(query)
+        rowcount = len(results)
         
         ret = []
 
         for i in range(rowcount):
-            st = c.fetchone()
+            st = results[i]
             ret.append(str(st[0]))
         
         nextPoint1 = ret[0][6:len(ret[0]) - 1].split(" ")
@@ -2133,13 +2124,12 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
 
         # db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
         # c = db.cursor()
-        c.execute(query)
-        rowcount = c.rowcount
-        
+        results = query_db(query)
+        rowcount = len(results)
         ret = []
 
         for i in range(rowcount):
-            st = c.fetchone()
+            st = results[i]
             ret.append(str(st[0]))
         
         nextPoint2 = ret[0][6:len(ret[0]) - 1].split(" ")
@@ -2148,8 +2138,6 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         #     print "Have ONE!!!"
         #     print nextPoint2
 
-    c.close()
-    db.close()
 
     nextPoint = [0, (), [], []]
     try:
@@ -2321,26 +2309,20 @@ def verify_street_point(street, nextLonLat):
 
         query = "select ST_asText(ST_StartPoint(ST_GeometryN(ST_Multi(the_geom),1))) , ST_asText(ST_EndPoint(ST_GeometryN(ST_Multi(the_geom),1))) from tiger_data.in_roads where fullname = '" + street + "'"
            
-        # db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        c = db.cursor()
-        c.execute(query)
-        rowcount = c.rowcount
+        result - query_db(query)
+        rowcount = len(result)
 
         lines_table = []
         
         if rowcount > 1:
                 for i in range (rowcount):
                         line = []
-                        row = c.fetchone()
+                        row = result[i]
                         start = extract_point_v2(row[0])
                         end = extract_point_v2(row[1])
                         line.append(start)
                         line.append(end)
                         lines_table.append(line)
-
-        c.close()
-        db.close()
 
         for i in range(len(lines_table)):
                 pt1 = lines_table[i][0]
@@ -2474,14 +2456,12 @@ def update_commuter_turn(street, bearing, previous_bearing, commuter):
     
     query = "select * from tiger_data.street_at_point(ST_SetSRID(ST_Point(" + LON + ", " + LAT + "),4269))"
     
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
+    results = query_db(query)
+    rowcount = len(results)
+    
     if rowcount == 1:
         
-        row = c.fetchone()
+        row = results[0]
         street2 = str(row[0])
         
         if street == street2:
@@ -2515,9 +2495,6 @@ def update_commuter_turn(street, bearing, previous_bearing, commuter):
             else:
                 break
         commuter.append(new_point)
-                                            
-    c.close()
-    db.close()
 
 
 # turn left will decrease the bearing by 90 degrees
