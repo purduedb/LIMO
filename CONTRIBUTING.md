@@ -45,3 +45,11 @@
       - Make sure you have installed newman, the CLI version of postman while installing the LIMO dev environment
   - pytest is used for python-specific unit tests
     - In this context, unit tests will look at external and internal function definitions individually
+=======
+
+## Testing
+- LIMO aims to use two methods of testing
+  - Postman is used for system and performance testing. This program sends POST requests to a running LIMO server instance
+    - TODO: How to install and use
+  - pytest is used for python-specific unit tests
+    - In this context, unit tests will look at external and internal function definitions individually
