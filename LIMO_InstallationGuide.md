@@ -48,12 +48,13 @@
     3. Install pylint via `pip install pylint --user`
 
 ## 5. Deploying to the server (Purdue Ibnkhaldun Specific)
-1. Transfer all files under the ‘war’ directory into ibnkhaldun server (using ftp/scp and your purdue account)
-2. ssh to the ibnkhaldun server using purdue id, switch to limo-sudo
+1. Right click on the project directory, select GWT -> Compile -> Compile
+2. Transfer all files under the ‘war’ directory into ibnkhaldun server (using ftp/scp and your purdue account)
+3. ssh to the ibnkhaldun server using purdue id, switch to limo-sudo
     1. $ sudo -u limo-sudo –s
     2. (password)
     3. $ cd
-3. The web app files need to be copied from your ibnkhaldun account to shared limo-sudo account: `/homes/limo-sudo/apache/tomcat/webapps/limo`
+4. The web app files need to be copied from your ibnkhaldun account to shared limo-sudo account: `/homes/limo-sudo/apache/tomcat/webapps/limo`
     1. $ cd /homes/limo-sudo/apache/tomcat/webapps/limo
     2. $ scp -r <yourPurdueId>@ibnkhaldun.cs.purdue.edu:/home/<yourPurdueId>/somefolder/* .
     3. (password)
