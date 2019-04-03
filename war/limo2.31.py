@@ -2637,7 +2637,7 @@ def orient_to(commuterName, direction):
 #turn on a specific angle clockwise
 def turn_angle(angle):
     global bearing
-bearing = (bearing + angle) % 360
+    bearing = (bearing + angle) % 360
 # finds the distance (using the great circle distance) between two addresses or geo-coordinates
 def compute_distance(add1, add2):
     if type(add1) is str and type(add2) is str:
