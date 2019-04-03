@@ -104,7 +104,7 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
     print "roadnames after : ",
     print roadNames
 
-    # nextPoint = move_along_street(point[0], point[1], roadNames[0], ZIP, commuters.get(str(commuterName))[3], 0.01)    
+    # nextPoint = move_along_street(point[0], point[1], roadNames[0], ZIP, commuters.get(str(commuterName))[3], 0.01)
     # print "next point : ",
     # print nextPoint
 
@@ -116,14 +116,15 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
     #     depth += 1
 
     for i in range(len(roadNames)):
-        
+
         print "current road : ",
         print roadNames[i]
 
-        newCoveredRoads = deepcopy(coveredRoads)            
+        newCoveredRoads = deepcopy(coveredRoads)
         newCoveredRoads.append(str(roadNames[i]))
 
         nextPoint = move_along_street(point[0], point[1], roadNames[i], ZIP, commuters.get(str(commuterName))[3], 0.01)    
+
         print "nextPoint : "
         print nextPoint
 
@@ -135,18 +136,19 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
             print "came in 2 - 1"
             newName = str(commuterName) + "_" + roadNames[i] + "-1"
             copy_commuter(commuterName, newName)
-            
+
             cnt = 0
             stop = False
             while stop == False:
-                
+
                 # if cnt > 5:
                 #     break
 
                 if cnt == 0:
-                    nextBearings = turn_to(newName, roadNames[i], nextPoint[3][0])    
+                    nextBearings = turn_to(newName, roadNames[i],
+                                           nextPoint[3][0])
                 else:
-                    nextBearings = turn_to(newName, roadNames[i])    
+                    nextBearings = turn_to(newName, roadNames[i])
 
                 if nextBearings[0] == 0.0:  # end of road
                     print "endofstraightraod"
@@ -154,9 +156,9 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
                 else:
                     move_to_next_intersection(newName)
                     # nextBearings = turn_to(newName, roadNames[i])
-                      
+
                     names = get_road_names(get_current_point(newName))
-                    
+
                     for name in names:
                         if name not in newCoveredRoads:
 
@@ -168,9 +170,11 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
                             print "moveSoFar : ",
                             print moveSoFar
 
-                            intersections1.append([name, nextCommuterName, commuterName, moveSoFar])
+                            intersections1.append([
+                                name, nextCommuterName, commuterName, moveSoFar
+                            ])
 
-                            if moveSoFar < maxLength:    
+                            if moveSoFar < maxLength:
                                 cnt += 1
                             else:
                                 stop = True
@@ -180,7 +184,7 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
                                 # intersections2[len(intersections2)-1][2] = intersections2[len(intersections2)-2][2]
                                 # intersections1.pop()
                                 break
-                    
+
             print "intersections1 : ",
             print intersections1
 
@@ -193,12 +197,13 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
             stop = False
             # previous_name = "";
             while stop == False:
-                
+
                 if cnt == 0:
-                    nextBearings = turn_to(newName, roadNames[i], nextPoint[3][1])    
+                    nextBearings = turn_to(newName, roadNames[i],
+                                           nextPoint[3][1])
                     # previous_name = newName
                 else:
-                    nextBearings = turn_to(newName, roadNames[i])    
+                    nextBearings = turn_to(newName, roadNames[i])
 
                 if nextBearings[0] == 0.0:  # end of road
                     print "endofstraightraod"
@@ -207,9 +212,9 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
                 else:
                     move_to_next_intersection(newName)
                     # nextBearings = turn_to(newName, roadNames[i])
-                      
+
                     names = get_road_names(get_current_point(newName))
-                    
+
                     for name in names:
                         if name not in newCoveredRoads:
 
@@ -221,9 +226,11 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
                             print "moveSoFar : ",
                             print moveSoFar
 
-                            intersections2.append([name, nextCommuterName, commuterName, moveSoFar])
+                            intersections2.append([
+                                name, nextCommuterName, commuterName, moveSoFar
+                            ])
 
-                            if moveSoFar < maxLength:    
+                            if moveSoFar < maxLength:
                                 cnt += 1
                             else:
                                 # intersections2.append([name, nextCommuterName, get_current_point(newName), moveSoFar])
@@ -232,11 +239,11 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
                                 # intersections2[len(intersections2)-1][0] = intersections2[len(intersections2)-2][0]
                                 # intersections2[len(intersections2)-1][1] = intersections2[len(intersections2)-2][1]
                                 # intersections2[len(intersections2)-1][2] = intersections2[len(intersections2)-2][2]
-                                # intersections2[len(intersections2)-1][3] 
+                                # intersections2[len(intersections2)-1][3]
                                 # intersections2.pop()
                                 break
                                 # need to go last remain lenght
-                    
+
             print "intersections2 : ",
             print intersections2
 
@@ -245,7 +252,8 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
             num += 1
 
             if intersection[3] < maxLength:
-                find_all_roads_within(intersection[1], intersection[3], maxLength, newCoveredRoads)
+                find_all_roads_within(intersection[1], intersection[3],
+                                      maxLength, newCoveredRoads)
             else:
                 print "showonmap1-L on ==="
                 # print intersection[0]
@@ -254,7 +262,7 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
                 # print "length : ",
                 # print lastLength
                 lastCommuterName = str(intersection[1]) + "-L"
-                copy_commuter(str(intersection[1]), lastCommuterName)     
+                copy_commuter(str(intersection[1]), lastCommuterName)
 
                 # lastLength = maxLength - display_distance(lastCommuterName)
                 # turn_to(lastCommuterName, str(intersection[0]))
@@ -277,31 +285,32 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
             num += 1
 
             if intersection[3] < maxLength:
-                find_all_roads_within(intersection[1], intersection[3], maxLength, newCoveredRoads)
+                find_all_roads_within(intersection[1], intersection[3],
+                                      maxLength, newCoveredRoads)
             else:
                 print "showonmap2-L on ==="
                 # print intersection[0]
                 # print commuters.get(str(intersection[1]))[2]
                 # lastLength = maxLength - display_distance(str(intersection[2]))
-            
+
                 lastCommuterName = str(intersection[1]) + "-L"
 
-                copy_commuter(str(intersection[1]), lastCommuterName)        
-                
+                copy_commuter(str(intersection[1]), lastCommuterName)
+
                 rollback_commuter(lastCommuterName)
 
                 lastLength = maxLength - display_distance(lastCommuterName)
 
                 print "length : ",
                 print lastLength
-                
+
                 show_commuter(lastCommuterName)
 
                 move_distance(lastCommuterName, lastLength)
 
                 show_on_map(lastCommuterName)
 
-    
+
 def cover_all_roads_within(commuterName, length):
     coveredRoads = []
     # get current road name based on the point
@@ -327,31 +336,31 @@ def start_at(commuterName, address=None, direction=0):
     # commuterName: String name for the commuter we are about to create
     # address: csv representation of the address. Typically input from read_address(). Default value: none
     # direction: representation of direction. use strings "NORTH", "EAST", "SOUTH", "WEST", etc
-         
+
     # recieve global `commuters` so we can modify it
     global commuters
-    
+
     # is the address an address or an intersection of roads(?)
     # .find(String) is a python string method.
-    
-    x = address.find("intersection,") 
+
+    x = address.find("intersection,")
     addressList = []
 
     # If this is a traditional address?
     if x == 0:
-        
+
         # Slice address starting at the 13th element?
         # a[start:end] # items start through end-1
         # a[start:]    # items start through the rest of the array
         # a[:end]      # items from the beginning through end-1
         # a[:]         # a copy of the whole array
-        addr = address [13:]
-        
+        addr = address[13:]
+
         addressList = addr.split(',')
-       
+
         # Debugging:
         # print addressList
-        
+
         # For each address element
         for i in range(len(addressList)):
             # Strip leading and trailing characters
@@ -359,24 +368,24 @@ def start_at(commuterName, address=None, direction=0):
             addressList[i] = addressList[i].lstrip()
 
         # Set globals CITY, STATE, ZIP
-        # Sets locale/scope?? 
+        # Sets locale/scope??
         global CITY
         CITY = addressList[3]
         global STATE
         STATE = addressList[2]
         global ZIP
         ZIP = addressList[4]
-    
+
     # If address is not of form "Intersection of Russel St and University Ave"???
     else:
         # Split into array by `,`s. Why?
         addressList = address.split(',')
-        
+
         # Trim leading and trailing characters
         for i in range(len(addressList)):
             addressList[i] = addressList[i].rstrip()
             addressList[i] = addressList[i].lstrip()
-        
+
         # Set globals CITY, STATE, ZIP
         # TODO: Set these per commuters
         global CITY
@@ -385,7 +394,7 @@ def start_at(commuterName, address=None, direction=0):
         STATE = addressList[2]
         global ZIP
         ZIP = addressList[3]
-        
+
     # Get the long/lat of the given address
     geolocation = geocode_address(address)
 
@@ -426,7 +435,6 @@ def start_at(commuterName, address=None, direction=0):
     return geolocation
     # commuter = [set of Points / current point / current st. name / direction]
 
-
 def test():
     return "say something"
 
@@ -445,47 +453,49 @@ def setZipCode(z):
 
 # prompts the user to input the address
 def read_address(street, city, state, zipcode):
-        address = street + "," + city + "," + state + "," + zipcode 
-        return address
+    address = street + "," + city + "," + state + "," + zipcode
+    return address
+
 
 
 # prompts the user to input the address as intersection
 def read_intersection(street1, street2, city, state, zipcode):
-        address = "intersection," + street1 + "," + street2 + "," + state + "," + city + "," + zipcode 
-        return address
-
+    address = "intersection," + street1 + "," + street2 + "," + state + "," + city + "," + zipcode
+    return address
 
 # adds a marker on a address by creating a row in visualize file: MARKER,lon,lat
 # returns the geolocation of the marker
-def display_marker (address):
 
-        if type(address) is str:
-                geolocation = geocode_address(address)
-        else:
-                # the address is a list [lon, lat]
-                geolocation = address
-        instruction = "MARKER," + str(geolocation[0]) + "," + str(geolocation[1]) + "\n"
-        ExampleServiceImpl.setResultString(instruction)
+def display_marker (address):
+    if type(address) is str:
+        geolocation = geocode_address(address)
+    else:
+        #the address is a list [lon, lat]
+        geolocation = address
+    instruction = "MARKER," + str(geolocation[0]) + "," + str(geolocation[1]) + "\n"
+    ExampleServiceImpl.setResultString(instruction)
+
     # f = open("visualize.txt", 'a')
     # f.write(instruction)
     # f.close()
-        return geolocation
+    return geolocation
 
 
 # displays a message on address by making a row in visualize file: MSG,message,lon,lat
-def display_message (message, address):
-    
-    if type(address) is str: 
+def display_message(message, address):
+
+    if type(address) is str:
         geolocation = geocode_address(address)
         # print geolocation
     else:
         geolocation = address
            
     instruction = "MSG," + message + "," + str(geolocation[0]) + "," + str(geolocation[1]) + "\n"
+
     # f = open("visualize.txt", 'a')
     # f.write(instruction)
     # f.close()
-    ExampleServiceImpl.setResultString(instruction) 
+    ExampleServiceImpl.setResultString(instruction)
 
 
 # returns [lon,lat] of address
@@ -531,108 +541,114 @@ def geocode_address(address):
             return "NULL"
 
 
+
 # extract the point from the geocode string using ST_AsText(geomout): (u'POINT(-86.882223 40.423635)',)
 def extract_point(geo_output):
     geo_output = geo_output[3:len(geo_output)]
     start = geo_output.find('(')
     end = geo_output.find(')')
     geo_output = geo_output[start + 1:end]
-    
+
     lonLat = geo_output.split(' ')
     lonLat[0] = eval(lonLat[0])
     lonLat[1] = eval(lonLat[1])
-   
+
     return lonLat
 
 
+
 # extract the point from the geocode string using ST_AsText(geomout): POINT(-86.882223 40.423635)
+
 def extract_point_v2(geo_output):
     start = geo_output.find('(')
     end = geo_output.find(')')
     geo_output = geo_output[start + 1:end]
-    
     lonLat = geo_output.split(' ')
     lonLat[0] = eval(lonLat[0])
     lonLat[1] = eval(lonLat[1])
-    
+
     return lonLat
 
 
 # extract polygon points from geo_output string using ST_AsText(ST_Simplify(the_geom, 0.05)): (u'MULTIPOLYGON((( geo_point1, ... )))',)
 def extract_polygon(geo_output):
 
-        end = geo_output.find(')')
-        geo_output = geo_output[18:end]
+    end = geo_output.find(')')
+    geo_output = geo_output[18:end]
 
-        geoList = geo_output.split(',')
-        outputList = []
-        outputList.append("POLYGON")
-        for i in range(len(geoList)):
-                geoSubList = geoList[i].split(" ")
-                outputList.append(geoSubList)
-                
-        return outputList
+    geoList = geo_output.split(',')
+    outputList = []
+    outputList.append("POLYGON")
+    for i in range(len(geoList)):
+        geoSubList = geoList[i].split(" ")
+        outputList.append(geoSubList)
+
+    return outputList
+
 
 
 # extract polygon points from geo_output string using ST_AsText(ST_Simplify(the_geom, 0.05)): (u'POLYGON((( geo_point1, ... )))',)
 def extract_polygon_v2(geo_output):
 
-        end = geo_output.find(')')
-        geo_output = geo_output[12:end]
+    end = geo_output.find(')')
+    geo_output = geo_output[12:end]
 
-        geoList = geo_output.split(',')
-        outputList = []
-        outputList.append("POLYGON")
-        for i in range(len(geoList)):
-                geoSubList = geoList[i].split(" ")
-                outputList.append(geoSubList)
-                
-        return outputList
+    geoList = geo_output.split(',')
+    outputList = []
+    outputList.append("POLYGON")
+    for i in range(len(geoList)):
+        geoSubList = geoList[i].split(" ")
+        outputList.append(geoSubList)
+
+    return outputList
+
 
 
 # extract polyline points from geo_output string: (u'MULTILINESTRING((  geo_point1, ... ))',)
 def extract_polyline(geo_output):
-        end = geo_output.find(')')
-        geo_output = geo_output[20:end]
+    end = geo_output.find(')')
+    geo_output = geo_output[20:end]
 
-        geoList = geo_output.split(',')
-        outputList = []
-        outputList.append("POLYLINE")
-        for i in range(len(geoList)):
-                geoSubList = geoList[i].split(" ")
-                outputList.append(geoSubList)
-                
-        return outputList
+    geoList = geo_output.split(',')
+    outputList = []
+    outputList.append("POLYLINE")
+    for i in range(len(geoList)):
+        geoSubList = geoList[i].split(" ")
+        outputList.append(geoSubList)
+
+    return outputList
 
 
 # extract polyline points from geo_output string: LINESTRING((  geo_point1, ... ))',
 def extract_line_string(geo_output):
-        end = geo_output.find(')')
-        geo_output = geo_output[14:end]
+    end = geo_output.find(')')
+    geo_output = geo_output[14:end]
 
-        geoList = geo_output.split(',')
-        outputList = []
-        outputList.append("POLYLINE")
-        for i in range(len(geoList)):
-                geoSubList = geoList[i].split(" ")
-                outputList.append(geoSubList)
-                
-        return outputList
+    geoList = geo_output.split(',')
+    outputList = []
+    outputList.append("POLYLINE")
+    for i in range(len(geoList)):
+        geoSubList = geoList[i].split(" ")
+        outputList.append(geoSubList)
+
+    return outputList
+
 
 
 # extract polyline points from geo_output string: LINESTRING((  geo_point1, ... ))',
 def extract_line_string2(geo_output):
-        end = geo_output.find(')')
-        geo_output = geo_output[11:end]
+    end = geo_output.find(')')
+    geo_output = geo_output[11:end]
 
-        geoList = geo_output.split(',')
-        outputList = []
-        outputList.append("POLYLINE")
-        for i in range(len(geoList)):
-                geoSubList = geoList[i].split(" ")
-                outputList.append(geoSubList)
-                
-        return outputList
+    geoList = geo_output.split(',')
+    outputList = []
+    outputList.append("POLYLINE")
+    for i in range(len(geoList)):
+        geoSubList = geoList[i].split(" ")
+        outputList.append(geoSubList)
+
+    return outputList
+
 
 
 def copy_commuter(commuterName, copyName):
@@ -654,6 +670,7 @@ def show_commuter(commuterName):
 
     print "Bearing: ",
     print commuters.get(str(commuterName))[3]
+
 
 # sets the commuters start location and returns [lon,lat]
 # also sets the global variables: CITY, STATE, and ZIP associated with commuter
@@ -680,13 +697,12 @@ def show_commuter(commuterName):
 #                 STATE = addressList[2]
 #                 global ZIP
 #                 ZIP = addressList[3]
-                
+
 #         geolocation = geocode_address(address)
 #         #commuter_points.append(geolocation)
 #         #commuter.append(geolocation)
 
 #         # commuter = [set of Points / current point / current st. name / direction]
-        
 #         commuterName = str(commuterName)
 #         stName = addressList[0]
 #         items = stName.split(" ")
@@ -718,12 +734,11 @@ def show_commuter(commuterName):
 
 #         return geolocation
 
-    
 # sets the commuters start location and returns [lon,lat]
 # also sets the global variables: CITY, STATE, and ZIP associated with commuter
 def get_location(address):
-        geolocation = geocode_address(address)
-        return geolocation
+    geolocation = geocode_address(address)
+    return geolocation
 
 # returns the distnace between two geocoordinates
 # def compute_distance(geoloc1, geoloc2):
@@ -761,15 +776,25 @@ def move_until(commuterName, street2):
         return None
 
     if len(pnts) > 1:
-        pnts = pnts[1:]    
+        pnts = pnts[1:]
 
-    f = distFrom(float(commuter[len(commuter) - 1][0]), float(commuter[len(commuter) - 1][1]), float(pnts[0][0]), float(pnts[0][1]))
-    l = distFrom(float(commuter[len(commuter) - 1][0]), float(commuter[len(commuter) - 1][1]), float(pnts[len(pnts) - 1][0]), float(pnts[len(pnts) - 1][1]))
-    
+    f = distFrom(
+        float(commuter[len(commuter) - 1][0]),
+        float(commuter[len(commuter) - 1][1]), float(pnts[0][0]),
+        float(pnts[0][1]))
+    l = distFrom(
+        float(commuter[len(commuter) - 1][0]),
+        float(commuter[len(commuter) - 1][1]), float(pnts[len(pnts) - 1][0]),
+        float(pnts[len(pnts) - 1][1]))
+
     if f > l:
         pnts.reverse()
 
-    lastPoint = [float(commuter[len(commuter) - 1][0]), float(commuter[len(commuter) - 1][1])]
+    lastPoint = [
+        float(commuter[len(commuter) - 1][0]),
+        float(commuter[len(commuter) - 1][1])
+    ]
+
     delIndex = 0
     for i in pnts:
         if lastPoint[0] == float(i[0]) and lastPoint[1] == float(i[1]):
@@ -777,7 +802,7 @@ def move_until(commuterName, street2):
 
     if debug:
         print "delIndex " + str(delIndex)
-    
+
     if delIndex > 0:
         pnts = pnts[delIndex:]
 
@@ -788,13 +813,14 @@ def move_until(commuterName, street2):
     pnts = newList
 
     if debug:
-        print "commuter " 
+        print "commuter "
         print commuter
         print "attatch "
         print pnts
 
-    for i in range (len(pnts)):
+    for i in range(len(pnts)):
         commuter.append((float(pnts[i][0]), float(pnts[i][1])))
+
 
     if commuter[len(commuter) - 1][0] != lonlat[0] and commuter[len(commuter) - 1][1] != lonlat[1]:
         commuter.append((float(lonlat[0]), float(lonlat[1])))
@@ -805,18 +831,23 @@ def move_until(commuterName, street2):
 
     commuters.get(str(commuterName))[1] = lonlat
     # commuters.get(str(commuterName))[2] = str(street2)
-    commuters.get(str(commuterName))[3] = calculate_initial_compass_bearing((commuter[len(commuter) - 2][0], float(commuter[len(commuter) - 2][1])) , (commuter[len(commuter) - 1][0], float(commuter[len(commuter) - 1][1])))
-    
+
+    commuters.get(
+        str(commuterName))[3] = calculate_initial_compass_bearing(
+            (commuter[len(commuter) - 2][0],
+             float(commuter[len(commuter) - 2][1])),
+            (commuter[len(commuter) - 1][0],
+             float(commuter[len(commuter) - 1][1])))
+
     if debug:
         print "last bearing : " + str(commuters.get(str(commuterName))[3])
         print commuters.get(str(commuterName))[0]
-    
-    return lonlat
 
+    return lonlat
 
 # returns a road segment between start and end, area_code is used to filter out roads
 def get_sub_road(road, area_code, start, end):
-    
+
     query = "select ST_asText(tiger_data.get_sub_road('" + road + "' , '" + area_code + "' , " + start + " , " + end + "))"
     
     db_results = query_db(query)
@@ -829,8 +860,9 @@ def get_sub_road(road, area_code, start, end):
 
     
 def get_sub_road_distance(road, area_code, brng, point_EWKT, distance):
-    
+
     dist_degrees = change_in_latitude(distance)
+
     # point_EWKT = get_EWKT(lonlatList)
     
     query = "select ST_asText( tiger_data.point_at_distance ('" + road + "' , '" + area_code + "', " + str(brng) + "," + point_EWKT + "," + str(dist_degrees) + "))"
@@ -843,12 +875,13 @@ def get_sub_road_distance(road, area_code, brng, point_EWKT, distance):
         return "NULL"
 
 
+
 def get_intersections2(street, start_geo, end_geo):
 
-        points_bearing = calculate_initial_compass_bearing(start_geo, end_geo)
+    points_bearing = calculate_initial_compass_bearing(start_geo, end_geo)
 
-        if points_bearing >= 350:
-                points_bearing = 0
+    if points_bearing >= 350:
+        points_bearing = 0
 
         # print bearing , points_bearing
 
@@ -898,6 +931,7 @@ def geocode_intersection2(street1, street2):
         else:
             print "geocode_intersection(2" + street1 + ", " + street2 + ") returned NULL\n\tFailed query: " + query
             return "NULL"     
+
 
 
 def draw_line(geo1, geo2):
@@ -1002,6 +1036,7 @@ def get(name, description, geomType):
         return "NULL"
 
 
+
 def get_all(description, geomType):
         if geomType == "POLYGON":
             if description == "STATE":
@@ -1009,7 +1044,7 @@ def get_all(description, geomType):
 
             elif description == "COUNTY":
                 query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all"
-			
+            
             # Query database
             db_results = query_db(query)
             
@@ -1019,8 +1054,8 @@ def get_all(description, geomType):
                     db_results[i] = extract_polygon_v2(str(db_results[i]))
                
                 return db_results
-			
-								
+            
+                                
         elif geomType == "POINT":
             if description == "STATE":
                 query = "SELECT intptlon, intptlat from tiger_data.state_all"
@@ -1071,7 +1106,7 @@ def get_all(description, geomType):
 
 # Get_Max_Postion returns position of maximum element of an array
 def Get_Max_Postion(DistanceArray):
-    if(len(DistanceArray) > 0):
+    if (len(DistanceArray) > 0):
         maxPostion = 0
         maxValue = DistanceArray[0]
         for i in range(len(DistanceArray)):
@@ -1133,7 +1168,9 @@ def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
         my_lon = Currentpoint[0]
         lon1 = my_lon - dist / abs(math.cos(math.radians(my_lat)) * 69)
         lon2 = my_lon + dist / abs(math.cos(math.radians(my_lat)) * 69)
+
         lat1 = my_lat - (dist / 69.0) 
+
         lat2 = my_lat + (dist / 69.0)
     else:
         # print "in"
@@ -1228,13 +1265,14 @@ def get_dim(testlist, dim=0):
           return dim
 
 
+
 def get_count(Array):
     if get_dim(Array) == 2:
         return len(Array)
     else:
         count_array = []
         for j in range(len(Array)):
-            if(Array[j] is not "NULL") :
+            if (Array[j] is not "NULL"):
                 count = len(Array[j])
             else:
                 count = 0
@@ -1303,9 +1341,8 @@ def get_all_in_range(description, Currentpoint, dist=None):
             lonlat = []
             Range = getPolygonRange(Currentpoint[i])
             lonlat = get_kNN_optimized(description, None, None, None, Range)
-            # print lonlat
             lonlatList.append(lonlat)
-        return lonlatList 
+        return lonlatList
     else:
         lonlatList = get_kNN_optimized(description, Currentpoint, None, dist, None)
     if(lonlatList is not None):
@@ -1424,12 +1461,13 @@ def get_fill(ArrayofDensity):
         
 # adds shape on map
 def display_shape(shape):
-        instruction = create_geostring(shape)
-        ExampleServiceImpl.setResultString(instruction)
-        # f = open("visualize.txt", 'a')
-        # f.write(instruction)
-        # f.close()
-        
+    instruction = create_geostring(shape)
+    ExampleServiceImpl.setResultString(instruction)
+    # f = open("visualize.txt", 'a')
+    # f.write(instruction)
+    # f.close()
+
+
 
 # creates a string of geocoordinates: lon1;lat,lon;lat,...
 def create_geostring(geoList, Fill=0):
@@ -1454,8 +1492,10 @@ def create_coorList(geoList):
         for i in range(1, len(geoList)):
                 c = Coordinate(float(geoList[i][0]), float(geoList[i][1]))
                 coords.append(c)
-
+                
         return coords
+
+
 
 
 # creates a geometry type from a list of coordinates
@@ -1477,7 +1517,6 @@ def create_polyline(coord_list):
 
 
 def create_shape(geoList):
-       
         coord_list = create_coorList(geoList)
         if geoList[0] == "POLYGON":
                 shape = create_polygon(coord_list)
@@ -1490,133 +1529,134 @@ def create_shape(geoList):
         return "NULL"
 
 
+
 # returns true if shape1 touches shape2
 def touches(geoList1, geoList2):
-        shape1 = create_shape(geoList1)
-        shape2 = create_shape(geoList2)
-#       print shape1.distance(shape2)
+    shape1 = create_shape(geoList1)
+    shape2 = create_shape(geoList2)
+    #       print shape1.distance(shape2)
 
-        if shape1.touches(shape2):
-       # if shape1.distance(shape2) == 0.0:
-                return True
-        return False
- 
+    if shape1.touches(shape2):
+        # if shape1.distance(shape2) == 0.0:
+        return True
+    return False
+
 
 def disjoint(geoList1, geoList2):
-        shape1 = create_shape(geoList1)
-        shape2 = create_shape(geoList2)
-#       print shape1.distance(shape2)
+    shape1 = create_shape(geoList1)
+    shape2 = create_shape(geoList2)
+    #       print shape1.distance(shape2)
 
-        if shape1.disjoint(shape2):
-       # if shape1.distance(shape2) == 0.0:
-                return True
-        return False
-
-        
+    if shape1.disjoint(shape2):
+        # if shape1.distance(shape2) == 0.0:
+        return True
+    return False
+  
 def crosses(geoList1, geoList2):
-        shape1 = create_shape(geoList1)
-        shape2 = create_shape(geoList2)
-#       print shape1.distance(shape2)
+    shape1 = create_shape(geoList1)
+    shape2 = create_shape(geoList2)
+    #       print shape1.distance(shape2)
 
-        if shape1.crosses(shape2):
-       # if shape1.distance(shape2) == 0.0:
-                return True
-        return False
+    if shape1.crosses(shape2):
+        # if shape1.distance(shape2) == 0.0:
+        return True
+    return False
 
-        
 def equals(geoList1, geoList2):
-        shape1 = create_shape(geoList1)
-        shape2 = create_shape(geoList2)
-#       print shape1.distance(shape2)
+    shape1 = create_shape(geoList1)
+    shape2 = create_shape(geoList2)
+    #       print shape1.distance(shape2)
 
-        if shape1.equals(shape2):
-       # if shape1.distance(shape2) == 0.0:
-                return True
-        return False
-
+    if shape1.equals(shape2):
+        # if shape1.distance(shape2) == 0.0:
+        return True
+    return False
 
 # returns true if shape1 intersects shape2
 def intersects(geoList1, geoList2):
-        shape1 = create_shape(geoList1)
-        shape2 = create_shape(geoList2)
-        
-        if shape1.intersects(shape2):
-              if shape1.contains(shape2) or shape2.contains(shape1): 
-                return False
-              else:
-                return True
-        return False
+    shape1 = create_shape(geoList1)
+    shape2 = create_shape(geoList2)
+
+    if shape1.intersects(shape2):
+        if shape1.contains(shape2) or shape2.contains(shape1):
+            return False
+        else:
+            return True
+    return False
+
 
 
 # returns true if shape1 overlaps shape2
 def overlaps(geoList1, geoList2):
-        shape1 = create_shape(geoList1)
-        shape2 = create_shape(geoList2)
+    shape1 = create_shape(geoList1)
+    shape2 = create_shape(geoList2)
 
-        if shape1.overlaps(shape2):
-                return True
-        return False
+    if shape1.overlaps(shape2):
+        return True
+    return False
 
-        
+
 # returns true if shape1 contains shape2
 def contains(geoList1, geoList2):
-        shape1 = create_shape(geoList1)
-        shape2 = create_shape(geoList2)
-        if shape1.contains(shape2):
-                return True
-        return False
+    shape1 = create_shape(geoList1)
+    shape2 = create_shape(geoList2)
+    if shape1.contains(shape2):
+        return True
+    return False
 
-    
+
 # returns true if shape1 within shape2
 def within(geoList1, geoList2):
-        shape1 = create_shape(geoList1)
-        shape2 = create_shape(geoList2)
+    shape1 = create_shape(geoList1)
+    shape2 = create_shape(geoList2)
 
-        if shape1.within(shape2):
-                return True
-        return False
+    if shape1.within(shape2):
+        return True
+    return False
 
-    
+
 # returns true if shape1 within shape2
 def compute_shape_area(geoList1):
-        shape1 = create_shape(geoList1)
-        return shape1.getArea()
+    shape1 = create_shape(geoList1)
+    return shape1.getArea()
 
-                
+
 def calculate_distance(geo1, geo2):
-        return distFrom(geo1[1], geo1[0], geo2[1], geo2[0])
+    return distFrom(geo1[1], geo1[0], geo2[1], geo2[0])
+
 
 
 # compute the distance between two geo_coordinates using the Great Circle Distance formula GCD
 def distFrom(lat1, lng1, lat2, lng2):
-        earthRadius = 3958.75
-        dLat = math.radians(lat2 - lat1)
-        dLng = math.radians(lng2 - lng1)
-        a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dLng / 2) * math.sin(dLng / 2)
-        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-        return   earthRadius * c
-
+    earthRadius = 3958.75
+    dLat = math.radians(lat2 - lat1)
+    dLng = math.radians(lng2 - lng1)
+    a = math.sin(dLat / 2) * math.sin(
+        dLat / 2) + math.cos(math.radians(lat1)) * math.cos(
+            math.radians(lat2)) * math.sin(dLng / 2) * math.sin(dLng / 2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return earthRadius * c
 
 # calculate the distance commuted
 def caculate_distance_commuted2(commuter):
-        result = 0
-        # commuter = commuters.get(str(commuterName))[0]
-        for i in range(len(commuter) - 1):
-                result = result + calculate_distance(commuter[i], commuter[i + 1])
-        return round(result, 2)
+    result = 0
+    # commuter = commuters.get(str(commuterName))[0]
+    for i in range(len(commuter) - 1):
+        result = result + calculate_distance(commuter[i], commuter[i + 1])
+    return round(result, 2)
 
-    
+
 def caculate_distance_commuted(commuterName):
-        result = 0
-        commuter = commuters.get(str(commuterName))[0]
-        for i in range(len(commuter) - 1):
-                result = result + calculate_distance(commuter[i], commuter[i + 1])
-        return round(result, 2)
+    result = 0
+    commuter = commuters.get(str(commuterName))[0]
+    for i in range(len(commuter) - 1):
+        result = result + calculate_distance(commuter[i], commuter[i + 1])
+    return round(result, 2)
 
 
 # calculate the distance commuted
 def display_distance(commuterName):
-        return caculate_distance_commuted(commuterName)
+    return caculate_distance_commuted(commuterName)
 
 
 def get_road_names(point):
@@ -1638,7 +1678,8 @@ def move_to_next_intersection(commuterName):
     bearing = commuters.get(str(commuterName))[3]
 
     global ZIP
-    next = get_next_intersection(currentPoint[0], currentPoint[1], current_street, ZIP, bearing)
+    next = get_next_intersection(currentPoint[0], currentPoint[1],
+                                 current_street, ZIP, bearing)
 
     # print "----"
     # print str(currentPoint[0]) + " + " + str(currentPoint[1])
@@ -1660,20 +1701,18 @@ def distance_all_roads_in(geo1, geo2, geo3, geo4):
 
     lineString += str(line[0][0]) + " " + str(line[0][1]) + ")"
 
-    query = "select ST_AsText(ST_Intersection(T1.geom, ST_Polygon(ST_GeomFromText('" + lineString + "'),4269))) \
-            from \
-                (select the_geom geom \
-                from tiger_data.in_roads r \
-                where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)) T1"
+    #Harsh: added some stuff to the query
+
+    query = "select ST_AsText(ST_Intersection(T1.geom, ST_Polygon(ST_GeomFromText('" + lineString + "'),4269))) from (select the_geom geom from tiger_data.in_roads r where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)) T1"
 
     # print query
-
     db_results = query_db(query)
     
     if len(db_results) == 0:
         raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
         return "NULL"     
     
+
     roads = []
 
     for result in db_results:
@@ -1711,20 +1750,16 @@ def draw_all_roads_in(geo1, geo2, geo3, geo4):
 
     lineString += str(line[0][0]) + " " + str(line[0][1]) + ")"
 
-    query = "select ST_AsText(ST_Intersection(T1.geom, ST_Polygon(ST_GeomFromText('" + lineString + "'),4269))) \
-            from \
-                (select the_geom geom \
-                from tiger_data.in_roads r \
-                where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)) T1"
+    query = "select ST_AsText(ST_Intersection(T1.geom, ST_Polygon(ST_GeomFromText('" + lineString + "'),4269)))  from (select the_geom geom from tiger_data.in_roads r where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)) T1"
 
     # print query
-
     db_results = query_db(query)
     
     if len(db_results) == 0:
         raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
         return "NULL"
     
+
     roads = []
 
     for result in db_results:
@@ -1733,7 +1768,7 @@ def draw_all_roads_in(geo1, geo2, geo3, geo4):
     # print roads
 
     # instruction = "DRAWROADS,"+ str(geolocation[0]) + "," + str(geolocation[1]) + "\n"
-    
+
     for road in roads:
         # print road
         instruction = "POLYLINE2,"
@@ -1752,14 +1787,14 @@ def draw_all_roads_in(geo1, geo2, geo3, geo4):
         ExampleServiceImpl.setResultString(instruction)
 
         # print instruction
-        # instruction += "/"    
-            
+        # instruction += "/"
+
     # instruction = instruction[:len(instruction)-1]
     # instruction += "\n"
 
     # print instruction
     # ExampleServiceImpl.setResultString(instruction)
-    
+
 
 def get_road_names_in(geo1, geo2, geo3, geo4):
     return findAllIntersectionRoads2((geo1, geo2, geo3, geo4))
@@ -1775,8 +1810,8 @@ def findAllIntersectionRoads2(testCommuter):
     # print "@"
     # print testCommuter
     # if len(testCommuter) < 4:
-        # print "?"
-        # return ""
+    # print "?"
+    # return ""
     lineString = "LINESTRING("
 
     for item in testCommuter:
@@ -1791,6 +1826,7 @@ def findAllIntersectionRoads2(testCommuter):
 
     # print query
 
+
     db_results = query_db(query)
     
     if len(db_results) == 0:
@@ -1802,16 +1838,19 @@ def findAllIntersectionRoads2(testCommuter):
     for result in db_results:
         roads.append(str(result[0]))
     
-    # print roads
+
 
     return roads
 
 
 def findAllIntersectionRoads(currentPoint, eps):
-    currentSquare = [compute_next_point(currentPoint[0], currentPoint[1], 0, eps),
-                            compute_next_point(currentPoint[0], currentPoint[1], 90, eps),
-                            compute_next_point(currentPoint[0], currentPoint[1], 180, eps),
-                            compute_next_point(currentPoint[0], currentPoint[1], 270, eps)]
+
+    currentSquare = [
+        compute_next_point(currentPoint[0], currentPoint[1], 0, eps),
+        compute_next_point(currentPoint[0], currentPoint[1], 90, eps),
+        compute_next_point(currentPoint[0], currentPoint[1], 180, eps),
+        compute_next_point(currentPoint[0], currentPoint[1], 270, eps)
+    ]
 
     lineString = "LINESTRING(" + str(currentSquare[0][0]) + " " + str(currentSquare[0][1]) + "," + \
                                 str(currentSquare[1][0]) + " " + str(currentSquare[1][1]) + "," + \
@@ -1819,6 +1858,7 @@ def findAllIntersectionRoads(currentPoint, eps):
                                 str(currentSquare[3][0]) + " " + str(currentSquare[3][1]) + "," + \
                                 str(currentSquare[0][0]) + " " + str(currentSquare[0][1]) + ")"
     # print lineString
+
                             
     query = "select distinct fullname from tiger_data.in_roads r where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)"
     # print query
@@ -1845,16 +1885,18 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
     # print lon
     # print lat
 
-    inter1 = get_all_intersection_name_and_point_on_the_road_with_fraction(0, fraction, street, ZIP)
-    inter2 = get_all_intersection_name_and_point_on_the_road_with_fraction(fraction, 1, street, ZIP)
+    inter1 = get_all_intersection_name_and_point_on_the_road_with_fraction(
+        0, fraction, street, ZIP)
+    inter2 = get_all_intersection_name_and_point_on_the_road_with_fraction(
+        fraction, 1, street, ZIP)
 
     # get smallest distance for each inters
 
     minDist1 = 10000
     st1 = []
-    
+
     for item in inter1:
-        
+
         point = item[1]
         point = point[6:len(point) - 1].split(" ")
 
@@ -1862,7 +1904,7 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
         f2 = float(point[1])
 
         dist = distFrom(float(lon), float(lat), f1, f2)
-        
+
         if dist < minDist1:
             if float(lon) != f1 and float(lat) != f2:
                 minDist1 = dist
@@ -1871,7 +1913,6 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
     minDist2 = 10000
     st2 = []
     for item in inter2:
-        
         point = item[1]
         point = point[6:len(point) - 1].split(" ")
 
@@ -1879,7 +1920,7 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
         f2 = float(point[1])
 
         dist = distFrom(float(lon), float(lat), f1, f2)
-        
+
         if dist < minDist2:
             if float(lon) != f1 and float(lat) != f2:
                 minDist2 = dist
@@ -1897,12 +1938,14 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
     if len(st1) == 0:
         return st2
     else:
-        br1 = calculate_initial_compass_bearing((float(lon), float(lat)), (float(st1[1][0]), float(st1[1][1])))
-    
+        br1 = calculate_initial_compass_bearing(
+            (float(lon), float(lat)), (float(st1[1][0]), float(st1[1][1])))
+
     if len(st2) == 0:
         return st1
     else:
-        br2 = calculate_initial_compass_bearing((float(lon), float(lat)), (float(st2[1][0]), float(st2[1][1])))
+        br2 = calculate_initial_compass_bearing(
+            (float(lon), float(lat)), (float(st2[1][0]), float(st2[1][1])))
 
     if get_angle_between(bearing, br1) < get_angle_between(bearing, br2):
         return st1
@@ -1911,13 +1954,16 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
 
 
 def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
-    fr1 = get_current_fraction_on_the_street(float(currentPoint[0]), float(currentPoint[1]), street, ZIP)
-    fr2 = get_current_fraction_on_the_street(float(nextPoint[0]), float(nextPoint[1]), street, ZIP)
+    fr1 = get_current_fraction_on_the_street(
+        float(currentPoint[0]), float(currentPoint[1]), street, ZIP)
+    fr2 = get_current_fraction_on_the_street(
+        float(nextPoint[0]), float(nextPoint[1]), street, ZIP)
 
     if fr1 > fr2:
         temp = fr2
         fr2 = fr1
         fr1 = temp
+
 
     query = "select ST_AsText(ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fr1) + ", " + str(fr2) + ")) line\
             from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  \
@@ -1929,7 +1975,7 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
     if len(db_results) == 0:
         raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
         return "NULL"
-    
+   
     ret = []
 
     for result in db_results:
@@ -1952,19 +1998,18 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
 
 
 def get_total_length_of_street(street, ZIP):
-    query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) \
-            from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b \
-            where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
+    query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(
+        ZIP
+    ) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
 
     # print query
-    
     db_results = query_db(query)
     
     if len(db_results) == 0:
         raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
         return "NULL"     
     
+
     ret = []
 
     for result in db_results:
@@ -1980,6 +2025,7 @@ def get_total_length_of_street(street, ZIP):
 
 
 def get_current_fraction_on_the_street(lon, lat, street, ZIP):
+
     query = "select ST_Line_Locate_Point(\
                 (select ST_LineMerge(st_geometryn(a.the_geom,1)) \
                 from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,\
@@ -2002,7 +2048,7 @@ def get_current_fraction_on_the_street(lon, lat, street, ZIP):
 
     if len(ret) == 0:
         return None
-    
+
     fraction = float(ret[0])
 
     return fraction
@@ -2030,7 +2076,6 @@ def get_all_intersection_name_and_point_on_the_road(street, ZIP):
 
     for result in db_results:
         ret.append((str(result[0]), str(result[1])))
-
     return ret
 
 
@@ -2058,6 +2103,7 @@ def get_all_intersection_name_and_point_on_the_road_with_fraction(fractionFrom, 
     for result in db_results:
         ret.append((str(result[0]), str(result[1])))
 
+
     return ret
 
 
@@ -2067,9 +2113,8 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
 
     if debug:
         print "total length : " + str(totalLength)
-    
     startFraction = get_current_fraction_on_the_street(lon, lat, street, ZIP)
-    
+
     if debug:
         print "startFraction " + str(startFraction)
         print "dist : " + str(distance)
@@ -2083,16 +2128,16 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         print "distanceFraction " + str(distanceFraction)
         print "1 : " + str(nextFraction1)
         print "2 : " + str(nextFraction2)
-    
+
     nextPoint1 = ""
     nextPoint2 = ""
     if nextFraction1 < 0:
-        nextFraction1 = 0;
+        nextFraction1 = 0
     elif nextFraction1 > 1:
         nextFraction1 = 1
 
     if nextFraction2 < 0:
-        nextFraction2 = 0;
+        nextFraction2 = 0
     elif nextFraction2 > 1:
         nextFraction2 = 1
 
@@ -2110,7 +2155,7 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         for i in range(rowcount):
             st = results[i]
             ret.append(str(st[0]))
-        
+
         nextPoint1 = ret[0][6:len(ret[0]) - 1].split(" ")
         # if debug:
         #     print "Have ONE!!!"
@@ -2122,8 +2167,7 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
             (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b \
             where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction2) + "))"
 
-        # db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        # c = db.cursor()
+        
         results = query_db(query)
         rowcount = len(results)
         ret = []
@@ -2134,10 +2178,6 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         
         nextPoint2 = ret[0][6:len(ret[0]) - 1].split(" ")
         
-        # if debug:
-        #     print "Have ONE!!!"
-        #     print nextPoint2
-
 
     nextPoint = [0, (), [], []]
     try:
@@ -2160,30 +2200,34 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
 
             minTo1 = get_angle_between(bearing, bearing1)
             minTo2 = get_angle_between(bearing, bearing2)
-         
+
             if minTo1 < minTo2:
                 # print "!!3"
                 nextPoint[1] = (float(nextPoint1[0]), float(nextPoint1[1]))
-                nextPoint[2].append((float(nextPoint1[0]), float(nextPoint1[1])))
-                nextPoint[2].append((float(nextPoint2[0]), float(nextPoint2[1])))
+                nextPoint[2].append((float(nextPoint1[0]),
+                                     float(nextPoint1[1])))
+                nextPoint[2].append((float(nextPoint2[0]),
+                                     float(nextPoint2[1])))
                 nextPoint[3].append(bearing1)
                 nextPoint[3].append(bearing2)
                 # print "3"
-                
+
             else:
                 # print "!!4"
                 nextPoint[1] = (float(nextPoint2[0]), float(nextPoint2[1]))
-                nextPoint[2].append((float(nextPoint2[0]), float(nextPoint2[1])))
-                nextPoint[2].append((float(nextPoint1[0]), float(nextPoint1[1])))
+                nextPoint[2].append((float(nextPoint2[0]),
+                                     float(nextPoint2[1])))
+                nextPoint[2].append((float(nextPoint1[0]),
+                                     float(nextPoint1[1])))
                 nextPoint[3].append(bearing2)
                 nextPoint[3].append(bearing1)
                 # print "4"
-           
+
     except:
         print "abcde"
         print nextPoint1
         print nextPoint2
-        # return None            
+        # return None
 
     if debug:
         print "Next is ",
@@ -2219,9 +2263,8 @@ def move_distance(commuterName, distance, direction=None):
             bearing = float(direction)
         else:
             bearing = orient_to(commuterName, direction)
-
-     # get the previous commuter geo-coordinate
     
+    # get the previous commuter geo-coordinate    
     lonlat = move_along_street(currentPoint[0], currentPoint[1], street, ZIP, bearing, distance)
 
     if lonlat == None:
@@ -2238,7 +2281,6 @@ def move_distance(commuterName, distance, direction=None):
         return False
 
     pnts = []
-    
     if lonlat[3][0] != 0.0:
         lonlat = lonlat[1]
         pnts = get_lines_between_two_points(currentPoint, lonlat, street, ZIP)
@@ -2251,15 +2293,25 @@ def move_distance(commuterName, distance, direction=None):
         return None
 
     if len(pnts) > 1:
-        pnts = pnts[1:]    
+        pnts = pnts[1:]
 
-    f = distFrom(float(commuter[len(commuter) - 1][0]), float(commuter[len(commuter) - 1][1]), float(pnts[0][0]), float(pnts[0][1]))
-    l = distFrom(float(commuter[len(commuter) - 1][0]), float(commuter[len(commuter) - 1][1]), float(pnts[len(pnts) - 1][0]), float(pnts[len(pnts) - 1][1]))
-    
+    f = distFrom(
+        float(commuter[len(commuter) - 1][0]),
+        float(commuter[len(commuter) - 1][1]), float(pnts[0][0]),
+        float(pnts[0][1]))
+    l = distFrom(
+        float(commuter[len(commuter) - 1][0]),
+        float(commuter[len(commuter) - 1][1]), float(pnts[len(pnts) - 1][0]),
+        float(pnts[len(pnts) - 1][1]))
+
     if f > l:
         pnts.reverse()
 
-    lastPoint = [float(commuter[len(commuter) - 1][0]), float(commuter[len(commuter) - 1][1])]
+    lastPoint = [
+        float(commuter[len(commuter) - 1][0]),
+        float(commuter[len(commuter) - 1][1])
+    ]
+
     delIndex = 0
     for i in pnts:
         if lastPoint[0] == float(i[0]) and lastPoint[1] == float(i[1]):
@@ -2267,7 +2319,7 @@ def move_distance(commuterName, distance, direction=None):
 
     if debug:
         print "delIndex " + str(delIndex)
-    
+
     if delIndex > 0:
         pnts = pnts[delIndex:]
 
@@ -2278,12 +2330,12 @@ def move_distance(commuterName, distance, direction=None):
     pnts = newList
 
     if debug:
-        print "commuter " 
+        print "commuter "
         print commuter
         print "attatch "
         print pnts
 
-    for i in range (len(pnts)):
+    for i in range(len(pnts)):
         commuter.append((float(pnts[i][0]), float(pnts[i][1])))
 
     if commuter[len(commuter) - 1][0] != lonlat[0] and commuter[len(commuter) - 1][1] != lonlat[1]:
@@ -2295,13 +2347,19 @@ def move_distance(commuterName, distance, direction=None):
 
     commuters.get(str(commuterName))[1] = lonlat
     # commuters.get(str(commuterName))[2] = str(street2)
-    commuters.get(str(commuterName))[3] = calculate_initial_compass_bearing((commuter[len(commuter) - 2][0], float(commuter[len(commuter) - 2][1])) , (commuter[len(commuter) - 1][0], float(commuter[len(commuter) - 1][1])))
-    
+    commuters.get(
+        str(commuterName))[3] = calculate_initial_compass_bearing(
+            (commuter[len(commuter) - 2][0],
+             float(commuter[len(commuter) - 2][1])),
+            (commuter[len(commuter) - 1][0],
+             float(commuter[len(commuter) - 1][1])))
+
     if debug:
         print "last bearing : " + str(commuters.get(str(commuterName))[3])
         print commuters.get(str(commuterName))[0]
-    
+
     return lonlat
+
 
 
 # verifies whether or not the point is on the street 
@@ -2327,49 +2385,51 @@ def verify_street_point(street, nextLonLat):
         for i in range(len(lines_table)):
                 pt1 = lines_table[i][0]
                 pt2 = lines_table[i][1]
-
-                if test_line_point(pt1, pt2, nextLonLat):
-                   return True
+        if test_line_point(pt1, pt2, nextLonLat):
+            return True
+        
         return False
 
 
 # test whether the point on the line represented by start and end       
 def test_line_point(start, end, pt):
 
-        lon1, lat1 = polarToCartesian(start)
-        lon2, lat2 = polarToCartesian(end)
-        pt_lon, pt_lat = polarToCartesian(pt)
+    lon1, lat1 = polarToCartesian(start)
+    lon2, lat2 = polarToCartesian(end)
+    pt_lon, pt_lat = polarToCartesian(pt)
 
-        dist = projectedDistance(start, end, pt)
-        projected_point = projectPointToLine(start, end, pt)
+    dist = projectedDistance(start, end, pt)
+    projected_point = projectPointToLine(start, end, pt)
 
-        if acceptPoint(start, end, projected_point, dist):
-                return True
-        return False
-        
-      
-# compute the next point based on the current lonlat, orientation (bearing) and distance
+    if acceptPoint(start, end, projected_point, dist):
+        return True
+    return False
+
+#compute the next point based on the current lonlat, orientation (bearing) and distance
 def compute_next_point(lon1, lat1, brng, dist):
 
-        dist = dist / 3959.0
-        brng = math.radians(brng)
-        lat1 = math.radians(lat1)
-        lon1 = math.radians(lon1)
+    dist = dist / 3959.0
+    brng = math.radians(brng)
+    lat1 = math.radians(lat1)
+    lon1 = math.radians(lon1)
 
-        lat2 = math.asin(math.sin(lat1) * math.cos(dist) + math.cos(lat1) * math.sin(dist) * math.cos(brng))
-        a = math.atan2(math.sin(brng) * math.sin(dist) * math.cos(lat1), math.cos(dist) - math.sin(lat1) * math.sin(lat2))
-        lon2 = lon1 + a
+    lat2 = math.asin(
+        math.sin(lat1) * math.cos(dist) +
+        math.cos(lat1) * math.sin(dist) * math.cos(brng))
+    a = math.atan2(
+        math.sin(brng) * math.sin(dist) * math.cos(lat1),
+        math.cos(dist) - math.sin(lat1) * math.sin(lat2))
+    lon2 = lon1 + a
 
-        lon2 = (lon2 + 3 * math.pi) % (2 * math.pi) - math.pi
+    lon2 = (lon2 + 3 * math.pi) % (2 * math.pi) - math.pi
 
-        lat2 = math.degrees(lat2)
-        lon2 = math.degrees(lon2)
+    lat2 = math.degrees(lat2)
+    lon2 = math.degrees(lon2)
 
-        return [lon2, lat2]
+    return [lon2, lat2]
 
- 
 def get_current_point(commuterName):
-    return commuters.get(str(commuterName))[1]       
+    return commuters.get(str(commuterName))[1]
 
 
 def turn_to(commuterName, roadName, direction=None):
@@ -2388,7 +2448,6 @@ def turn_to(commuterName, roadName, direction=None):
     commuters.get(str(commuterName))[4].append(tmp)
 
     global ZIP
-    
     if direction == None:
         commuters.get(str(commuterName))[2] = str(roadName)
 
@@ -2412,7 +2471,7 @@ def turn_to(commuterName, roadName, direction=None):
 
     else:
         commuters.get(str(commuterName))[2] = str(roadName)
-        
+
         if str(direction).isdigit():
             direction = int(direction)
         else:
@@ -2424,49 +2483,51 @@ def turn_to(commuterName, roadName, direction=None):
         # print roadName
         # print direction
         # print "3"
-    
+
 
 # turn right will increase the bearing by 90 degrees
 def turn_right(street, commuter):
     global bearing
-    
+
     previous_bearing = bearing
     bearing = (bearing + 90) % 360
-        
     # update commuter if needed
     # in the case of Move_distance, the specified user distance might be a little bit
     # after the turn, we modify the commuter points according to the street
     # specified in the turn
-
     update_commuter_turn(street, bearing, previous_bearing, commuter)
 
 
 # when a commuter makes a turn after a move_distace, it is expected that the distance will put the 
 # commuter after the turn which result in incorrect path. we remove the extra points    
 def update_commuter_turn(street, bearing, previous_bearing, commuter):
-    
+
     global last_move
     if last_move == True:
         last_move = False
         return
- 
+
+
     last_point = commuter[len(commuter) - 1]
     LON = str(last_point[0])
     LAT = str(last_point[1])
-    
+
     query = "select * from tiger_data.street_at_point(ST_SetSRID(ST_Point(" + LON + ", " + LAT + "),4269))"
-    
-    results = query_db(query)
-    rowcount = len(results)
-    
+
+    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
+                        "org.postgresql.Driver")
+    c = db.cursor()
+    c.execute(query)
+    rowcount = c.rowcount
+
     if rowcount == 1:
-        
-        row = results[0]
+
+        row = c.fetchone()
         street2 = str(row[0])
-        
+
         if street == street2:
             return
-        
+
         new_point = geocode_intersection(street, street2)
         # if street == "Oakhurst Dr":
             # print query
@@ -2477,20 +2538,30 @@ def update_commuter_turn(street, bearing, previous_bearing, commuter):
             # print new_point
                 
         temp = compute_next_point(new_point[0], new_point[1], bearing, 0.25)
-                   
+
         opposite_bearing = (bearing + 180) % 360
+
         
-        temp2 = compute_next_point(new_point[0], new_point[1], opposite_bearing , 0.25)
-        
-        initial_orientation_point = compute_next_point(commuter[len(commuter) - 1][0], commuter[len(commuter) - 1][1], previous_bearing, 0.25)
-                
-        initial_orientation = cross_product(polarToCartesian(temp), polarToCartesian(temp2), polarToCartesian(initial_orientation_point))
-        
-        # print temp, temp2
-                
+
+        temp2 = compute_next_point(new_point[0], new_point[1],
+                                   opposite_bearing, 0.25)
+
+        initial_orientation_point = compute_next_point(
+            commuter[len(commuter) - 1][0], commuter[len(commuter) - 1][1],
+            previous_bearing, 0.25)
+
+        initial_orientation = cross_product(
+            polarToCartesian(temp), polarToCartesian(temp2),
+            polarToCartesian(initial_orientation_point))
+
+        #print temp, temp2
+
         for item in commuter[::-1]:
-            if initial_orientation == cross_product(polarToCartesian(temp), polarToCartesian(temp2), polarToCartesian(item)) and calculate_distance(new_point, item) > 0.005:
-                # print calculate_distance(new_point, item)
+            if initial_orientation == cross_product(
+                    polarToCartesian(temp), polarToCartesian(temp2),
+                    polarToCartesian(item)) and calculate_distance(
+                        new_point, item) > 0.005:
+                #print calculate_distance(new_point, item)
                 commuter.pop()
             else:
                 break
@@ -2519,100 +2590,100 @@ def isReal(txt):
         return False
 
 
-# initialize the bearing, needed for relative instructions
+#initialize the bearing, needed for relative instructions
 def orient_to(commuterName, direction):
-        global commuters
-        bearing = 0
-        
-        if isReal(direction):
-            if str(commuterName) in commuters:
-                commuters.get(str(commuterName))[3] = bearing            
-            bearing = direction
-            return bearing
-        
-        if direction.upper() == "NORTH":
-                bearing = 0
-        elif direction.upper() == "EAST":
-                bearing = 90
-        elif direction.upper() == "SOUTH":
-                bearing = 180
-        elif direction.upper() == "WEST":
-                bearing = 270
-        elif direction.upper() == "LEFT":
-                # print commuters.get(str(commuterName))[3]
-                # print str(commuterName)
-                # print commuters.keys()
-                if str(commuterName) in commuters:
-                    commuters.get(str(commuterName))[3] = (float(commuters.get(str(commuterName))[3]) - 90.0) % 360
-                    # print "called1"
-                
-                # print commuters.get(str(commuterName))[3]
-                return commuters.get(str(commuterName))[3]
+    global commuters
+    bearing = 0
 
-        elif direction.upper() == "RIGHT":
-                if str(commuterName) in commuters:
-                    commuters.get(str(commuterName))[3] = (float(commuters.get(str(commuterName))[3]) + 90.0) % 360
-                return commuters.get(str(commuterName))[3]
-
+    if isReal(direction):
         if str(commuterName) in commuters:
-            # print "called2"
             commuters.get(str(commuterName))[3] = bearing
-
+        bearing = direction
         return bearing
 
-                
-# turn on a specific angle clockwise
+    if direction.upper() == "NORTH":
+        bearing = 0
+    elif direction.upper() == "EAST":
+        bearing = 90
+    elif direction.upper() == "SOUTH":
+        bearing = 180
+    elif direction.upper() == "WEST":
+        bearing = 270
+    elif direction.upper() == "LEFT":
+        # print commuters.get(str(commuterName))[3]
+        # print str(commuterName)
+        # print commuters.keys()
+        if str(commuterName) in commuters:
+            commuters.get(str(commuterName))[3] = (
+                float(commuters.get(str(commuterName))[3]) - 90.0) % 360
+            # print "called1"
+
+        # print commuters.get(str(commuterName))[3]
+        return commuters.get(str(commuterName))[3]
+
+    elif direction.upper() == "RIGHT":
+        if str(commuterName) in commuters:
+            commuters.get(str(commuterName))[3] = (
+                float(commuters.get(str(commuterName))[3]) + 90.0) % 360
+        return commuters.get(str(commuterName))[3]
+
+    if str(commuterName) in commuters:
+        # print "called2"
+        commuters.get(str(commuterName))[3] = bearing
+
+    return bearing
+
+
+#turn on a specific angle clockwise
 def turn_angle(angle):
-        global bearing
-        bearing = (bearing + angle) % 360
-
-
+    global bearing
+bearing = (bearing + angle) % 360
 # finds the distance (using the great circle distance) between two addresses or geo-coordinates
 def compute_distance(add1, add2):
-        if type(add1) is str and type(add2) is str:
-                geo1 = geocode_address(add1)
-                geo2 = geocode_address(add2)
-        elif type(add1) is str and type (add2) is not str:
-                # the address is a list [lon, lat]
-                geo1 = geocode_address(add1)
-                geo2 = add2
-        elif type(add2) is str and type (add1) is not str:
-                # the address is a list [lon, lat]
-                geo1 = geocode_address(add2)
-                geo2 = add1
-        else:
-                # the address is a list [lon, lat]
-                geo1 = add1
-                geo2 = add2
-                
-        return distFrom(geo1[1], geo1[0], geo2[1], geo2[0])
+    if type(add1) is str and type(add2) is str:
+        geo1 = geocode_address(add1)
+        geo2 = geocode_address(add2)
+    elif type(add1) is str and type(add2) is not str:
+        #the address is a list [lon, lat]
+        geo1 = geocode_address(add1)
+        geo2 = add2
+    elif type(add2) is str and type(add1) is not str:
+        #the address is a list [lon, lat]
+        geo1 = geocode_address(add2)
+        geo2 = add1
+    else:
+        #the address is a list [lon, lat]
+        geo1 = add1
+        geo2 = add2
+
+    return distFrom(geo1[1], geo1[0], geo2[1], geo2[0])
 
 
 def polarToCartesian(pnt):
 
-        lon = pnt[0]
-        lat = pnt[1]
-        
-        r = 3959.0
+    lon = pnt[0]
+    lat = pnt[1]
 
-        lon = math.radians(lon)
-        lat = math.radians(lat)
+    r = 3959.0
 
-        x = r * math.cos(lat) * math.cos(lon)
-        y = r * math.cos(lat) * math.sin(lon)
-        z = r * math.sin(lat)
+    lon = math.radians(lon)
+    lat = math.radians(lat)
 
-        return x, y
-        
-        
-# Find the projected distance between line: a,b and point c
+    x = r * math.cos(lat) * math.cos(lon)
+    y = r * math.cos(lat) * math.sin(lon)
+    z = r * math.sin(lat)
+
+    return x, y
+
+
+#Find the projected distance between line: a,b and point c
 def projectedDistance(a, b, c):
-        c1 = Coordinate(a[0], a[1])
-        c2 = Coordinate(b[0], b[1])
-        p = Coordinate(c[0], c[1])
-        segment = LineSegment(c1, c2)
-        distance = segment.distancePerpendicular(p)
-        return distance
+    c1 = Coordinate(a[0], a[1])
+    c2 = Coordinate(b[0], b[1])
+    p = Coordinate(c[0], c[1])
+    segment = LineSegment(c1, c2)
+    distance = segment.distancePerpendicular(p)
+    return distance
 
 
 # returns the perpendicular projected point on line (endPoint1, endPoint2)
@@ -2627,62 +2698,64 @@ def projectPointToLine(endPoint1, endPoint2, toProject):
         return pt.x, pt.y
 
 
+
 # checks if the point is within 0.005 miles from the line (e.g., road), also checks that the point is located within the
 # endpoints of the line
 def acceptPoint(endPoint1, endPoint2, p, distance):
 
-        env1 = Coordinate(endPoint1[0], endPoint1[1])
-        env2 = Coordinate(endPoint2[0], endPoint2[1])
+    env1 = Coordinate(endPoint1[0], endPoint1[1])
+    env2 = Coordinate(endPoint2[0], endPoint2[1])
 
-        envelope = Envelope(env1, env2)
+    envelope = Envelope(env1, env2)
 
-        pnt = Coordinate(p[0], p[1])
-          
-        if distance <= 0.05 and envelope.contains(pnt):
-                return True
-        else:
-                return False
+    pnt = Coordinate(p[0], p[1])
+
+    if distance <= 0.05 and envelope.contains(pnt):
+        return True
+    else:
+        return False
+
 
 
 # given the start and end of a line, test whether the intersection point falls inside the interval
 def test_intersection_points(start, end, lonlat_list):
-        result = []
-        ln1, lt1 = polarToCartesian(start)
-        ln2, lt2 = polarToCartesian(end)
-        for i in range(len(lonlat_list)):
-                ptln, ptlt = polarToCartesian(lonlat_list[i])
-                dist = projectedDistance((ln1, lt1), (ln2, lt2), (ptln, ptlt))
-                projected_point = projectPointToLine ((ln1, lt1), (ln2, lt2), (ptln, ptlt))
-                if acceptPoint((ln1, lt1), (ln2, lt2), projected_point, dist):
-                        result.append(lonlat_list[i])
+    result = []
+    ln1, lt1 = polarToCartesian(start)
+    ln2, lt2 = polarToCartesian(end)
+    for i in range(len(lonlat_list)):
+        ptln, ptlt = polarToCartesian(lonlat_list[i])
+        dist = projectedDistance((ln1, lt1), (ln2, lt2), (ptln, ptlt))
+        projected_point = projectPointToLine((ln1, lt1), (ln2, lt2),
+                                             (ptln, ptlt))
+        if acceptPoint((ln1, lt1), (ln2, lt2), projected_point, dist):
+            result.append(lonlat_list[i])
 
-        # print result
-        return result
+    #print result
+    return result
 
-                       
-# calculates thr bearing between two geo-coordinates
+
+#calculates thr bearing between two geo-coordinates
 def calculate_initial_compass_bearing(pointA, pointB):
 
-    # if (type(pointA) != tuple) or (type(pointB) != tuple):
-        # raise TypeError("Only tuples are supported as arguments")
- 
+    #if (type(pointA) != tuple) or (type(pointB) != tuple):
+    #raise TypeError("Only tuples are supported as arguments")
     lat1 = math.radians(pointA[1])
     lat2 = math.radians(pointB[1])
- 
+
     diffLong = math.radians(pointB[0] - pointA[0])
- 
+
     x = math.sin(diffLong) * math.cos(lat2)
-    y = math.cos(lat1) * math.sin(lat2) - (math.sin(lat1)
-            * math.cos(lat2) * math.cos(diffLong))
- 
+    y = math.cos(lat1) * math.sin(lat2) - (
+        math.sin(lat1) * math.cos(lat2) * math.cos(diffLong))
+
     initial_bearing = math.atan2(x, y)
- 
+
     # Now we have the initial bearing but math.atan2 return values
     # from -180 to + 180 which is not what we want for a compass bearing
     # The solution is to normalize the initial bearing as shown below
     initial_bearing = math.degrees(initial_bearing)
     compass_bearing = (initial_bearing + 360) % 360
- 
+
     return compass_bearing
 
 
@@ -2701,21 +2774,21 @@ def cartesianToPolar(x, y):
 
 # forms a point on EWKT format: 'POINT(lon lat)'
 def get_EWKT(lonlatList):
-        return "'POINT (" + str(lonlatList[0]) + " " + str(lonlatList[1]) + ")'"
+    return "'POINT (" + str(lonlatList[0]) + " " + str(lonlatList[1]) + ")'"
 
 
-def  cross_product(a, b, c):
-     if ((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])) > 0:
-         return 1
-     else:
-         return -1
-
+def cross_product(a, b, c):
+    if ((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])) > 0:
+        return 1
+    else:
+        return -1
 
 def subtract_bearing(brn, amount):
     if (brn - amount) >= 0:
         return brn - amount
     else:
-        return brn - amount + 359  
+        return brn - amount + 359
+
 
 
 # Given a distance north, return the change in latitude."
@@ -2725,7 +2798,7 @@ def change_in_latitude(miles):
 
 # Given a latitude and a distance west, return the change in longitude.
 def change_in_longitude(latitude, miles):
-    
+
     # Find the radius of a circle around the earth at given latitude.
     r = earth_radius * math.cos(latitude * degrees_to_radians)
     return (miles / r) * radians_to_degrees
