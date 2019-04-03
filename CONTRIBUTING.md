@@ -28,7 +28,7 @@
 - We would like LIMO to follow PEP-8 Style conventions. When adding new code, please follow these conventions
   - Style guide can be found here: <https://www.python.org/dev/peps/pep-0008/>
 - In order to enforce these conventions, we will use pylint to check your code for deviations, and YAPF to attempt to automatically fix these deviations
-- To execute the linter from the command line, use the command `pylint limo2.31.py -r y -f colorized` while in the `war` directory
+- To execute the linter from the command line, use the command `pylint war/limo2.31.py` while in the project directory. This will automatically use the project's pylint configuration file
 - To execute the yapf autoformatting tool, use the command `yapf --style pep8 -i limo2.31.py` while in the  `war` directory
 
 ## Refactoring:
