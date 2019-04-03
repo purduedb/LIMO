@@ -1,4 +1,4 @@
-#Limo 2.31
+# Limo 2.31
 
 from com.ziclix.python.sql import zxJDBC
 from com.vividsolutions.jts.geom import Coordinate
@@ -17,34 +17,64 @@ earth_radius = 3960.0
 degrees_to_radians = math.pi / 180.0
 radians_to_degrees = 180.0 / math.pi
 
-#Flag that is set to True when the movement type is distance
+# Flag that is set to True when the movement type is distance
 last_move = False
 
-#Constants
-#IP = "192.168.126.140"
+# Constants
+# IP = "192.168.126.140"
 IP = "ibnkhaldun.cs.purdue.edu"
 PORT = "5439"
-#DB_USER = "postgres"
+# DB_USER = "postgres"
 DB_USER = "limo"
-#DB = "gisDBTest"
+# DB = "gisDBTest"
 DB = "gisdb3"
-#PASSWORD = "''"
+# PASSWORD = "''"
 PASSWORD = "limo"
 CITY = ""
 STATE = ""
 ZIP = ""
 CONNECT_STRING = "jdbc:postgresql://" + IP + ":" + PORT + "/" + DB
 
-#globals
-#bearing = 0
+
+# Function query_db
+# query_db( query, results_opt)
+# query: String representation of the db query
+# returns a tuple of db results
+def query_db(query):
+    
+    # TODO: add debugging support
+    if 0:
+        print query
+    
+    # Precondition checking: Verify the parameters are of the correct type
+    #if type(query) != str:
+    #    return -1
+    
+    # TODO: add secondary sql query verification
+    
+    # Connect to the database
+    # Likely taken from here: http://www.jython.org/archive/21/docs/zxjdbc.html
+    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
+    csr = db.cursor()
+    csr.execute(query)
+    
+    toreturn = csr.fetchall()
+    
+    csr.close()
+    db.close()
+    
+    return toreturn
+
+
+# globals
+# bearing = 0
 commuters = dict()
 debug = 0
 
 depth = 0
 
 
-def find_all_roads_within(commuterName, currentLength, maxLength,
-                          coveredRoads):  #, previousCommuterName):
+def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):  # , previousCommuterName):
 
     global depth
     print "==================================================== DEPTH ",
@@ -93,9 +123,8 @@ def find_all_roads_within(commuterName, currentLength, maxLength,
         newCoveredRoads = deepcopy(coveredRoads)
         newCoveredRoads.append(str(roadNames[i]))
 
-        nextPoint = move_along_street(point[0], point[1], roadNames[i], ZIP,
-                                      commuters.get(str(commuterName))[3],
-                                      0.01)
+        nextPoint = move_along_street(point[0], point[1], roadNames[i], ZIP, commuters.get(str(commuterName))[3], 0.01)    
+
         print "nextPoint : "
         print nextPoint
 
@@ -293,31 +322,15 @@ def cover_all_roads_within(commuterName, length):
     newCommuter = copy_commuter(str(commuterName), str(commuterName) + "_1")
     cnt = 1
 
-    find_all_roads_within(str(commuterName) + "_1", 0, length,
-                          coveredRoads)  #, str(commuterName))
+    find_all_roads_within(str(commuterName) + "_1", 0, length, coveredRoads)  # , str(commuterName))
 
 
 def rollback_commuter(commuterName):
-    commuters.get(str(commuterName))[0] = commuters.get(
-        str(commuterName))[4][0]
-    commuters.get(str(commuterName))[1] = commuters.get(
-        str(commuterName))[4][1]
-    commuters.get(str(commuterName))[2] = commuters.get(
-        str(commuterName))[4][2]
-    commuters.get(str(commuterName))[3] = commuters.get(
-        str(commuterName))[4][3]
+    commuters.get(str(commuterName))[0] = commuters.get(str(commuterName))[4][0]
+    commuters.get(str(commuterName))[1] = commuters.get(str(commuterName))[4][1]
+    commuters.get(str(commuterName))[2] = commuters.get(str(commuterName))[4][2]
+    commuters.get(str(commuterName))[3] = commuters.get(str(commuterName))[4][3]
 
-
-def start_at(commuterName, address=None, direction=0):
-    # commuterName: String name for the commuter we are about to create
-    # address: csv representation of the address. Typically input from read_address(). Default value: none
-    # direction: representation of direction. use strings "NORTH", "EAST", "SOUTH", "WEST", etc
-
-    # recieve global `commuters` so we can modify it
-    global commuters
-
-    # is the address an address or an intersection of roads(?)
-    # .find(String) is a python string method.
 
 def start_at(commuterName, address=None, direction=0):
     # commuterName: String name for the commuter we are about to create
@@ -422,8 +435,6 @@ def start_at(commuterName, address=None, direction=0):
     return geolocation
     # commuter = [set of Points / current point / current st. name / direction]
 
-
-
 def test():
     return "say something"
 
@@ -440,17 +451,17 @@ def setZipCode(z):
     ZIP = z
 
 
-#prompts the user to input the address
+# prompts the user to input the address
 def read_address(street, city, state, zipcode):
     address = street + "," + city + "," + state + "," + zipcode
     return address
 
 
-#prompts the user to input the address as intersection
+
+# prompts the user to input the address as intersection
 def read_intersection(street1, street2, city, state, zipcode):
     address = "intersection," + street1 + "," + street2 + "," + state + "," + city + "," + zipcode
     return address
-
 
 # adds a marker on a address by creating a row in visualize file: MARKER,lon,lat
 # returns the geolocation of the marker
@@ -469,16 +480,17 @@ def display_marker (address):
     # f.close()
     return geolocation
 
+
 # displays a message on address by making a row in visualize file: MSG,message,lon,lat
 def display_message(message, address):
 
     if type(address) is str:
         geolocation = geocode_address(address)
-        #print geolocation
+        # print geolocation
     else:
         geolocation = address
-
-    instruction = "MSG," + message + "," + str(geolocation[0]) + "," + str(geolocation[1]) + "\n"       
+           
+    instruction = "MSG," + message + "," + str(geolocation[0]) + "," + str(geolocation[1]) + "\n"
 
     # f = open("visualize.txt", 'a')
     # f.write(instruction)
@@ -486,66 +498,51 @@ def display_message(message, address):
     ExampleServiceImpl.setResultString(instruction)
 
 
-#returns [lon,lat] of address
+# returns [lon,lat] of address
 def geocode_address(address):
-
-    query = ""
-    #check whether the address represents an intersection?
-    x = address.find("intersection,")
-    
-    # If address begins with "intersection, "
-    if x == 0:
-        # Trim "intersection,"
-        address = address[13:]
-        addressList = address.split(',')
-        for i in range(len(addressList)):
-            addressList[i] = "'" + addressList[i] + "'"
-        # Debugging
-        #print addressList
-        # query:
-        # ST_AsText
-        # http://www.postgis.org/docs/ST_AsText.html
-        # ST_AsText — Return the Well-Known Text (WKT) representation of the geometry/geography without SRID metadata.
-        # text ST_AsText(geometry g1);
-
-        # geocode_intersection
-        # https://postgis.net/docs/Geocode_Intersection.html
-        # Geocode_Intersection — Takes in 2 streets that intersect and a state, city, zip, and outputs a set of possible locations on the first cross street that is at the intersection
-        # setof record geocode_intersection(text roadway1, text roadway2, text in_state, text in_city, text in_zip, integer max_results=10, norm_addy OUT addy, geometry OUT geomout, integer OUT rating);
-        #
-        # There is no equilivent to this in Voltdb... Do we emulate geocode_intersection in python?
-        query = "SELECT ST_AsText(geomout) FROM geocode_intersection(" + addressList[
-            0] + "," + addressList[1] + "," + addressList[
-                2] + "," + addressList[3] + "," + addressList[4] + ",1)"
-
-    # If address does not begin with "intersection, "
-    else:
-
-        address = "'" + address + "'"
-        query = "SELECT ST_AsText(geomout) FROM geocode(" + address + ",1)"
-
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-
-    c.close()
-    db.close()
-
-    if rowcount == 1:
-        return extract_point(str(row))
-    else:
-        raise Exception("Geocode " + address + " returned NULL")
-        return "NULL"
+        query = "";
+        # check whether the address represents an intersection?
+        x = address.find("intersection,")
+       
+        # If address begins with "intersection, "
+        if x == 0:
+                # Trim "intersection,"
+                address = address [13:]
+                addressList = address.split(',')
+                for i in range(len(addressList)):
+                        addressList[i] = "'" + addressList[i] + "'"
+                # Debugging
+                # print addressList
+                # query:
+                # ST_AsText
+                # http://www.postgis.org/docs/ST_AsText.html
+                # ST_AsText — Return the Well-Known Text (WKT) representation of the geometry/geography without SRID metadata.
+                # text ST_AsText(geometry g1);
+                
+                # geocode_intersection
+                # https://postgis.net/docs/Geocode_Intersection.html
+                # Geocode_Intersection — Takes in 2 streets that intersect and a state, city, zip, and outputs a set of possible locations on the first cross street that is at the intersection
+                # setof record geocode_intersection(text roadway1, text roadway2, text in_state, text in_city, text in_zip, integer max_results=10, norm_addy OUT addy, geometry OUT geomout, integer OUT rating);
+                # 
+                # There is no equilivent to this in Voltdb... Do we emulate geocode_intersection in python?
+                query = "SELECT ST_AsText(geomout) FROM geocode_intersection(" + addressList[0] + "," + addressList[1] + "," + addressList[2] + "," + addressList[3] + "," + addressList[4] + ",1)"
+        
+        # If address does not begin with "intersection, "
+        else:
+                
+                address = "'" + address + "'"
+                query = "SELECT ST_AsText(geomout) FROM geocode(" + address + ",1)"
+        
+        db_results = query_db(query)
+        if len(db_results) == 1:
+            return extract_point(str(db_results[0]))
+        else:
+            raise Exception("Geocode " + address + " returned NULL\n\tFailed db query: " + query)
+            return "NULL"
 
 
-#extract the point from the geocode string using ST_AsText(geomout): (u'POINT(-86.882223 40.423635)',)
+
+# extract the point from the geocode string using ST_AsText(geomout): (u'POINT(-86.882223 40.423635)',)
 def extract_point(geo_output):
     geo_output = geo_output[3:len(geo_output)]
     start = geo_output.find('(')
@@ -559,12 +556,13 @@ def extract_point(geo_output):
     return lonLat
 
 
-#extract the point from the geocode string using ST_AsText(geomout): POINT(-86.882223 40.423635)
+
+# extract the point from the geocode string using ST_AsText(geomout): POINT(-86.882223 40.423635)
+
 def extract_point_v2(geo_output):
     start = geo_output.find('(')
     end = geo_output.find(')')
     geo_output = geo_output[start + 1:end]
-
     lonLat = geo_output.split(' ')
     lonLat[0] = eval(lonLat[0])
     lonLat[1] = eval(lonLat[1])
@@ -572,7 +570,7 @@ def extract_point_v2(geo_output):
     return lonLat
 
 
-#extract polygon points from geo_output string using ST_AsText(ST_Simplify(the_geom, 0.05)): (u'MULTIPOLYGON((( geo_point1, ... )))',)
+# extract polygon points from geo_output string using ST_AsText(ST_Simplify(the_geom, 0.05)): (u'MULTIPOLYGON((( geo_point1, ... )))',)
 def extract_polygon(geo_output):
 
     end = geo_output.find(')')
@@ -588,7 +586,8 @@ def extract_polygon(geo_output):
     return outputList
 
 
-#extract polygon points from geo_output string using ST_AsText(ST_Simplify(the_geom, 0.05)): (u'POLYGON((( geo_point1, ... )))',)
+
+# extract polygon points from geo_output string using ST_AsText(ST_Simplify(the_geom, 0.05)): (u'POLYGON((( geo_point1, ... )))',)
 def extract_polygon_v2(geo_output):
 
     end = geo_output.find(')')
@@ -604,7 +603,8 @@ def extract_polygon_v2(geo_output):
     return outputList
 
 
-#extract polyline points from geo_output string: (u'MULTILINESTRING((  geo_point1, ... ))',)
+
+# extract polyline points from geo_output string: (u'MULTILINESTRING((  geo_point1, ... ))',)
 def extract_polyline(geo_output):
     end = geo_output.find(')')
     geo_output = geo_output[20:end]
@@ -619,7 +619,7 @@ def extract_polyline(geo_output):
     return outputList
 
 
-#extract polyline points from geo_output string: LINESTRING((  geo_point1, ... ))',
+# extract polyline points from geo_output string: LINESTRING((  geo_point1, ... ))',
 def extract_line_string(geo_output):
     end = geo_output.find(')')
     geo_output = geo_output[14:end]
@@ -634,7 +634,8 @@ def extract_line_string(geo_output):
     return outputList
 
 
-#extract polyline points from geo_output string: LINESTRING((  geo_point1, ... ))',
+
+# extract polyline points from geo_output string: LINESTRING((  geo_point1, ... ))',
 def extract_line_string2(geo_output):
     end = geo_output.find(')')
     geo_output = geo_output[11:end]
@@ -647,6 +648,7 @@ def extract_line_string2(geo_output):
         outputList.append(geoSubList)
 
     return outputList
+
 
 
 def copy_commuter(commuterName, copyName):
@@ -701,7 +703,6 @@ def show_commuter(commuterName):
 #         #commuter.append(geolocation)
 
 #         # commuter = [set of Points / current point / current st. name / direction]
-
 #         commuterName = str(commuterName)
 #         stName = addressList[0]
 #         items = stName.split(" ")
@@ -733,16 +734,14 @@ def show_commuter(commuterName):
 
 #         return geolocation
 
-
 # sets the commuters start location and returns [lon,lat]
 # also sets the global variables: CITY, STATE, and ZIP associated with commuter
 def get_location(address):
     geolocation = geocode_address(address)
     return geolocation
 
-
 # returns the distnace between two geocoordinates
-#def compute_distance(geoloc1, geoloc2):
+# def compute_distance(geoloc1, geoloc2):
 #    distance = 0.0
 #    retuen distance
 
@@ -795,6 +794,7 @@ def move_until(commuterName, street2):
         float(commuter[len(commuter) - 1][0]),
         float(commuter[len(commuter) - 1][1])
     ]
+
     delIndex = 0
     for i in pnts:
         if lastPoint[0] == float(i[0]) and lastPoint[1] == float(i[1]):
@@ -821,8 +821,8 @@ def move_until(commuterName, street2):
     for i in range(len(pnts)):
         commuter.append((float(pnts[i][0]), float(pnts[i][1])))
 
-    if commuter[len(commuter) - 1][0] != lonlat[0] and commuter[
-            len(commuter) - 1][1] != lonlat[1]:
+
+    if commuter[len(commuter) - 1][0] != lonlat[0] and commuter[len(commuter) - 1][1] != lonlat[1]:
         commuter.append((float(lonlat[0]), float(lonlat[1])))
         if debug:
             print "inserted"
@@ -831,6 +831,7 @@ def move_until(commuterName, street2):
 
     commuters.get(str(commuterName))[1] = lonlat
     # commuters.get(str(commuterName))[2] = str(street2)
+
     commuters.get(
         str(commuterName))[3] = calculate_initial_compass_bearing(
             (commuter[len(commuter) - 2][0],
@@ -844,51 +845,35 @@ def move_until(commuterName, street2):
 
     return lonlat
 
-
-#returns a road segment between start and end, area_code is used to filter out roads
+# returns a road segment between start and end, area_code is used to filter out roads
 def get_sub_road(road, area_code, start, end):
 
     query = "select ST_asText(tiger_data.get_sub_road('" + road + "' , '" + area_code + "' , " + start + " , " + end + "))"
-    # print query
+    
+    db_results = query_db(query)
+    
+    if len(db_results) == 1:
+        return extract_line_string(str(db_results[0]))
+    else:
+        raise Exception("get_sub_road(" + road + ", " + area_code + ", " + start + ", " + end + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"     
 
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-        c.close()
-        db.close()
-
-        if row[0] == None:
-            return None
-        # print "row"
-        # print str(row)
-        return extract_line_string(str(row))
-
-
+    
 def get_sub_road_distance(road, area_code, brng, point_EWKT, distance):
 
     dist_degrees = change_in_latitude(distance)
-    #point_EWKT = get_EWKT(lonlatList)
 
+    # point_EWKT = get_EWKT(lonlatList)
+    
     query = "select ST_asText( tiger_data.point_at_distance ('" + road + "' , '" + area_code + "', " + str(brng) + "," + point_EWKT + "," + str(dist_degrees) + "))"
+    
+    db_results = query_db(query)
+    if len(db_results) == 1:
+        return extract_line_string(str(db_results[0]))
+    else:
+        raise Exception("get_sub_road_distance(" + road + ", " + area_code + ", " + brng + ", " + point_EWKT + ", " + distance + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"
 
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-        c.close()
-        db.close()
-        return extract_line_string(str(row))
 
 
 def get_intersections2(street, start_geo, end_geo):
@@ -898,96 +883,55 @@ def get_intersections2(street, start_geo, end_geo):
     if points_bearing >= 350:
         points_bearing = 0
 
-    #print bearing , points_bearing
+        # print bearing , points_bearing
 
-    if (points_bearing >= 260 and points_bearing <= 280) or bearing == 270:
-        query = "select ST_asText(intersection.inters) from ( select distinct (ST_Intersection(a.the_geom, b.the_geom)) inters From tiger_data.in_roads a, (select fullname , the_geom, linearid from tiger_data.in_roads where fullname = '" + street + "' ) as b where st_intersects(a.the_geom, b.the_geom) and geometrytype(ST_Intersection(a.the_geom, b.the_geom)) = 'POINT'::text order by ST_Intersection(a.the_geom, b.the_geom) desc) intersection"
-    else:
-        query = "select ST_asText(intersection.inters) from ( select distinct (ST_Intersection(a.the_geom, b.the_geom)) inters From tiger_data.in_roads a, (select fullname , the_geom, linearid from tiger_data.in_roads where fullname = '" + street + "' ) as b where st_intersects(a.the_geom, b.the_geom) and geometrytype(ST_Intersection(a.the_geom, b.the_geom)) = 'POINT'::text order by ST_Intersection(a.the_geom, b.the_geom)) intersection"
+        if (points_bearing >= 260 and points_bearing <= 280) or bearing == 270:
+                query = "select ST_asText(intersection.inters) from ( select distinct (ST_Intersection(a.the_geom, b.the_geom)) inters From tiger_data.in_roads a, (select fullname , the_geom, linearid from tiger_data.in_roads where fullname = '" + street + "' ) as b where st_intersects(a.the_geom, b.the_geom) and geometrytype(ST_Intersection(a.the_geom, b.the_geom)) = 'POINT'::text order by ST_Intersection(a.the_geom, b.the_geom) desc) intersection"
+        else:
+                query = "select ST_asText(intersection.inters) from ( select distinct (ST_Intersection(a.the_geom, b.the_geom)) inters From tiger_data.in_roads a, (select fullname , the_geom, linearid from tiger_data.in_roads where fullname = '" + street + "' ) as b where st_intersects(a.the_geom, b.the_geom) and geometrytype(ST_Intersection(a.the_geom, b.the_geom)) = 'POINT'::text order by ST_Intersection(a.the_geom, b.the_geom)) intersection"
+        
+        db_results = query_db(query)
 
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
+        lonlatList = list(db_results)
 
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+        output = test_intersection_points((start_geo[0], start_geo[1]), (end_geo[0], end_geo[1]), lonlatList)
+        
+        if (points_bearing >= 0 and points_bearing <= 10) :
+                output = sorted(output, key=lambda x : (x[1], -x[0]))
+                # print output
+        elif points_bearing >= 170 and points_bearing <= 190:
+                output = sorted(output, key=lambda x : (x[1], -x[0]), reverse=True)
+                # print output
 
-    lonlatList = []
+        # print output
+        # print
+        return output
 
-    if rowcount > 1:
-
-        for i in range(rowcount):
-            row = c.fetchone()
-            lonlatList.append(extract_point(str(row)))
-    c.close()
-    db.close()
-
-    output = test_intersection_points((start_geo[0], start_geo[1]),
-                                      (end_geo[0], end_geo[1]), lonlatList)
-
-    if (points_bearing >= 0 and points_bearing <= 10):
-        output = sorted(output, key=lambda x: (x[1], -x[0]))
-        #print output
-    elif points_bearing >= 170 and points_bearing <= 190:
-        output = sorted(output, key=lambda x: (x[1], -x[0]), reverse=True)
-        #print output
-
-    #print output
-    #print
-    return output
-
-
+     
 def geocode_intersection(street1, street2):
-    query = "SELECT ST_AsText(geomout) FROM geocode_intersection('" + street1 + "','" + street2 + "','" + STATE + "','" + CITY + "','" + ZIP + "',1)"
+        query = "SELECT ST_AsText(geomout) FROM geocode_intersection('" + street1 + "','" + street2 + "','" + STATE + "','" + CITY + "','" + ZIP + "',1)"
 
-    #print query
-
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-
-    c.close()
-    db.close()
-
-    if rowcount == 1:
-        return extract_point(str(row))
-    else:
-        raise Exception("Geocode intersection " + street1 + ", " + street2 +
-                        " returned NULL")
+        db_results = query_db(query)
+    
+        if len(db_results) == 1:
+            return extract_point(str(db_results[0]))
+        else:
+            raise Exception("geocode_intersection(" + street1 + ", " + street2 + ") returned NULL\n\tFailed query: " + query)
+            return "NULL"     
 
 
 def geocode_intersection2(street1, street2):
-    query = "SELECT ST_AsText(geomout) FROM geocode_intersection('" + street1 + "','" + street2 + "','" + STATE + "','" + CITY + "','" + ZIP + "',1)"
+        query = "SELECT ST_AsText(geomout) FROM geocode_intersection('" + street1 + "','" + street2 + "','" + STATE + "','" + CITY + "','" + ZIP + "',1)"
 
-    # print query
+        # print query
+        db_results = query_db(query)
+    
+        if len(db_results) == 1:
+            return extract_point(str(db_results[0]))
+        else:
+            print "geocode_intersection(2" + street1 + ", " + street2 + ") returned NULL\n\tFailed query: " + query
+            return "NULL"     
 
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-
-    c.close()
-    db.close()
-
-    if rowcount == 1:
-        return extract_point(str(row))
-    else:
-        #################### this is only difference
-        return ""
 
 
 def draw_line(geo1, geo2):
@@ -998,257 +942,175 @@ def draw_line(geo1, geo2):
     ExampleServiceImpl.setResultString(instruction)
 
 
-#display the the list of coordinates on map
+# display the the list of coordinates on map
 def show_on_map(commuterName):
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    geoList = commuters.get(str(commuterName))[0]
+        geoList = commuters.get(str(commuterName))[0]
 
-    # db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
+        instruction = "POLYLINE,"
+        for i in range(len(geoList)):
+                instruction += str(geoList[i][0]) + ';' + str(geoList[i][1]) + ','
+                
+        instruction = instruction [: len(instruction) - 1]
+        instruction += "\n"
+        ExampleServiceImpl.setResultString(instruction) 
+    #     f = open("visualize.txt", 'a')
+       # f.write(instruction)
+       # f.close()
 
-    instruction = "POLYLINE,"
-    for i in range(len(geoList)):
-        instruction += str(geoList[i][0]) + ';' + str(geoList[i][1]) + ','
-
-    instruction = instruction[:len(instruction) - 1]
-    instruction += "\n"
-    ExampleServiceImpl.setResultString(instruction)
-
-
-#     f = open("visualize.txt", 'a')
-# f.write(instruction)
-# f.close()
-
-
+        
 # get(name, description, geometric shape)
 # Return the location (as geometric shape) of the place that matches name and description.
 def get(name, description, geomType):
-    # name: string representation of the desired object
-    # description: string representation of the type of object requested. Case sensitive
-    # Choices: STATE, CITY, COUNTY, RIVER, PRIMARY-ROAD, ROAD
-    # geomType: The type of geom we want returned. Case sensitive
-    # Choices: POLYGON, POINT, POLYLINE
+        # name: string representation of the desired object
+        # description: string representation of the type of object requested. Case sensitive
+            # Choices: STATE, CITY, COUNTY, RIVER, PRIMARY-ROAD, ROAD
+        # geomType: The type of geom we want returned. Case sensitive
+            # Choices: POLYGON, POINT, POLYLINE
 
-    # TODO: Make this a function
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
+        # If a polygon (outline) was requested
+        if geomType == "POLYGON":
+                # Can we combine these? IE - look for a state first, then a city if it is not found, then a county? What order should we look? Is there overlap between city, state, and county names?
+                if description == "STATE":
+                        # Uses GIS calls to DB
+                        # query = "SELECT ST_AsText(ST_Simplify(the_geom, 0.05)) FROM tiger_data.state_all where name = '" + name +"'"
+                        query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.state_all where name = '" + name + "'"
 
-    # If a polygon (outline) was requested
-    if geomType == "POLYGON":
-        # Can we combine these? Ie - look for a state first, then a city if it is not found, then a county? What order should we look? Is there overlap between city, state, and county names?
-        if description == "STATE":
-            # Uses GIS calls to DB
-            #query = "SELECT ST_AsText(ST_Simplify(the_geom, 0.05)) FROM tiger_data.state_all where name = '" + name +"'"
-            query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.state_all where name = '" + name + "'"
-            c.execute(query)
-            # Get the number of rows
-            rowcount = c.rowcount
+                # What about Lafayette Louisiana vs Lafayette Indiana?
+                elif description == "CITY":
+                    query = "select ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.001)) from tiger_data.in_place where name = '" + name + "'"
+                        
+                elif description == "COUNTY":
+                        # `Where name like` - why do we approximate here and not in others?
+                        query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all where name like  '" + name + "'"
+                        
+                db_results = query_db(query)
+                
+                # Return the first result. Behavior copied from old code. Is there a better way to do this?
+                # Check if anything returned?
+                return extract_polygon_v2(str(db_results[0]))
+                
+        # If a geopoint/lonlat was requested
+        elif geomType == "POINT":
+                # If we want a geopoint of a state
+                # This seems a bit useless?
+                if description == "STATE":
+                        # Why is this query so different? Is it because states are not naturally points?
+                        query = "SELECT intptlon, intptlat from tiger_data.state_all where name = '" + name + "'"
+                        
+                        db_results = query_db(query)
+                        
+                        if len(db_results) == 1:
+                                lonlat = []
+                                # Behavior copied from old code. Is there a better way to do this?
+                                lonlat.append(eval(db_results[0][0]))
+                                lonlat.append(eval(db_results[0][1]))
+                                
+                                return lonlat
 
-            # If we have exactly one result, return it. If not, return NULL
-            # All states have unique names, should we process this differently?
-            # TODO: Make this a function
-            if rowcount == 1:
-                row = c.fetchone()
-                c.close()
-                db.close()
-                #print row[0]
-                return extract_polygon_v2(str(row))
+        elif geomType == "POLYLINE":
+                if description == "RIVER":
+                        # query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where fullname = '" + name + "'"
+                        query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where lower(fullname) like '" + name + "'"
+                        # print query
+                       
+                elif description == "PRIMARY-ROAD":
+                        # query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where fullname = '" + name + "'"
+                        query = "select ST_AsText(the_geom) from tiger_data.in_primaryroads where fullname = '" + name + "'"
+                        # print query
+                       
+                elif description == "ROAD":
+                        # query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where fullname = '" + name + "'"
+                        query = "select ST_AsText(the_geom) from tiger_data.in_roads where fullname = '" + name + "'"
+                        # print query
+                               
+                db_results = query_db(query)
+                if len(db_results) > 1:
+                    lonlatList = []
+                    for result in db_results: 
+                        lonlatList.append(extract_polyline(str(result)))
+                        return lonlatList
+                else:
+                    raise Exception("get(" + name + ", " + description + ", " + geomType + ") returned NULL\n\tFailed query: " + query)
+                    return "NULL"
+                        
+        return "NULL"
 
-        # What about Lafayette Louisiana vs Lafayette Indiana?
-        elif description == "CITY":
-            query = "select ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.001)) from tiger_data.in_place where name = '" + name + "%'"
-            c.execute(query)
-            rowcount = c.rowcount
-
-            # See state. Return result iff there was one result.
-            if rowcount == 1:
-                row = c.fetchone()
-                c.close()
-                db.close()
-                #print row[0]
-                return extract_polygon_v2(str(row))
-
-        elif description == "COUNTY":
-            # `Where name like` - why do we approximate here and not in others?
-            query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all where name like  '" + name + "'"
-            print query
-            c.execute(query)
-            rowcount = c.rowcount
-
-            # If we have more than one result, return the first one.
-            # Is there a better way to handle this?
-            if rowcount > 0:
-                row = c.fetchone()
-                c.close()
-                db.close()
-                #print row[0]
-                return extract_polygon_v2(str(row))
-    # If a geopoint/longlat was requested
-    elif geomType == "POINT":
-        # If we want a geopoint of a state
-        # This seems a bit useless?
-        if description == "STATE":
-            # Why is this query so different? Is it because states are not naturally points?
-            query = "SELECT intptlon, intptlat from tiger_data.state_all where name = '" + name + "'"
-            c.execute(query)
-            rowcount = c.rowcount
-            if rowcount == 1:
-                row = c.fetchone()
-                c.close()
-                db.close()
-                lonlat = []
-                lonlat.append(eval(row[0]))
-                lonlat.append(eval(row[1]))
-
-                return lonlat
-
-    elif geomType == "POLYLINE":
-        if description == "RIVER":
-            #query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where fullname = '" + name + "'"
-            query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where lower(fullname) like '" + name + "'"
-            #print query
-            c.execute(query)
-            rowcount = c.rowcount
-            if rowcount >= 1:
-                lonlatList = []
-                for i in range(rowcount):
-                    row = c.fetchone()
-                    lonlatList.append(extract_polyline(str(row)))
-                c.close()
-                db.close()
-                return lonlatList
-
-                #row = c.fetchone()
-                #c.close()
-                #db.close()
-                #return extract_polyline(str(row))
-
-        elif description == "PRIMARY-ROAD":
-            #query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where fullname = '" + name + "'"
-            query = "select ST_AsText(the_geom) from tiger_data.in_primaryroads where fullname = '" + name + "'"
-            #print query
-            c.execute(query)
-            rowcount = c.rowcount
-            if rowcount > 1:
-                lonlatList = []
-                for i in range(rowcount):
-                    row = c.fetchone()
-                    lonlatList.append(extract_polyline(str(row)))
-                c.close()
-                db.close()
-                return lonlatList
-
-        elif description == "ROAD":
-            #query = "Select ST_AsText(the_geom) from tiger_data.in_linearwater where fullname = '" + name + "'"
-            query = "select ST_AsText(the_geom) from tiger_data.in_roads where fullname = '" + name + "'"
-            #print query
-            c.execute(query)
-            rowcount = c.rowcount
-            if rowcount > 1:
-                lonlatList = []
-                for i in range(rowcount):
-                    row = c.fetchone()
-                    lonlatList.append(extract_polyline(str(row)))
-                c.close()
-                db.close()
-                return lonlatList
-
-    return "NULL"
 
 
 def get_all(description, geomType):
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    if geomType == "POLYGON":
-        if description == "STATE":
-            query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.state_all"
-            c.execute(query)
-            rowcount = c.rowcount
+        if geomType == "POLYGON":
+            if description == "STATE":
+                query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.state_all"
 
-            if rowcount > 1:
+            elif description == "COUNTY":
+                query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all"
+            
+            # Query database
+            db_results = query_db(query)
+            
+            if len(db_results) > 1:
+                # convert each item in the result list to a polygon
+                for i in range(len(db_results)):
+                    db_results[i] = extract_polygon_v2(str(db_results[i]))
+               
+                return db_results
+            
+                                
+        elif geomType == "POINT":
+            if description == "STATE":
+                query = "SELECT intptlon, intptlat from tiger_data.state_all"
+                
+            elif description == "COUNTY":
+                query = "SELECT intptlon, intptlat from tiger_data.county_all"
+            
+            else:
+                # Default case - if the description is not a state or a county
+                mtfcc = get_mtfcc(description)
+                if mtfcc !="NULL":
+                    query = "select  ST_X(the_geom), ST_Y(the_geom), fullname  from tiger_data.in_pointlm where mtfcc = '"+mtfcc+"'"
+                
+                    # Query database with built query specific for mtfcc queries
+                    db_results = query_db(query)
+                    
+                    if len(db_results) > 1:
+                        # Blank list to insert items into
+                        lonlatList = []
+                        # Convert each item in the result list to a polygon
+                        for result in db_results:
+                            lonlatList.append([result[0], result[1], str(result[2])])
+                       
+                        return lonlatList
+                
+                return "NULL"
+
+            
+            # Query database with built query
+            db_results = query_db(query)
+            
+            if len(db_results) > 1:
+                # Blank list to insert items into
                 lonlatList = []
-                for i in range(rowcount):
-                    row = c.fetchone()
-                    lonlatList.append(extract_polygon_v2(str(row)))
-                c.close()
-                db.close()
+                # Convert each item in the result list to a polygon
+                i = 0
+                for result in db_results:
+                    lonlatList[i] = [eval(result[0]), eval(result[1])]
+                    i = i + 1
+                
                 return lonlatList
-        elif description == "COUNTY":
-            query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all"
-            c.execute(query)
-            rowcount = c.rowcount
+            
+            
 
-            if rowcount > 1:
-                lonlatList = []
-                for i in range(rowcount):
-                    row = c.fetchone()
-                    lonlatList.append(extract_polygon_v2(str(row)))
-                c.close()
-                db.close()
-                return lonlatList
-
-    elif geomType == "POINT":
-        if description == "STATE":
-            query = "SELECT intptlon, intptlat from tiger_data.state_all"
-            c.execute(query)
-            rowcount = c.rowcount
-            if rowcount > 1:
-                lonlatList = []
-                for i in range(rowcount):
-                    row = c.fetchone()
-                    lonlat = []
-                    lonlat.append(eval(row[0]))
-                    lonlat.append(eval(row[1]))
-                    lonlatList.append(lonlat)
-                c.close()
-                db.close()
-                return lonlatList
-        elif description == "COUNTY":
-            query = "SELECT intptlon, intptlat from tiger_data.county_all"
-            c.execute(query)
-            rowcount = c.rowcount
-            if rowcount > 1:
-                lonlatList = []
-                for i in range(rowcount):
-                    row = c.fetchone()
-                    lonlat = []
-                    lonlat.append(eval(row[0]))
-                    lonlat.append(eval(row[1]))
-                    lonlatList.append(lonlat)
-                c.close()
-                db.close()
-                return lonlatList
-        else:
-            mtfcc = get_mtfcc(description)
-            if mtfcc != "NULL":
-                query = "select  ST_X(the_geom), ST_Y(the_geom), fullname  from tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'"
-                c.execute(query)
-                rowcount = c.rowcount
-
-                if rowcount > 1:
-                    lonlatList = []
-                    for i in range(rowcount):
-                        row = c.fetchone()
-                        lonlat = []
-                        lonlat.append(row[0])
-                        lonlat.append(row[1])
-                        lonlat.append(str(row[2]))
-                        lonlatList.append(lonlat)
-                    c.close()
-                    db.close()
-                    return lonlatList
-
-    return "NULL"
+            
+        return "NULL"
 
 
-#Get_Max_Postion returns position of maximum element of an array
+# Get_Max_Postion returns position of maximum element of an array
 def Get_Max_Postion(DistanceArray):
     if (len(DistanceArray) > 0):
         maxPostion = 0
         maxValue = DistanceArray[0]
         for i in range(len(DistanceArray)):
-            if (DistanceArray[i] > maxValue):
+            if(DistanceArray[i] > maxValue):
                 maxValue = DistanceArray[i]
                 maxPostion = i
         return maxPostion
@@ -1259,222 +1121,149 @@ def Get_Max_Postion(DistanceArray):
 def get_coordinates(geoList):
     corr = ""
     for i in range(1, len(geoList)):
-        corr += geoList[i][0]
-        corr += " "
-        corr += geoList[i][1]
-        if (i != len(geoList) - 1):
-            corr += " , "
-
-
-# print corr
+      corr += geoList[i][0] 
+      corr += " "
+      corr += geoList[i][1]
+      if(i != len(geoList) - 1):
+        corr += " , "
+   # print corr
     return corr
 
 
-def getPolygonRange(geoList):
-    Range = []
-    if (geoList[0] == "POLYGON"):
-        maxLon = float(geoList[1][0])
-        minLon = float(geoList[1][0])
-        maxLat = float(geoList[1][1])
-        minLat = float(geoList[1][1])
-        #print maxLon , maxLat
-        for i in range(2, len(geoList)):
-            #print geoList[i][0] , geoList[i][1]
+def getPolygonRange (geoList):
+        Range = []
+        if(geoList[0] == "POLYGON"):
+            maxLon = float(geoList[1][0]) 
+            minLon = float(geoList[1][0])
+            maxLat = float(geoList[1][1])
+            minLat = float(geoList[1][1])
+            # print maxLon , maxLat 
+            for i in range(2, len(geoList)):
+                # print geoList[i][0] , geoList[i][1]
+                
+                if(float(geoList[i][0]) > float(maxLon)):
+                    maxLon = geoList[i][0]
+                   # print "new maxlon" +  maxLon
+                if(float(geoList[i][0]) < float(minLon)):
+                    minLon = geoList[i][0]
+                  #  print "new minlon" +  minLon
+                if(float(geoList[i][1]) > float(maxLat)):
+                    maxLat = geoList[i][1]
+                    # print "new maxLat" +  maxLat
+                if(float(geoList[i][1]) < float(minLat)):
+                    minLat = geoList[i][1]
+                   # print "new minLat" +  minLat
+            Range.append(maxLon)
+            Range.append(minLon)
+            Range.append(maxLat)
+            Range.append(minLat)
+        return Range
 
-            if (float(geoList[i][0]) > float(maxLon)):
-                maxLon = geoList[i][0]
-            # print "new maxlon" +  maxLon
-            if (float(geoList[i][0]) < float(minLon)):
-                minLon = geoList[i][0]
-            #  print "new minlon" +  minLon
-            if (float(geoList[i][1]) > float(maxLat)):
-                maxLat = geoList[i][1]
-                #print "new maxLat" +  maxLat
-            if (float(geoList[i][1]) < float(minLat)):
-                minLat = geoList[i][1]
-            # print "new minLat" +  minLat
-        Range.append(maxLon)
-        Range.append(minLon)
-        Range.append(maxLat)
-        Range.append(minLat)
-    return Range
-
-
+        
 def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    #print description , NumberOfItems
-    #print Currentpoint
+    # print description , NumberOfItems  
+    # print Currentpoint
     if Range == None:
         my_lat = Currentpoint[1]
         my_lon = Currentpoint[0]
         lon1 = my_lon - dist / abs(math.cos(math.radians(my_lat)) * 69)
         lon2 = my_lon + dist / abs(math.cos(math.radians(my_lat)) * 69)
-        lat1 = my_lat - (dist / 69.0)
+
+        lat1 = my_lat - (dist / 69.0) 
+
         lat2 = my_lat + (dist / 69.0)
     else:
-        #print "in"
+        # print "in"
         lon2 = float(Range[0])
         lon1 = float(Range[1])
         lat2 = float(Range[2])
         lat1 = float(Range[3])
         my_lat = (float(lat1) + float(lat2)) / 2
         my_lon = (float(lon1) + float(lon2)) / 2
-        #print lon1 ,lon2 , lat1 , lat2,  my_lat , my_lon
-    query = None
+        # print lon1 ,lon2 , lat1 , lat2,  my_lat , my_lon
+    query = ""
 
     if description == "STATE":
         if NumberOfItems == None:
-            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-                my_lat
-            ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-                my_lat
-            ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-                my_lon
-            ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between " + str(
-                lat1) + " and " + str(
-                    lat2) + "AND intptlon::numeric between " + str(
-                        lon1) + " and " + str(lon2) + " ORDER BY distance "
+            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance "
         else:
-            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-                my_lat
-            ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-                my_lat
-            ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-                my_lon
-            ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between " + str(
-                lat1
-            ) + " and " + str(lat2) + "AND intptlon::numeric between " + str(
-                lon1) + " and " + str(
-                    lon2) + " ORDER BY distance limit " + str(NumberOfItems)
+            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance limit " + str(NumberOfItems)
     elif description == "COUNTY":
         if NumberOfItems == None:
-            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-                my_lat
-            ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-                my_lat
-            ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-                my_lon
-            ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(
-                lat1) + " and " + str(
-                    lat2) + "AND intptlon::numeric between " + str(
-                        lon1) + " and " + str(lon2) + " ORDER BY distance "
+            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance "
         else:
-            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-                my_lat
-            ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-                my_lat
-            ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-                my_lon
-            ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(
-                lat1
-            ) + " and " + str(lat2) + "AND intptlon::numeric between " + str(
-                lon1) + " and " + str(
-                    lon2) + " ORDER BY distance limit " + str(NumberOfItems)
+            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance limit " + str(NumberOfItems)  
     else:
-        mtfcc = get_mtfcc(description)
-        if mtfcc != "NULL":
-            if NumberOfItems == None:
-                #print "in 2"
-                query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN((" + str(
-                    my_lat
-                ) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(
-                    my_lat
-                ) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(
-                    my_lon
-                ) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'  AND ST_Y(the_geom) between " + str(
-                    lat1) + " and " + str(
-                        lat2) + " AND ST_X(the_geom) between " + str(
-                            lon1) + " and " + str(lon2) + " ORDER BY distance"
-            else:
-                query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN((" + str(
-                    my_lat
-                ) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(
-                    my_lat
-                ) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(
-                    my_lon
-                ) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'  AND ST_Y(the_geom) between " + str(
-                    lat1) + " and " + str(
-                        lat2) + " AND ST_X(the_geom) between " + str(
-                            lon1) + " and " + str(
-                                lon2) + " ORDER BY distance limit " + str(
-                                    NumberOfItems)
-    if (query is not None):
-        #print "in3"
-        c.execute(query)
-        rowcount = c.rowcount
-        #print query
-        maxDistance = 0
-        if rowcount > 0:
+       mtfcc = get_mtfcc(description)
+       if mtfcc != "NULL":
+        if NumberOfItems == None:
+            # print "in 2"
+            query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'  AND ST_Y(the_geom) between " + str(lat1) + " and " + str(lat2) + " AND ST_X(the_geom) between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance"
+        else:
+            query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'  AND ST_Y(the_geom) between " + str(lat1) + " and " + str(lat2) + " AND ST_X(the_geom) between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance limit " + str(NumberOfItems)
+    
+    if query is not "":
+        db_results = query_db(query)
+        
+        if len(db_results) > 0:
+            maxDistance = 0
             lonlatList = []
-            for i in range(rowcount):
-                row = c.fetchone()
+            for result in db_results:
+                # Could this be improved?
                 lonlat = []
-                lonlat.append(row[0])
-                lonlat.append(row[1])
-                lonlat.append(row[2])
-                lonlat.append(row[3])
+                lonlat.append(result[0])
+                lonlat.append(result[1])
+                lonlat.append(result[2])
+                lonlat.append(result[3])
                 lonlatList.append(lonlat)
-            c.close()
-            db.close()
             return lonlatList
-    c.close()
-    db.close()
+    
+    # Either the query returned null or there was no query set
+    # Occasionally this still needs to work if nothing is found. Don't asl
+    #raise Exception("get_kNN_optimized(" + str(description) + ", " + str(Currentpoint) + ", " + str(NumberOfItems) + ", " + str(dist) + ", " + str(Range) + ")\n\tquery: " + str(query))
     return "NULL"
-
-
-#
-
+    
 
 def get_area(dist, description=None):
     if (description == None):
-        if (type(dist) == int or type(dist) == float):
-            return math.pi * dist * dist
-        elif (dist[0] == "POLYGON"):
+        if(type(dist) == int or type(dist) == float):
+          return math.pi * dist * dist
+        
+        elif(dist[0] == "POLYGON"):
             corr = get_coordinates(dist)
-            db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                                "org.postgresql.Driver")
-            c = db.cursor()
+            
             query = "SELECT ST_Area(ST_Transform(the_geom,26986)) FROM (SELECT ST_GeomFromText('POLYGON ((" + corr + "))',4326)) As foo(the_geom)"
-            c.execute(query)
-            rowcount = c.rowcount
-            if rowcount == 1:
-                row = c.fetchone()
-            c.close()
-            db.close()
-            return row[0]
-
+  
     else:
         name = dist
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                            "org.postgresql.Driver")
-        c = db.cursor()
         if description == "STATE":
-            query = "SELECT ST_Area(ST_Transform(the_geom,26986)) FROM tiger_data.state_all where name = '" + name + "'"
+           query = "SELECT ST_Area(ST_Transform(the_geom,26986)) FROM tiger_data.state_all where name = '" + name + "'"
         elif description == "CITY":
-            query = "select ST_Area(ST_Transform(the_geom,26986)) from tiger_data.in_place where name like '" + name + "%'"
-        c.execute(query)
-        rowcount = c.rowcount
-        if rowcount == 1:
-            row = c.fetchone()
-        c.close()
-        db.close()
-        return row[0]
+           query = "select ST_Area(ST_Transform(the_geom,26986)) from tiger_data.in_place where name like '" + name + "%'"
+
+    db_results = query_db(query)
+    
+    if len(db_results) == 1:
+        return db_results[0][0]
+    else:
+        raise Exception("geocode_intersection(" + street1 + ", " + street2 + ") returned NULL\n\tFailed query: " + query)
+
+        return "NULL"     
 
 
 def get_dim(testlist, dim=0):
-    if isinstance(testlist, list):
-        if testlist == []:
-            return dim
-        dim = dim + 1
-        dim = get_dim(testlist[0], dim)
-        return dim
-    else:
-        if dim == 0:
-            return -1
-        else:
-            return dim
+   if isinstance(testlist, list):
+      if testlist == []:
+          return dim
+      dim = dim + 1
+      dim = get_dim(testlist[0], dim)
+      return dim
+   else:
+      if dim == 0:
+          return -1
+      else:
+          return dim
+
 
 
 def get_count(Array):
@@ -1492,283 +1281,185 @@ def get_count(Array):
 
 
 def get_kNN_unoptimized(description, Currentpoint, NumberOfItems):
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    query = None
+    query = ""
     if description == "STATE":
-        query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-            Currentpoint[1]
-        ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-            Currentpoint[1]
-        ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-            Currentpoint[0]
-        ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all ORDER BY distance limit " + str(
-            NumberOfItems)
+            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(Currentpoint[1]) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(Currentpoint[1]) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(Currentpoint[0]) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all ORDER BY distance limit " + str(NumberOfItems)
     elif description == "COUNTY":
-        query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-            Currentpoint[1]
-        ) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(
-            Currentpoint[1]
-        ) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(
-            Currentpoint[0]
-        ) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all ORDER BY distance limit " + str(
-            NumberOfItems)
+            query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(Currentpoint[1]) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(Currentpoint[1]) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(Currentpoint[0]) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all ORDER BY distance limit " + str(NumberOfItems)
     else:
-        mtfcc = get_mtfcc(description)
-        if mtfcc != "NULL":
-            query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(
-                Currentpoint[1]
-            ) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(
-                Currentpoint[1]
-            ) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(
-                Currentpoint[0]
-            ) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "' ORDER BY distance limit " + str(
-                NumberOfItems)
-    if (query is not None):
-        c.execute(query)
-        rowcount = c.rowcount
-        maxDistance = 0
-        if rowcount > 0:
+       mtfcc = get_mtfcc(description)
+       if mtfcc != "NULL":
+            query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(Currentpoint[1]) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(Currentpoint[1]) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(Currentpoint[0]) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "' ORDER BY distance limit " + str(NumberOfItems)
+
+    if query is not "":
+        db_results = query_db(query)
+    
+        if len(db_results) > 0:
+            maxDistance = 0
             lonlatList = []
-            for i in range(rowcount):
-                row = c.fetchone()
+            for result in len(db_results):
+                # Could this be improved?
                 lonlat = []
-                lonlat.append(row[0])
-                lonlat.append(row[1])
-                lonlat.append(row[2])
-                lonlat.append(row[3])
+                lonlat.append(result[0])
+                lonlat.append(result[1])
+                lonlat.append(result[2])
+                lonlat.append(result[3])
                 lonlatList.append(lonlat)
-            c.close()
-            db.close()
             return lonlatList
-    c.close()
-    db.close()
+    
+    # Either the query returned null or there was no query set
+    raise Exception("get_kNN_unoptimized(" + description + ", " + Currentpoint + ", " + NumberOfItems + ", " + dist + ", " + Range + "), query: " + query)
     return "NULL"
-
-
-#get_closest_point Returning N nearest points
-def get_kNN(description, Currentpoint, NumberOfItems):
-    lonlatList = None
-
-    if description == "STATE":
-        lonlatList = get_kNN_optimized(description, Currentpoint,
-                                       NumberOfItems, 100 * NumberOfItems,
-                                       None)
-    else:
-        lonlatList = get_kNN_optimized(description, Currentpoint,
-                                       NumberOfItems, 10 * NumberOfItems, None)
-        if (len(lonlatList) < NumberOfItems):
-            lonlatList = get_kNN_unoptimized(description, Currentpoint,
-                                             NumberOfItems)
-    if (lonlatList is not None):
-        return lonlatList
-
-    return "NULL"
+    
+    
+# get_closest_point Returning N nearest points
+def get_kNN(description, Currentpoint, NumberOfItems): 
+        lonlatList = None
+        
+        if description == "STATE":
+            lonlatList = get_kNN_optimized(description, Currentpoint, NumberOfItems, 100 * NumberOfItems, None)
+        else:
+            lonlatList = get_kNN_optimized(description, Currentpoint, NumberOfItems, 10 * NumberOfItems, None)
+            if(len(lonlatList) < NumberOfItems):
+                lonlatList = get_kNN_unoptimized(description, Currentpoint, NumberOfItems)
+        if(lonlatList is not None):
+            return lonlatList
+               
+        return "NULL"
 
 
 def get_all_in_range(description, Currentpoint, dist=None):
     lonlatList = None
-    if (dist == None and Currentpoint[0] == "POLYGON"):
+    if(dist == None and Currentpoint[0] == "POLYGON"):
         Range = getPolygonRange(Currentpoint)
-        #print Range
+        # print Range
         lonlatList = get_kNN_optimized(description, None, None, None, Range)
-    elif (dist == None and Currentpoint[0][0] == "POLYGON"):
+    elif(dist == None and Currentpoint[0][0] == "POLYGON"):
         count = 0
         lonlatList = []
         for i in range(len(Currentpoint)):
             lonlat = []
             Range = getPolygonRange(Currentpoint[i])
             lonlat = get_kNN_optimized(description, None, None, None, Range)
-            #print lonlat
             lonlatList.append(lonlat)
         return lonlatList
     else:
-        lonlatList = get_kNN_optimized(description, Currentpoint, None, dist,
-                                       None)
-    if (lonlatList is not None):
+        lonlatList = get_kNN_optimized(description, Currentpoint, None, dist, None)
+    if(lonlatList is not None):
         return lonlatList
     return "NULL"
 
-
+    
 def get_mtfcc(description):
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-
     return_value = None
     # print "select mtfcc from tiger_data.mtfcc_Lookup where class_feature = lower('" + description + "')"
     query = "select mtfcc from tiger_data.mtfcc_Lookup where class_feature = lower('" + description + "')"
-
-    c.execute(query)
-    rowcount = c.rowcount
-    if rowcount == 1:
-        row = c.fetchone()
-        return_value = row[0]
-    else:
-        return_value = "NULL"
-    c.close()
-    db.close()
-
+    
+    db_results = query_db(query)
+    
+    if len(db_results) == 1 :
+       return_value = db_results[0][0]
+    else :
+       return_value = "NULL"
+       
     # print return_value
     return return_value
+      
 
-
-def TEST():
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    query = None
-    #query = "SELECT table_name ,column_name FROM information_schema.columns WHERE table_name in (SELECT table_name FROM information_schema.tables )"
-    #query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'tiger_data' "
-    #tiger_data.in_pointlm
-    #query ="select  *  from tiger_data.mtfcc_Lookup where mtfcc like 'H%'"
-    #query ="select  DISTINCT statefp , mtfcc from tiger_data.county_all"
-    # ="select  fullname from tiger_data.in_roads where fullname like 'R%'"
-    #query = "SELECT count(*)  from tiger_data.in_pointlm"
-    query = " SELECT *  FROM tiger_data.county_all where name = 'DeKalb'"
-    #query = "SELECT intptlon, intptlat from tiger_data.county_all"
-    #state_all
-    #query ="SELECT rolname FROM pg_roles"
-    #query ="select column_name, data_type, character_maximum_length from INFORMATION_SCHEMA.COLUMNS where table_schema = 'tiger_data' and table_name = 'county_all'"
-    #query ="CREATE TABLE tiger_data.mtfcc_Lookup (    class_feature varchar(100),    mtfcc      varchar(5)PRIMARY KEY    )"
-    #query = "INSERT INTO tiger_data.mtfcc_Lookup VALUES(lower('Mountain Peak or Summit'),'C3022')"
-    if (query is not None):
-        c.execute(query)
-        rowcount = c.rowcount
-        print rowcount
-        if rowcount > 0:
-            for i in range(rowcount):
-                row = c.fetchone()
-                print row
-
-    c.close()
-    db.close()
-    return "NULL"
-
-
-def TEST2():
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    query = None
-    query = "SELECT  ST_CollectionExtract(the_geom,2), name from tiger_data.in_place limit 1"
-    if (query is not None):
-        c.execute(query)
-        rowcount = c.rowcount
-        print rowcount
-        if rowcount > 0:
-            for i in range(rowcount):
-                row = c.fetchone()
-                print row
-
-    c.close()
-    db.close()
-    return "NULL"
-
-
-#get_closest_point Returning point of ck
+# get_closest_point Returning point of ck
 def get_closest_point(description, Currentpoint, NumberOfItems):
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    if description == "STATE":
-        query = "SELECT intptlon, intptlat from tiger_data.state_all"
-        c.execute(query)
-        rowcount = c.rowcount
-        ClosestElement = None
-        shortest_Distance = None
-        if rowcount > 1:
-
-            for i in range(rowcount):
-                row = c.fetchone()
-                lonlat = []
-                lonlat.append(row[0])
-                lonlat.append(row[1])
-                lonlat.append(str(row[2]))
-                distance = calculate_distance(Currentpoint, lonlat)
-                if shortest_Distance is None:
-                    shortest_Distance = distance
-                    ClosestElement = lonlat
-                if distance < shortest_Distance:
-                    shortest_Distance = distance
-                    ClosestElement = lonlat
-            c.close()
-            db.close()
-            return ClosestElement
-    elif description == "COUNTY":
-        query = "SELECT intptlon, intptlat from tiger_data.county_all"
-        c.execute(query)
-        rowcount = c.rowcount
-        ClosestElement = None
-        shortest_Distance = None
-        if rowcount > 1:
-
-            for i in range(rowcount):
-                row = c.fetchone()
-                lonlat = []
-                lonlat.append(row[0])
-                lonlat.append(row[1])
-                lonlat.append(str(row[2]))
-                distance = calculate_distance(Currentpoint, lonlat)
-                if shortest_Distance is None:
-                    shortest_Distance = distance
-                    ClosestElement = lonlat
-                if distance < shortest_Distance:
-                    shortest_Distance = distance
-                    ClosestElement = lonlat
-            c.close()
-            db.close()
-            return ClosestElement
-    else:
-        mtfcc = get_mtfcc(description)
-        if mtfcc != "NULL":
-            query = "select  ST_X(the_geom), ST_Y(the_geom), fullname  from tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'"
-            c.execute(query)
-            rowcount = c.rowcount
+        if description == "STATE":
+            query = "SELECT intptlon, intptlat from tiger_data.state_all"
+            results = query_db(query)
+            
+            rowcount = len(results)
             ClosestElement = None
             shortest_Distance = None
             if rowcount > 1:
-                for i in range(rowcount):
-                    row = c.fetchone()
-                    lonlat = []
-                    lonlat.append(row[0])
-                    lonlat.append(row[1])
-                    lonlat.append(str(row[2]))
-                    distance = calculate_distance(Currentpoint, lonlat)
-                    if shortest_Distance is None:
-                        shortest_Distance = distance
-                        ClosestElement = lonlat
-                    if distance < shortest_Distance:
-                        shortest_Distance = distance
-                        ClosestElement = lonlat
-                    c.close()
-                    db.close()
+                    
+                    for i in range (rowcount):
+                        row = results[i]
+                        lonlat = []
+                        lonlat.append(row[0])
+                        lonlat.append(row[1])
+                        lonlat.append(str(row[2]))
+                        distance = calculate_distance(Currentpoint, lonlat)
+                        if shortest_Distance is None:
+                            shortest_Distance = distance
+                            ClosestElement = lonlat
+                        if distance < shortest_Distance:
+                            shortest_Distance = distance
+                            ClosestElement = lonlat
                     return ClosestElement
+        elif description == "COUNTY":
+            query = "SELECT intptlon, intptlat from tiger_data.county_all"
+            results = query_db(query)
+            rowcount = len(results)
+            ClosestElement = None
+            shortest_Distance = None
+            if rowcount > 1:
+                    
+                    for i in range (rowcount):
+                        row = results[i]
+                        lonlat = []
+                        lonlat.append(row[0])
+                        lonlat.append(row[1])
+                        lonlat.append(str(row[2]))
+                        distance = calculate_distance(Currentpoint, lonlat)
+                        if shortest_Distance is None:
+                            shortest_Distance = distance
+                            ClosestElement = lonlat
+                        if distance < shortest_Distance:
+                            shortest_Distance = distance
+                            ClosestElement = lonlat
+                    return ClosestElement
+        else :
+            mtfcc = get_mtfcc(description)
+            if mtfcc != "NULL":
+                query = "select  ST_X(the_geom), ST_Y(the_geom), fullname  from tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'"
+                results = query_db(query)
+                rowcount = len(results)
+                ClosestElement = None
+                shortest_Distance = None
+                if rowcount > 1:
+                    for i in range (rowcount):
+                        row = results[i]
+                        lonlat = []
+                        lonlat.append(row[0])
+                        lonlat.append(row[1])
+                        lonlat.append(str(row[2]))
+                        distance = calculate_distance(Currentpoint, lonlat)
+                        if shortest_Distance is None:
+                                shortest_Distance = distance
+                                ClosestElement = lonlat
+                        if distance < shortest_Distance:
+                                shortest_Distance = distance
+                                ClosestElement = lonlat
+                        return ClosestElement
+                                
+        return "NULL"
 
-    return "NULL"
-
-
+        
 def display_Count(ArrayofShape, ArrayofDensity):
-    if (len(ArrayofShape) == len(ArrayofDensity)):
-        for i in range(len(ArrayofShape)):
+    if(len(ArrayofShape) == len(ArrayofDensity)):
+        for i in range (len(ArrayofShape)):
             ArrayofShape[i][0] = "FullPOLYGON"
-            if (ArrayofDensity[i] == 0):
+            if(ArrayofDensity[i] == 0):
                 ArrayofShape[i].insert(1, "#FFFFFF")
             else:
-                ArrayofShape[i].insert(1, get_fill(ArrayofDensity[i]))
+                ArrayofShape[i].insert(1, get_fill(ArrayofDensity[i]))    
             instruction = create_geostring(ArrayofShape[i], 1)
-            #  print ArrayofShape[i][1]
+          #  print ArrayofShape[i][1]
             ExampleServiceImpl.setResultString(instruction)
 
-
+        
 def get_fill(ArrayofDensity):
     lighterBlue = (0xFF - (10 * ArrayofDensity))
-    # print "#0000%x" % lighterBlue
+   # print "#0000%x" % lighterBlue
     return "#0000%x" % lighterBlue
 
-
-#adds shape on map
+        
+# adds shape on map
 def display_shape(shape):
     instruction = create_geostring(shape)
     ExampleServiceImpl.setResultString(instruction)
@@ -1777,63 +1468,66 @@ def display_shape(shape):
     # f.close()
 
 
-#creates a string of geocoordinates: lon1;lat,lon;lat,...
+
+# creates a string of geocoordinates: lon1;lat,lon;lat,...
 def create_geostring(geoList, Fill=0):
-    instruction = ""
-    if (Fill != 0):
-        instruction = geoList[0] + "," + geoList[1] + ","
-        for i in range(2, len(geoList)):
-            instruction += str(geoList[i][0]) + ';' + str(geoList[i][1]) + ','
-    else:
-        instruction = geoList[0] + ","
-        for i in range(1, len(geoList)):
-            instruction += str(geoList[i][0]) + ';' + str(geoList[i][1]) + ','
-    instruction = instruction[:len(instruction) - 1]
-    instruction += "\n"
-    #print instruction
-    return instruction
+        instruction = ""
+        if(Fill != 0):
+            instruction = geoList[0] + "," + geoList[1] + ","
+            for i in range(2, len(geoList)):
+                instruction += str(geoList[i][0]) + ';' + str(geoList[i][1]) + ','
+        else:
+            instruction = geoList[0] + ","
+            for i in range(1, len(geoList)):
+                    instruction += str(geoList[i][0]) + ';' + str(geoList[i][1]) + ','
+        instruction = instruction [: len(instruction) - 1]
+        instruction += "\n"
+        # print instruction
+        return instruction
 
 
-#create a coordinate list [ Coor(lon1 lat1), Coor(lon1 lat1)] in order to compy with the JTS library format
+# create a coordinate list [ Coor(lon1 lat1), Coor(lon1 lat1)] in order to compy with the JTS library format
 def create_coorList(geoList):
-    coords = []
-    for i in range(1, len(geoList)):
-        c = Coordinate(float(geoList[i][0]), float(geoList[i][1]))
-        coords.append(c)
+        coords = []
+        for i in range(1, len(geoList)):
+                c = Coordinate(float(geoList[i][0]), float(geoList[i][1]))
+                coords.append(c)
+                
+        return coords
 
-    return coords
 
 
-#creates a geometry type from a list of coordinates
+
+# creates a geometry type from a list of coordinates
 def create_polygon(coord_list):
-    geomfactx = GeometryFactory()
-    ring = geomfactx.createLinearRing(coord_list)
-    hole = []
-    polygon = geomfactx.createPolygon(ring, hole)
-    #print polygon
-    return polygon
+        geomfactx = GeometryFactory()
+        ring = geomfactx.createLinearRing(coord_list)
+        hole = []
+        polygon = geomfactx.createPolygon(ring, hole)
+        # print polygon
+        return polygon
 
 
-#create a polyline geometry
+# create a polyline geometry
 def create_polyline(coord_list):
-    geomfactx = GeometryFactory()
-    line = geomfactx.createLineString(coord_list)
-    #print line
-    return line
+       geomfactx = GeometryFactory()
+       line = geomfactx.createLineString(coord_list)
+       # print line
+       return line
 
 
 def create_shape(geoList):
+        coord_list = create_coorList(geoList)
+        if geoList[0] == "POLYGON":
+                shape = create_polygon(coord_list)
+                return shape
+        elif geoList[0] == "POLYLINE":
+                # print "polyline"
+                shape = create_polyline(coord_list)
+                return shape
+                
+        return "NULL"
 
-    coord_list = create_coorList(geoList)
-    if geoList[0] == "POLYGON":
-        shape = create_polygon(coord_list)
-        return shape
-    elif geoList[0] == "POLYLINE":
-        #print "polyline"
-        shape = create_polyline(coord_list)
-        return shape
-
-    return "NULL"
 
 
 # returns true if shape1 touches shape2
@@ -1857,8 +1551,7 @@ def disjoint(geoList1, geoList2):
         # if shape1.distance(shape2) == 0.0:
         return True
     return False
-
-
+  
 def crosses(geoList1, geoList2):
     shape1 = create_shape(geoList1)
     shape2 = create_shape(geoList2)
@@ -1869,7 +1562,6 @@ def crosses(geoList1, geoList2):
         return True
     return False
 
-
 def equals(geoList1, geoList2):
     shape1 = create_shape(geoList1)
     shape2 = create_shape(geoList2)
@@ -1879,7 +1571,6 @@ def equals(geoList1, geoList2):
         # if shape1.distance(shape2) == 0.0:
         return True
     return False
-
 
 # returns true if shape1 intersects shape2
 def intersects(geoList1, geoList2):
@@ -1892,6 +1583,7 @@ def intersects(geoList1, geoList2):
         else:
             return True
     return False
+
 
 
 # returns true if shape1 overlaps shape2
@@ -1933,7 +1625,8 @@ def calculate_distance(geo1, geo2):
     return distFrom(geo1[1], geo1[0], geo2[1], geo2[0])
 
 
-#compute the distance between two geo_coordinates using the Great Circle Distance formula GCD
+
+# compute the distance between two geo_coordinates using the Great Circle Distance formula GCD
 def distFrom(lat1, lng1, lat2, lng2):
     earthRadius = 3958.75
     dLat = math.radians(lat2 - lat1)
@@ -1944,8 +1637,7 @@ def distFrom(lat1, lng1, lat2, lng2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return earthRadius * c
 
-
-#calculate the distance commuted
+# calculate the distance commuted
 def caculate_distance_commuted2(commuter):
     result = 0
     # commuter = commuters.get(str(commuterName))[0]
@@ -1962,7 +1654,7 @@ def caculate_distance_commuted(commuterName):
     return round(result, 2)
 
 
-#calculate the distance commuted
+# calculate the distance commuted
 def display_distance(commuterName):
     return caculate_distance_commuted(commuterName)
 
@@ -1978,7 +1670,7 @@ def get_road_names(point):
     return names
 
 
-#move to the next intersection within specified distance
+# move to the next intersection within specified distance
 def move_to_next_intersection(commuterName):
     commuter = commuters.get(str(commuterName))[0]
     currentPoint = commuters.get(str(commuterName))[1]
@@ -2013,22 +1705,18 @@ def distance_all_roads_in(geo1, geo2, geo3, geo4):
 
     query = "select ST_AsText(ST_Intersection(T1.geom, ST_Polygon(ST_GeomFromText('" + lineString + "'),4269))) from (select the_geom geom from tiger_data.in_roads r where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)) T1"
 
-    #print query
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+    # print query
+    db_results = query_db(query)
+    
+    if len(db_results) == 0:
+        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"     
+    
 
     roads = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-
-    c.close()
-    db.close()
+    for result in db_results:
+        roads.append(str(result[0]))
 
     sum = 0.0
     for road in roads:
@@ -2064,22 +1752,18 @@ def draw_all_roads_in(geo1, geo2, geo3, geo4):
 
     query = "select ST_AsText(ST_Intersection(T1.geom, ST_Polygon(ST_GeomFromText('" + lineString + "'),4269)))  from (select the_geom geom from tiger_data.in_roads r where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)) T1"
 
-    #print query
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+    # print query
+    db_results = query_db(query)
+    
+    if len(db_results) == 0:
+        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"
+    
 
     roads = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-
-    c.close()
-    db.close()
+    for result in db_results:
+        roads.append(str(result[0]))
 
     # print roads
 
@@ -2142,33 +1826,25 @@ def findAllIntersectionRoads2(testCommuter):
 
     # print query
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    try:
-        c.execute(query)
-    except:
-        print lineString
-        c.close()
-        db.close()
-        return None
-    rowcount = c.rowcount
 
+    db_results = query_db(query)
+    
+    if len(db_results) == 0:
+        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"
+    
     roads = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
+    for result in db_results:
+        roads.append(str(result[0]))
+    
 
-    c.close()
-    db.close()
-
-    # print roads
 
     return roads
 
 
 def findAllIntersectionRoads(currentPoint, eps):
+
     currentSquare = [
         compute_next_point(currentPoint[0], currentPoint[1], 0, eps),
         compute_next_point(currentPoint[0], currentPoint[1], 90, eps),
@@ -2183,23 +1859,20 @@ def findAllIntersectionRoads(currentPoint, eps):
                                 str(currentSquare[0][0]) + " " + str(currentSquare[0][1]) + ")"
     # print lineString
 
+                            
     query = "select distinct fullname from tiger_data.in_roads r where st_intersects(ST_Polygon(ST_GeomFromText('" + lineString + "'),4269),r.the_geom)"
     # print query
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
+    
+    db_results = query_db(query)
+    
+    if len(db_results) == 0:
+        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"
+    
     roads = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-
-    c.close()
-    db.close()
+    for result in db_results:
+        roads.append(str(result[0]))
 
     return roads
 
@@ -2208,9 +1881,9 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
     fraction = get_current_fraction_on_the_street(lon, lat, street, ZIP)
 
     # print "fraction, lon, lat = ",
-    #print fraction
-    #print lon
-    #print lat
+    # print fraction
+    # print lon
+    # print lat
 
     inter1 = get_all_intersection_name_and_point_on_the_road_with_fraction(
         0, fraction, street, ZIP)
@@ -2240,7 +1913,6 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
     minDist2 = 10000
     st2 = []
     for item in inter2:
-
         point = item[1]
         point = point[6:len(point) - 1].split(" ")
 
@@ -2254,11 +1926,11 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
                 minDist2 = dist
                 st2 = [(str(item[0])), point]
 
-        #print st1
-        #print inter1
-        #print "#$"
-        #print st2
-        #print inter2
+        # print st1
+        # print inter1
+        # print "#$"
+        # print st2
+        # print inter2
 
     # br1 = calculate_initial_compass_bearing((float(st1[1][0]), float(st1[1][0])), (float(lat), float(lon)))
     # br2 = calculate_initial_compass_bearing((float(st2[1][0]), float(st2[1][0])), (float(lat), float(lon)))
@@ -2292,28 +1964,28 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
         fr2 = fr1
         fr1 = temp
 
-    query = "select ST_AsText(ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fr1) + ", " + str(fr2) + ")) line from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b  where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1"
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
+    query = "select ST_AsText(ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fr1) + ", " + str(fr2) + ")) line\
+            from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  \
+                (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b            \
+            where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1"
 
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
+    db_results = query_db(query)
+    
+    if len(db_results) == 0:
+        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"
+   
     ret = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        ret.append(str(st[0]))
+    for result in db_results:
+        ret.append(str(result[0]))
 
-    #try:
+    # try:
     if len(ret) == 0:
         return None
 
     line = str(ret[0])
-
-    c.close()
-    db.close()
 
     if line[0:5] == "POINT":
         return None
@@ -2331,89 +2003,106 @@ def get_total_length_of_street(street, ZIP):
     ) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
 
     # print query
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+    db_results = query_db(query)
+    
+    if len(db_results) == 0:
+        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"     
+    
 
     ret = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        ret.append(str(st[0]))
+    for result in db_results:
+        ret.append(str(result[0]))
 
-    #try:
+    # try:
     if len(ret) == 0:
         return None
 
     totalLength = float(ret[0])
 
-    c.close()
-    db.close()
-
     return totalLength
 
 
 def get_current_fraction_on_the_street(lon, lat, street, ZIP):
-    query = "select ST_Line_Locate_Point( (select ST_LineMerge(st_geometryn(a.the_geom,1)) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1),  ST_GeomFromText('POINT (" + str(lon) + " " + str(lat) + ")',4269))"
+
+    query = "select ST_Line_Locate_Point(\
+                (select ST_LineMerge(st_geometryn(a.the_geom,1)) \
+                from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,\
+                (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b \
+                where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1), \
+            ST_GeomFromText('POINT (" + str(lon) + " " + str(lat) + ")',4269))"
     
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
+    # print query
+    
+    db_results = query_db(query)
+    
+    if len(db_results) == 0:
+        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"
+    
     ret = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        ret.append(str(st[0]))
+    for result in db_results:
+        ret.append(str(result[0]))
 
     if len(ret) == 0:
         return None
 
     fraction = float(ret[0])
 
-    c.close()
-    db.close()
-
     return fraction
 
 
 def get_all_intersection_name_and_point_on_the_road(street, ZIP):
-    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point from ( select ST_LineMerge(a.the_geom) geom  from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b  where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1, ( select ST_LineMerge(c.the_geom) geom, fullname from (select the_geom, fullname from tiger_data.in_roads) as c, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as d   where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2  where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"
+    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point from\
+            ( select ST_LineMerge(a.the_geom) geom\
+                from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  \
+                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b            \
+                where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,\
+            ( select ST_LineMerge(c.the_geom) geom, fullname \
+                from (select the_geom, fullname from tiger_data.in_roads) as c,  \
+                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as d   \
+                where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2\
+        where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"\
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
+    db_results = query_db(query)
+    
+    if len(db_results) == 0:
+        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"
+    
     ret = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        ret.append((str(st[0]), str(st[1])))
-
+    for result in db_results:
+        ret.append((str(result[0]), str(result[1])))
     return ret
 
 
 def get_all_intersection_name_and_point_on_the_road_with_fraction(fractionFrom, fractionTo, street, ZIP):
-    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point   from ( select ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fractionFrom) + ", " + str(fractionTo) + ") geom    from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b   where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,  ( select ST_LineMerge(c.the_geom) geom, fullname from (select the_geom, fullname from tiger_data.in_roads) as c, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as d where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2 where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"
+    query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point\
+                from \
+                ( select ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fractionFrom) + ", " + str(fractionTo) + ") geom\
+                    from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  \
+                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b            \
+                    where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,\
+                ( select ST_LineMerge(c.the_geom) geom, fullname \
+                    from (select the_geom, fullname from tiger_data.in_roads) as c,  \
+                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as d   \
+                    where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2\
+            where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'";
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
+    db_results = query_db(query)
+    
+    if len(db_results) == 0:
+        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        return "NULL"
+    
     ret = []
 
-    for i in range(rowcount):
-        st = c.fetchone()
-        ret.append((str(st[0]), str(st[1])))
+    for result in db_results:
+        ret.append((str(result[0]), str(result[1])))
+
 
     return ret
 
@@ -2424,7 +2113,6 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
 
     if debug:
         print "total length : " + str(totalLength)
-
     startFraction = get_current_fraction_on_the_street(lon, lat, street, ZIP)
 
     if debug:
@@ -2454,19 +2142,18 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         nextFraction2 = 1
 
     if 0 <= nextFraction1 and nextFraction1 <= 1:
-        query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b   where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(
-            nextFraction1) + "))"
+        query = "select ST_AsText(ST_Line_Interpolate_Point(\
+            (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,\
+            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b \
+            where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction1) + "))"
         # print query
-        db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                            "org.postgresql.Driver")
-        c = db.cursor()
-        c.execute(query)
-        rowcount = c.rowcount
-
+        results = query_db(query)
+        rowcount = len(results)
+        
         ret = []
 
         for i in range(rowcount):
-            st = c.fetchone()
+            st = results[i]
             ret.append(str(st[0]))
 
         nextPoint1 = ret[0][6:len(ret[0]) - 1].split(" ")
@@ -2475,28 +2162,22 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         #     print nextPoint1
 
     if 0 <= nextFraction2 and nextFraction2 <= 1:
-        query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(
-            nextFraction2) + "))"
+        query = "select ST_AsText(ST_Line_Interpolate_Point(\
+            (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,\
+            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b \
+            where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction2) + "))"
 
-        # db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-        # c = db.cursor()
-        c.execute(query)
-        rowcount = c.rowcount
-
+        
+        results = query_db(query)
+        rowcount = len(results)
         ret = []
 
         for i in range(rowcount):
-            st = c.fetchone()
+            st = results[i]
             ret.append(str(st[0]))
-
+        
         nextPoint2 = ret[0][6:len(ret[0]) - 1].split(" ")
-
-        # if debug:
-        #     print "Have ONE!!!"
-        #     print nextPoint2
-
-    c.close()
-    db.close()
+        
 
     nextPoint = [0, (), [], []]
     try:
@@ -2506,12 +2187,8 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
             nextPoint[0] = 0
 
         if nextPoint1 != "" and nextPoint2 != "":
-            bearing1 = calculate_initial_compass_bearing(
-                (float(lon), float(lat)),
-                (float(nextPoint1[0]), float(nextPoint1[1])))
-            bearing2 = calculate_initial_compass_bearing(
-                (float(lon), float(lat)),
-                (float(nextPoint2[0]), float(nextPoint2[1])))
+            bearing1 = calculate_initial_compass_bearing((float(lon), float(lat)), (float(nextPoint1[0]), float(nextPoint1[1]))) 
+            bearing2 = calculate_initial_compass_bearing((float(lon), float(lat)), (float(nextPoint2[0]), float(nextPoint2[1])))
 
             if debug:
                 print "Have two : "
@@ -2586,11 +2263,9 @@ def move_distance(commuterName, distance, direction=None):
             bearing = float(direction)
         else:
             bearing = orient_to(commuterName, direction)
-
-    #get the previous commuter geo-coordinate
-
-    lonlat = move_along_street(currentPoint[0], currentPoint[1], street, ZIP,
-                               bearing, distance)
+    
+    # get the previous commuter geo-coordinate    
+    lonlat = move_along_street(currentPoint[0], currentPoint[1], street, ZIP, bearing, distance)
 
     if lonlat == None:
         return None
@@ -2606,7 +2281,6 @@ def move_distance(commuterName, distance, direction=None):
         return False
 
     pnts = []
-
     if lonlat[3][0] != 0.0:
         lonlat = lonlat[1]
         pnts = get_lines_between_two_points(currentPoint, lonlat, street, ZIP)
@@ -2637,6 +2311,7 @@ def move_distance(commuterName, distance, direction=None):
         float(commuter[len(commuter) - 1][0]),
         float(commuter[len(commuter) - 1][1])
     ]
+
     delIndex = 0
     for i in pnts:
         if lastPoint[0] == float(i[0]) and lastPoint[1] == float(i[1]):
@@ -2663,8 +2338,7 @@ def move_distance(commuterName, distance, direction=None):
     for i in range(len(pnts)):
         commuter.append((float(pnts[i][0]), float(pnts[i][1])))
 
-    if commuter[len(commuter) - 1][0] != lonlat[0] and commuter[
-            len(commuter) - 1][1] != lonlat[1]:
+    if commuter[len(commuter) - 1][0] != lonlat[0] and commuter[len(commuter) - 1][1] != lonlat[1]:
         commuter.append((float(lonlat[0]), float(lonlat[1])))
         if debug:
             print "inserted"
@@ -2687,43 +2361,37 @@ def move_distance(commuterName, distance, direction=None):
     return lonlat
 
 
-#verifies whether or not the point is on the street
+
+# verifies whether or not the point is on the street 
 def verify_street_point(street, nextLonLat):
 
-    query = "select ST_asText(ST_StartPoint(ST_GeometryN(ST_Multi(the_geom),1))) , ST_asText(ST_EndPoint(ST_GeometryN(ST_Multi(the_geom),1))) from tiger_data.in_roads where fullname = '" + street + "'"
+        query = "select ST_asText(ST_StartPoint(ST_GeometryN(ST_Multi(the_geom),1))) , ST_asText(ST_EndPoint(ST_GeometryN(ST_Multi(the_geom),1))) from tiger_data.in_roads where fullname = '" + street + "'"
+           
+        result - query_db(query)
+        rowcount = len(result)
 
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+        lines_table = []
+        
+        if rowcount > 1:
+                for i in range (rowcount):
+                        line = []
+                        row = result[i]
+                        start = extract_point_v2(row[0])
+                        end = extract_point_v2(row[1])
+                        line.append(start)
+                        line.append(end)
+                        lines_table.append(line)
 
-    lines_table = []
-
-    if rowcount > 1:
-        for i in range(rowcount):
-            line = []
-            row = c.fetchone()
-            start = extract_point_v2(row[0])
-            end = extract_point_v2(row[1])
-            line.append(start)
-            line.append(end)
-            lines_table.append(line)
-
-    c.close()
-    db.close()
-
-    for i in range(len(lines_table)):
-        pt1 = lines_table[i][0]
-        pt2 = lines_table[i][1]
-
+        for i in range(len(lines_table)):
+                pt1 = lines_table[i][0]
+                pt2 = lines_table[i][1]
         if test_line_point(pt1, pt2, nextLonLat):
             return True
-    return False
+        
+        return False
 
 
-#test whether the point on the line represented by start and end
+# test whether the point on the line represented by start and end       
 def test_line_point(start, end, pt):
 
     lon1, lat1 = polarToCartesian(start)
@@ -2736,7 +2404,6 @@ def test_line_point(start, end, pt):
     if acceptPoint(start, end, projected_point, dist):
         return True
     return False
-
 
 #compute the next point based on the current lonlat, orientation (bearing) and distance
 def compute_next_point(lon1, lat1, brng, dist):
@@ -2761,7 +2428,6 @@ def compute_next_point(lon1, lat1, brng, dist):
 
     return [lon2, lat2]
 
-
 def get_current_point(commuterName):
     return commuters.get(str(commuterName))[1]
 
@@ -2782,12 +2448,11 @@ def turn_to(commuterName, roadName, direction=None):
     commuters.get(str(commuterName))[4].append(tmp)
 
     global ZIP
-
     if direction == None:
         commuters.get(str(commuterName))[2] = str(roadName)
 
         nextPoint = move_along_street(commuters.get(str(commuterName))[1][0], commuters.get(str(commuterName))[1][1], str(roadName)\
-                            ,ZIP, commuters.get(str(commuterName))[3], 0.01)
+                            , ZIP, commuters.get(str(commuterName))[3], 0.01)
         # print "123"
         # print nextPoint
         # print "456"
@@ -2820,29 +2485,28 @@ def turn_to(commuterName, roadName, direction=None):
         # print "3"
 
 
-#turn right will increase the bearing by 90 degrees
+# turn right will increase the bearing by 90 degrees
 def turn_right(street, commuter):
     global bearing
 
     previous_bearing = bearing
     bearing = (bearing + 90) % 360
-
-    #update commuter if needed
-    #in the case of Move_distance, the specified user distance might be a little bit
-    #after the turn, we modify the commuter points according to the street
-    #specified in the turn
-
+    # update commuter if needed
+    # in the case of Move_distance, the specified user distance might be a little bit
+    # after the turn, we modify the commuter points according to the street
+    # specified in the turn
     update_commuter_turn(street, bearing, previous_bearing, commuter)
 
 
-#when a commuter makes a turn after a move_distace, it is expected that the distance will put the
-#commuter after the turn which result in incorrect path. we remove the extra points
+# when a commuter makes a turn after a move_distace, it is expected that the distance will put the 
+# commuter after the turn which result in incorrect path. we remove the extra points    
 def update_commuter_turn(street, bearing, previous_bearing, commuter):
 
     global last_move
     if last_move == True:
         last_move = False
         return
+
 
     last_point = commuter[len(commuter) - 1]
     LON = str(last_point[0])
@@ -2865,17 +2529,19 @@ def update_commuter_turn(street, bearing, previous_bearing, commuter):
             return
 
         new_point = geocode_intersection(street, street2)
-        #if street == "Oakhurst Dr":
-        #print query
-        #print new_point
-
-        #if street == "Stadium Ave":
-        #print query
-        #print new_point
-
+        # if street == "Oakhurst Dr":
+            # print query
+            # print new_point
+            
+        # if street == "Stadium Ave":
+            # print query
+            # print new_point
+                
         temp = compute_next_point(new_point[0], new_point[1], bearing, 0.25)
 
         opposite_bearing = (bearing + 180) % 360
+
+        
 
         temp2 = compute_next_point(new_point[0], new_point[1],
                                    opposite_bearing, 0.25)
@@ -2901,22 +2567,19 @@ def update_commuter_turn(street, bearing, previous_bearing, commuter):
                 break
         commuter.append(new_point)
 
-    c.close()
-    db.close()
 
-
-#turn left will decrease the bearing by 90 degrees
+# turn left will decrease the bearing by 90 degrees
 def turn_left(street, commuter):
-    global bearing
-
-    previous_bearing = bearing
-    if bearing == 0:
-        bearing = 270
-    else:
-        bearing = (bearing - 90) % 360
-
-    #print street, bearing
-    update_commuter_turn(street, bearing, previous_bearing, commuter)
+        global bearing
+        
+        previous_bearing = bearing
+        if bearing == 0:
+                bearing = 270
+        else:
+                bearing = (bearing - 90) % 360
+                
+        # print street, bearing
+        update_commuter_turn(street, bearing, previous_bearing, commuter)
 
 
 def isReal(txt):
@@ -2975,9 +2638,7 @@ def orient_to(commuterName, direction):
 def turn_angle(angle):
     global bearing
     bearing = (bearing + angle) % 360
-
-
-#finds the distance (using the great circle distance) between two addresses or geo-coordinates
+# finds the distance (using the great circle distance) between two addresses or geo-coordinates
 def compute_distance(add1, add2):
     if type(add1) is str and type(add2) is str:
         geo1 = geocode_address(add1)
@@ -3025,20 +2686,21 @@ def projectedDistance(a, b, c):
     return distance
 
 
-#returns the perpendicular projected point on line (endPoint1, endPoint2)
+# returns the perpendicular projected point on line (endPoint1, endPoint2)
 def projectPointToLine(endPoint1, endPoint2, toProject):
-    c1 = Coordinate(endPoint1[0], endPoint1[1])
-    c2 = Coordinate(endPoint2[0], endPoint2[1])
-    p = Coordinate(toProject[0], toProject[1])
-    segment = LineSegment(c1, c2)
+        c1 = Coordinate(endPoint1[0], endPoint1[1])
+        c2 = Coordinate(endPoint2[0], endPoint2[1])
+        p = Coordinate(toProject[0], toProject[1])
+        segment = LineSegment(c1, c2)
 
-    pt = segment.project(p)
+        pt = segment.project(p)
 
-    return pt.x, pt.y
+        return pt.x, pt.y
 
 
-#checks if the point is within 0.005 miles from the line (e.g., road), also checks that the point is located within the
-#endpoints of the line
+
+# checks if the point is within 0.005 miles from the line (e.g., road), also checks that the point is located within the
+# endpoints of the line
 def acceptPoint(endPoint1, endPoint2, p, distance):
 
     env1 = Coordinate(endPoint1[0], endPoint1[1])
@@ -3054,7 +2716,8 @@ def acceptPoint(endPoint1, endPoint2, p, distance):
         return False
 
 
-#given the start and end of a line, test whether the intersection point falls inside the interval
+
+# given the start and end of a line, test whether the intersection point falls inside the interval
 def test_intersection_points(start, end, lonlat_list):
     result = []
     ln1, lt1 = polarToCartesian(start)
@@ -3076,7 +2739,6 @@ def calculate_initial_compass_bearing(pointA, pointB):
 
     #if (type(pointA) != tuple) or (type(pointB) != tuple):
     #raise TypeError("Only tuples are supported as arguments")
-
     lat1 = math.radians(pointA[1])
     lat2 = math.radians(pointB[1])
 
@@ -3110,45 +2772,7 @@ def cartesianToPolar(x, y):
     return lon, lat
 
 
-def test_query():
-    query = "select ST_asText(ST_Simplify(the_geom, 0.05)) from tiger_data.in_zcta5 where zcta5ce = '47906'"
-    #print query
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-        c.close()
-        db.close()
-
-    return extract_polygon(str(row))
-
-
-def test_query2():
-    query = "select ST_asText(the_geom) from tiger_data.in_roads where linearid = '110168395940'"
-
-    #print query
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-        c.close()
-        db.close()
-
-        print str(row)
-        return extract_polyline(str(row))
-
-
-#forms a point on EWKT format: 'POINT(lon lat)'
+# forms a point on EWKT format: 'POINT(lon lat)'
 def get_EWKT(lonlatList):
     return "'POINT (" + str(lonlatList[0]) + " " + str(lonlatList[1]) + ")'"
 
@@ -3159,7 +2783,6 @@ def cross_product(a, b, c):
     else:
         return -1
 
-
 def subtract_bearing(brn, amount):
     if (brn - amount) >= 0:
         return brn - amount
@@ -3167,172 +2790,15 @@ def subtract_bearing(brn, amount):
         return brn - amount + 359
 
 
-#Given a distance north, return the change in latitude."
+
+# Given a distance north, return the change in latitude."
 def change_in_latitude(miles):
     return (miles / earth_radius) * radians_to_degrees
 
 
-#Given a latitude and a distance west, return the change in longitude.
+# Given a latitude and a distance west, return the change in longitude.
 def change_in_longitude(latitude, miles):
 
     # Find the radius of a circle around the earth at given latitude.
     r = earth_radius * math.cos(latitude * degrees_to_radians)
     return (miles / r) * radians_to_degrees
-
-
-def test_query3(road, area_code, brng, lonlatList, distance):
-
-    dist_degrees = change_in_latitude(distance)
-    point_EWKT = get_EWKT(lonlatList)
-
-    query = "select ST_asText( tiger_data.point_at_distance ('"+ road + "' , '" + area_code +"', " + str(brng) +  "," + point_EWKT + "," + str(dist_degrees) +"))"
-
-    # print query
-
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    if rowcount == 1:
-        row = c.fetchone()
-        c.close()
-        db.close()
-        return extract_line_string(str(row))
-
-
-def call():
-    query = "select ST_AsText(ST_LineMerge(a.the_geom)) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b   where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))"
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-
-    print roads
-
-    c.close()
-    db.close()
-
-
-def call2():
-    query = "select ST_AsText(ST_LineMerge(a.the_geom))   from (select the_geom from tiger_data.in_roads where fullname = 'N College Ave') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '46220') as b  where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
-
-    # query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) \
-    #         from (select the_geom from tiger_data.in_roads where fullname = 'Sheridan Rd') as a,\
-    #         (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b \
-    #         where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1"
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-    print "what "
-    print roads
-    return None
-
-    query = "select (ST_Length(ST_Transform(ST_LineMerge(a.the_geom),2877))/5280) from (select the_geom from tiger_data.in_roads where fullname = 'Sheridan Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b  where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))"
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-
-    # print roads
-
-    totalLength = float(roads[0])
-    print "total length : " + str(totalLength)
-
-    query = "select ST_Line_Locate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b  where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), ST_GeomFromText('POINT (-86.920866 40.439954)',4269))"
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-
-    startFraction = float(roads[0])
-
-    print "startFraction " + str(startFraction)
-
-    distance = 0.1
-
-    distanceFraction = distance / totalLength
-
-    nextFraction1 = startFraction - distanceFraction
-    nextFraction2 = startFraction + distanceFraction
-    print nextFraction1
-    print nextFraction2
-
-
-    query = "select ST_AsText(ST_Line_Interpolate_Point( (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = 'Hillcrest Rd') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '47906') as b   where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001))), " + str(nextFraction1) + "))"
-
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
-
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
-
-    roads = []
-
-    for i in range(rowcount):
-        st = c.fetchone()
-        roads.append(str(st[0]))
-
-    print roads
-
-    c.close()
-    db.close()
-
-
-def test_query4():
-    #query = "select ST_asText(the_geom) from tiger_data.in_roads where linearid = '110168395940'"
-
-    query = "select ST_asText(a.the_geom) from (select linearid, the_geom from tiger_data.in_primaryroads where fullname = 'I- 65') as a, (select the_geom from tiger_data.state_all where name = 'Indiana') as b where ST_within(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
-
-    #print query
-    #db = zxJDBC.connect(CONNECT_STRING, "postgres", "", "org.postgresql.Driver")
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-
-    c = db.cursor()
-    c.execute(query)
-
-    rowcount = c.rowcount
-    if rowcount > 1:
-        lonlatList = []
-        for i in range(rowcount):
-            row = c.fetchone()
-            lonlatList.append(extract_polyline(str(row)))
-        c.close()
-        db.close()
-        return lonlatList

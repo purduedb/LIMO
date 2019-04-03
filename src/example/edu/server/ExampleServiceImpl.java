@@ -103,7 +103,7 @@ public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleS
 			while (line != null) {
 				
 				sb.append(line);
-				sb.append(System.getProperty("line.separator"));
+				sb.append("\n");
 				line = br.readLine();
 				lineCnt++;
 			}
