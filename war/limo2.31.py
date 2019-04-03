@@ -2514,16 +2514,12 @@ def update_commuter_turn(street, bearing, previous_bearing, commuter):
 
     query = "select * from tiger_data.street_at_point(ST_SetSRID(ST_Point(" + LON + ", " + LAT + "),4269))"
 
-    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD,
-                        "org.postgresql.Driver")
-    c = db.cursor()
-    c.execute(query)
-    rowcount = c.rowcount
+    result = query_db(query)
+    
+    if len(result):
 
-    if rowcount == 1:
-
-        row = c.fetchone()
-        street2 = str(row[0])
+        
+        street2 = str(result[0][0])
 
         if street == street2:
             return
