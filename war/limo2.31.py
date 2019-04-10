@@ -461,21 +461,6 @@ def start_at(commuterName, address = None, direction = 0):
     return geolocation
     # commuter = [set of Points / current point / current st. name / direction]
 
-def test():
-    return "say something"
-
-
-def setCity(c):
-    CITY = c
-
-
-def setState(s):
-    STATE = s
-
-
-def setZipCode(z):
-    ZIP = z
-
 
 # prompts the user to input the address
 def read_address(street, city, state, zipcode):
@@ -596,25 +581,8 @@ def extract_point_v2(geo_output):
     return lonLat
 
 
-# extract polygon points from geo_output string using ST_AsText(ST_Simplify(the_geom, 0.05)): (u'MULTIPOLYGON((( geo_point1, ... )))',)
-def extract_polygon(geo_output):
-
-    end = geo_output.find(')')
-    geo_output = geo_output[18:end]
-
-    geoList = geo_output.split(',')
-    outputList = []
-    outputList.append("POLYGON")
-    for i in range(len(geoList)):
-        geoSubList = geoList[i].split(" ")
-        outputList.append(geoSubList)
-
-    return outputList
-
-
-
 # extract polygon points from geo_output string using ST_AsText(ST_Simplify(the_geom, 0.05)): (u'POLYGON((( geo_point1, ... )))',)
-def extract_polygon_v2(geo_output):
+def extract_polygon(geo_output):
 
     end = geo_output.find(')')
     geo_output = geo_output[12:end]
@@ -946,7 +914,7 @@ def get(name, description, geomType):
                 
                 # Return the first result. Behavior copied from old code. Is there a better way to do this?
                 # Check if anything returned?
-                return extract_polygon_v2(str(db_results[0]))
+                return extract_polygon(str(db_results[0]))
                 
         # If a geopoint/lonlat was requested
         elif geomType == "POINT":
@@ -1010,7 +978,7 @@ def get_all(description, geomType):
             if len(db_results) > 1:
                 # convert each item in the result list to a polygon
                 for i in range(len(db_results)):
-                    db_results[i] = extract_polygon_v2(str(db_results[i]))
+                    db_results[i] = extract_polygon(str(db_results[i]))
                
                 return db_results
             
@@ -2604,6 +2572,7 @@ def orient_to(commuterName, direction):
 def turn_angle(angle):
     global bearing
     bearing = (bearing + angle) % 360
+    
 # finds the distance (using the great circle distance) between two addresses or geo-coordinates
 def compute_distance(add1, add2):
     if type(add1) is str and type(add2) is str:
