@@ -67,7 +67,6 @@ def query_db(query):
     
     return toreturn
 
-
 # Address class. Created using read_address(...)
 # could this be better as a dict or another structure?
 class address:
@@ -129,7 +128,6 @@ debug = 0
 
 # Called by itself and cover_all_roads_within only. waiting to convert to commuter obj
 def find_all_roads_within(commuter, currentLength, maxLength, coveredRoads):#, previousCommuterName):
-
     
     # get how many roads / ways I have
     point = commuter.geolocation
@@ -1120,7 +1118,6 @@ def getPolygonRange (geoList):
             Range.append(minLat)
         return Range
 
-
 # Get k number of nearest neighbors        
 def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
     # get_kNN_optimized(description,Currentpoint,NumberOfItems,dist,Range):
@@ -1171,7 +1168,7 @@ def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
             query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance "
         else:
             query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance limit " + str(NumberOfItems)  
-    
+
    # Check for mtfcc code for non stat/county 
     else:
        mtfcc = get_mtfcc(description)
@@ -1637,9 +1634,8 @@ def caculate_distance_commuted(commuterName):
     return round(result, 2)
 
 #calculate the distance commuted
-
 def display_distance(commuterName):
-    return caculate_distance_commuted(commuterName)
+        return caculate_distance_commuted(commuterName)
 
 def get_road_names(point):
     if len(point) != 2:
@@ -2408,7 +2404,6 @@ def compute_next_point(lon1, lat1, brng, dist):
 def get_current_point(commuterName):
     return commuterName.geolocation
 
-
 def turn_to(commuterName, roadName, direction = None):
     # "Re-orient Commuter towards a new direction, 
     # e.g., right or left when direction is not empty and Re-orient Commuter towards a road when no direction is given."
@@ -2418,12 +2413,9 @@ def turn_to(commuterName, roadName, direction = None):
     # roadName: String representation of a nearby road (how close in nearby?)
     # direction: Typically string representation of a cardinal direction (Only cardinal?)
     
-
     commuterName.flushlog(self)
     
-
     # If direction was not specified
-
     if direction == None:
         # Set current street to roadName argument
         commuterName.street = str(roadName)
@@ -2565,7 +2557,6 @@ def isReal(txt):
     except ValueError:
         return False
 
-
 # Initialize the bearing, needed for relative instructions
 def orient_to(commuterName, direction):
         # Orient_to(commuterName, direction)
@@ -2581,6 +2572,7 @@ def orient_to(commuterName, direction):
             return -1;
         # Verify the direction is valid
         if not (direction in ["NORTH","EAST","SOUTH","WEST","LEFT","RIGHT"] or not (isReal(direction) and direction > 0 and direction < 360)):
+
             return -1
         # Start with a bearing of due north
         bearing = 0

@@ -6,8 +6,6 @@
 /war/gwtmaps
 /gwt-unitCache
 
-
-
 # All below are sourced from https://github.com/github/gitignore
 
 ##############
@@ -128,6 +126,7 @@ htmlcov/
 .coverage.*
 .cache
 nosetests.xml
+coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
@@ -383,7 +382,6 @@ tags
 # Intellij IDEA
 ###############
 .idea
-
 
 
 
