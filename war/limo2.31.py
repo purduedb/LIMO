@@ -14,6 +14,7 @@ import math
 from copy import deepcopy
 from org.w3c.dom import NameList
 import new
+from org.apache.http.conn.ssl import AllowAllHostnameVerifier
 
 earth_radius = 3960.0
 degrees_to_radians = math.pi / 180.0
@@ -125,18 +126,11 @@ class commuter:
 # commuters.get(commuterName)[4] -> array log of all previous geolocations
 commuters = dict()
 debug = 0
-depth = 0
 
+# Called by itself and cover_all_roads_within only. waiting to convert to commuter obj
+def find_all_roads_within(commuter, currentLength, maxLength, coveredRoads):#, previousCommuterName):
 
-def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):  # , previousCommuterName):
-    global depth
-    print "==================================================== DEPTH ",
-    print depth
-    depth += 1
-
-    # if depth > 1:
-    #     return 0
-
+    
     # get how many roads / ways I have
     point = commuter.geolocation
     roadNames = get_road_names(point)
@@ -362,6 +356,7 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
                 show_on_map(lastCommuterName)
 
 
+# Not called by any other methods or provided in LIMO documentation. Waiting to convert to commuter obj
 def cover_all_roads_within(commuterName, length):
     coveredRoads = []
     # get current road name based on the point
@@ -376,6 +371,7 @@ def cover_all_roads_within(commuterName, length):
     find_all_roads_within(str(commuterName) + "_1", 0, length, coveredRoads)  # , str(commuterName))
 
 
+# Called by find_all_roads_within method only. Holding off conversion to commuter obj
 def rollback_commuter(commuterName):
     commuters.get(str(commuterName))[0] = commuters.get(str(commuterName))[4][0]
     commuters.get(str(commuterName))[1] = commuters.get(str(commuterName))[4][1]
@@ -387,19 +383,16 @@ def start_at(commuterName, address = None, direction = 0):
     # commuterName: String name for the commuter we are about to create
     # address: csv representation of the address. Typically input from read_address(). Default value: none
     # direction: representation of direction. use strings "NORTH", "EAST", "SOUTH", "WEST", etc
-
-    # recieve global `commuters` so we can modify it
-    global commuters
-
-    # is the address an address or an intersection of roads(?)
-    # .find(String) is a python string method.
-
-    x = address.find("intersection,")
+         
+    # Create new commuter to start at this location
+    newcommuter = commuter(commuterName)
+     
     addressList = []
 
-    # If this is a traditional address?
-    if x == 0:
-
+    # If this is an address of form "Intersection, road1, road2"
+    # str.find() returns the index of the string specified
+    if address.find("intersection,") == 0:
+        
         # Slice address starting at the 13th element?
         # a[start:end] # items start through end-1
         # a[start:]    # items start through the rest of the array
@@ -418,18 +411,15 @@ def start_at(commuterName, address = None, direction = 0):
             addressList[i] = addressList[i].rstrip()
             addressList[i] = addressList[i].lstrip()
 
-        # Set globals CITY, STATE, ZIP
-        # Sets locale/scope??
-        global CITY
-        CITY = addressList[3]
-        global STATE
-        STATE = addressList[2]
-        global ZIP
-        ZIP = addressList[4]
-
-    # If address is not of form "Intersection of Russel St and University Ave"???
+        # Set CITY, STATE, ZIP 
+        newcommuter.city = addressList[3]
+        newcommuter.state = addressList[2]
+        newcommuter.zip = addressList[4]
+    
+    # If address is not of form "Intersection of Russel St and University Ave"
+    # Assumed to be a traditional address 
     else:
-        # Split into array by `,`s. Why?
+        # Split into array by `,`s.
         addressList = address.split(',')
 
         # Trim leading and trailing characters
@@ -439,20 +429,14 @@ def start_at(commuterName, address = None, direction = 0):
 
         # Set globals CITY, STATE, ZIP
         # TODO: Set these per commuters
-        global CITY
-        CITY = addressList[1]
-        global STATE
-        STATE = addressList[2]
-        global ZIP
-        ZIP = addressList[3]
-
+        # Set CITY, STATE, ZIP 
+        newcommuter.city = addressList[3]
+        newcommuter.state = addressList[2]
+        newcommuter.zip = addressList[4]
+        
     # Get the long/lat of the given address
     geolocation = geocode_address(address)
 
-    # commuter = [set of Points / current point / current st. name / direction]
-
-    # get only st. name
-    commuterName = str(commuterName)
     stName = addressList[0]
     items = stName.split(" ")
 
@@ -461,27 +445,20 @@ def start_at(commuterName, address = None, direction = 0):
         stName += items[i] + " "
 
     stName = stName[0:-1]
-    # print stName
+    
     # get direction (bearing)
     if str(direction).isdigit():
         direction = int(direction)
     else:
         direction = orient_to(commuterName, direction)
 
-    # set commuter
-    if str(commuterName) in commuters:
-        commuters.get(commuterName)[0].append(geolocation)
-        commuters.get(commuterName)[1] = geolocation
-        commuters.get(commuterName)[2] = stName
-        commuters.get(commuterName)[3] = direction
-        commuters.get(commuterName)[4] = []
-    else:
-        commuters[commuterName] = [[], "", "", 0, []]
-        commuters.get(commuterName)[0].append(geolocation)
-        commuters.get(commuterName)[1] = geolocation
-        commuters.get(commuterName)[2] = stName
-        commuters.get(commuterName)[3] = direction
-        commuters.get(commuterName)[4] = []
+
+    #TODO allow a existing commuter to be started somewhere else
+    
+    newcommuter.streetlog.append(geolocation)
+    newcommuter.geolocation = geolocation
+    newcommuter.street = stName
+    newcommuter.direction = direction
 
     return geolocation
     # commuter = [set of Points / current point / current st. name / direction]
@@ -722,79 +699,12 @@ def show_commuter(commuterName):
     print "Bearing: ",
     print commuters.get(str(commuterName))[3]
 
-
-# sets the commuters start location and returns [lon,lat]
-# also sets the global variables: CITY, STATE, and ZIP associated with commuter
-# def start_at(commuterName, address):
-#         global commuters
-#         x = address.find("intersection,")
-#         addressList = []
-
-#         if x == 0:
-#                 addr = address [13:]
-#                 addressList = addr.split(',')
-#                 global CITY
-#                 CITY = addressList[3]
-#                 global STATE
-#                 STATE = addressList[2]
-#                 global ZIP
-#                 ZIP = addressList[4]
-
-#         else:
-#                 addressList = address.split(',')
-#                 global CITY
-#                 CITY = addressList[1]
-#                 global STATE
-#                 STATE = addressList[2]
-#                 global ZIP
-#                 ZIP = addressList[3]
-
-#         geolocation = geocode_address(address)
-#         #commuter_points.append(geolocation)
-#         #commuter.append(geolocation)
-
-#         # commuter = [set of Points / current point / current st. name / direction]
-#         commuterName = str(commuterName)
-#         stName = addressList[0]
-#         items = stName.split(" ")
-
-#         stName = ""
-#         for i in (1,len(items)-1):
-#             stName += items[i] + " "
-
-#         stName = stName[0:-1]
-
-#         if str(commuterName) in commuters:
-#             commuters.get(commuterName)[0].append(geolocation)
-#             commuters.get(commuterName)[1] = geolocation
-#             commuters.get(commuterName)[2] = stName
-#             commuters.get(commuterName)[3] = 0
-#             commuters.get(commuterName)[4] = []
-#         else:
-#             commuters[commuterName] = [[], "", "", 0, []]
-#             commuters.get(commuterName)[0].append(geolocation)
-#             commuters.get(commuterName)[1] = geolocation
-#             commuters.get(commuterName)[2] = stName
-#             commuters.get(commuterName)[3] = 0
-#             commuters.get(commuterName)[4] = []
-
-#         if debug:
-#             print "start_at() : "
-#             print commuters.get(commuterName)
-#         ########################################################################################
-
-#         return geolocation
-
+    
 # sets the commuters start location and returns [lon,lat]
 # also sets the global variables: CITY, STATE, and ZIP associated with commuter
 def get_location(address):
-    geolocation = geocode_address(address)
-    return geolocation
-
-# returns the distnace between two geocoordinates
-# def compute_distance(geoloc1, geoloc2):
-#    distance = 0.0
-#    retuen distance
+        geolocation = geocode_address(address)
+        return geolocation
 
 
 def move_until(commuterName, street2):
@@ -1438,7 +1348,6 @@ def get_mtfcc(description):
        
     # print return_value
     return return_value
-      
 
 # get_closest_point Returning point of ck
 def get_closest_point(description, Currentpoint, NumberOfItems):
