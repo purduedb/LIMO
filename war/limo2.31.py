@@ -114,7 +114,7 @@ class commuter:
         
     def flushlog(self):
         self.laststreetlog = [self.streetlog, self.geolocation, self.street, self.direction]
-        self.streetlog = []
+        # self.streetlog = []
 
 
     def __str__(self):
@@ -139,6 +139,9 @@ debug = 0
 # Called by itself and cover_all_roads_within only. waiting to convert to commuter obj
 # CommutersAsObj tofix
 def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):#, previousCommuterName):
+    return "TBI"
+
+
     commuter = commuters_dict[commuterName]
     
     # get how many roads / ways I have
@@ -368,6 +371,8 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
 
 # Not called by any other methods or provided in LIMO documentation. Waiting to convert to commuter obj
 def cover_all_roads_within(commuterName, length):
+    return "TBI"
+    
     coveredRoads = []
     # get current road name based on the point
 
@@ -383,6 +388,8 @@ def cover_all_roads_within(commuterName, length):
 
 # Called by find_all_roads_within method only. Holding off conversion to commuter obj
 def rollback_commuter(commuterName):
+    return "TBI"
+    
     commuters_dict.get(str(commuterName))[0] = commuters_dict.get(str(commuterName))[4][0]
     commuters_dict.get(str(commuterName))[1] = commuters_dict.get(str(commuterName))[4][1]
     commuters_dict.get(str(commuterName))[2] = commuters_dict.get(str(commuterName))[4][2]
@@ -662,19 +669,24 @@ def copy_commuter(commuterName, copyName):
 
 
 def show_commuter(commuterName):
-    print "Name: " + str(commuterName)
+    if(commuters_dict.has_key(commuterName)):
+        commuter  = commuters_dict[commuterName]
+    else:
+        commuter = commuterName
+        
+    print "Name: " + commuter.name
 
     print "Path: ",
-    print commuters_dict.get(str(commuterName))[0]
+    print commuter.streetlog
 
     print "Last Point: ",
-    print commuters_dict.get(str(commuterName))[1]
+    print commuter.geolocation
 
     print "Current Road Name: ",
-    print commuters_dict.get(str(commuterName))[2]
+    print commuter.street
 
     print "Bearing: ",
-    print commuters_dict.get(str(commuterName))[3]
+    print commuter.direction
 
     
 # sets the commuters_dict start location and returns [lon,lat]
@@ -875,8 +887,6 @@ def draw_line(geo1, geo2):
 # display the the list of coordinates on map
 def show_on_map(commuterName):
         commuter = commuters_dict[commuterName]
-        print str(commuter)
-        print commuter.streetlog
         
         geoList = commuter.streetlog
 
@@ -1155,11 +1165,10 @@ def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
         
     # If query was successfully built
     if(query is not None):
-        c.execute(query)
-        rowcount = c.rowcount
+        db_results = query_db(query)
         maxDistance = 0
         # Assemble long/lat pairs of each item
-        if rowcount > 0 :
+        if len(db_results) > 0 :
             lonlatList = []
             for result in db_results:
                 # Could this be improved?
@@ -1169,8 +1178,6 @@ def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
                 lonlat.append(result[2])
                 lonlat.append(result[3])
                 lonlatList.append(lonlat)
-            c.close()
-            db.close()
             # Return list of lonlats
             return lonlatList
     
@@ -1603,9 +1610,15 @@ def caculate_distance_commuted2(commuter):
 
 def caculate_distance_commuted(commuterName):
     result = 0
-    commuter = commuters_dict.get(str(commuterName))[0]
-    for i in range(len(commuter) - 1):
-        result = result + calculate_distance(commuter[i], commuter[i + 1])
+    if commuters_dict.has_key(commuterName):
+        commuter = commuters_dict[commuterName]
+    else:
+        commuter = commuterName
+    
+    comslog = commuter.streetlog
+     
+    for i in range(len(comslog) - 1):
+        result = result + calculate_distance(comslog[i], comslog[i + 1])
     return round(result, 2)
 
 #calculate the distance commuted
@@ -1944,16 +1957,18 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, zip):
     return extract_line_string2(line)
 
 
-def get_total_length_of_street(street, ZIP):
-    query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(
-        ZIP
-    ) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
+def get_total_length_of_street(street, zip):
+    query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280)\
+            from (select the_geom from tiger_data.in_roads where fullname = '" + street + "')\
+            as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "')\
+            as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
 
     # print query
     db_results = query_db(query)
     
+    
     if len(db_results) == 0:
-        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        raise Exception("get_total_length_of_street(" + street + ", " + zip + ") returned NULL\n\tFailed query: " + query)
         return "NULL"     
     
 
@@ -2000,22 +2015,22 @@ def get_current_fraction_on_the_street(lon, lat, street, zip):
     return fraction
 
 
-def get_all_intersection_name_and_point_on_the_road(street, ZIP):
+def get_all_intersection_name_and_point_on_the_road(street, zip):
     query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point from\
             ( select ST_LineMerge(a.the_geom) geom\
                 from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  \
-                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b            \
+                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "') as b            \
                 where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,\
             ( select ST_LineMerge(c.the_geom) geom, fullname \
                 from (select the_geom, fullname from tiger_data.in_roads) as c,  \
-                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as d   \
+                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "') as d   \
                 where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2\
         where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"\
 
     db_results = query_db(query)
     
     if len(db_results) == 0:
-        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        raise Exception("get_all_intersecton_name_and_point_on_the_road(" + street + ", " + zip + ") returned NULL\n\tFailed query: " + query)
         return "NULL"
     
     ret = []
@@ -2025,23 +2040,23 @@ def get_all_intersection_name_and_point_on_the_road(street, ZIP):
     return ret
 
 
-def get_all_intersection_name_and_point_on_the_road_with_fraction(fractionFrom, fractionTo, street, ZIP):
+def get_all_intersection_name_and_point_on_the_road_with_fraction(fractionFrom, fractionTo, street, zip):
     query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point\
                 from \
                 ( select ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fractionFrom) + ", " + str(fractionTo) + ") geom\
                     from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  \
-                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b            \
+                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "') as b            \
                     where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,\
                 ( select ST_LineMerge(c.the_geom) geom, fullname \
                     from (select the_geom, fullname from tiger_data.in_roads) as c,  \
-                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as d   \
+                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "') as d   \
                     where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2\
             where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'";
 
     db_results = query_db(query)
     
     if len(db_results) == 0:
-        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        raise Exception("get_all_intersection_name_and_point_on_the_road_with_fraction(" + fractionFrom + ", " + FractionTo + ", " + street + ", " + zip + ") returned NULL\n\tFailed query: " + query)
         return "NULL"
     
     ret = []
@@ -2184,7 +2199,7 @@ def move_along_street(lon, lat, street, zip, bearing, distance):
 def move_distance(commuterName, distance, direction=None):
     commuter = commuters_dict[commuterName]
     
-    comsl = commuter.streetlog
+    comslog = commuter.streetlog
     
     commuter.flushlog()
 
@@ -2233,13 +2248,13 @@ def move_distance(commuterName, distance, direction=None):
 
     #print pnts
     f = distFrom(
-        comsl[0],
-        comsl[1],
+        float(comslog[len(comslog) - 1][0]),
+        float(comslog[len(comslog) - 1][1]),
         float(pnts[0][0]),
         float(pnts[0][1]))
     l = distFrom(
-        comsl[0],
-        comsl[1],
+        float(comslog[len(comslog) - 1][0]),
+        float(comslog[len(comslog) - 1][1]),
         float(pnts[len(pnts) - 1][0]),
         float(pnts[len(pnts) - 1][1]))
 
@@ -2247,9 +2262,9 @@ def move_distance(commuterName, distance, direction=None):
         pnts.reverse()
 
     lastPoint = [
-        comsl[0],
-        comsl[1]
-    ]
+        float(comslog[len(comslog) - 1][0]),
+        float(comslog[len(comslog) - 1][1])
+        ]
 
     delIndex = 0
     for i in pnts:
@@ -2275,22 +2290,22 @@ def move_distance(commuterName, distance, direction=None):
         print pnts
 
     for i in range(len(pnts)):
-        comsl.append((float(pnts[i][0]), float(pnts[i][1])))
+        comslog.append((float(pnts[i][0]), float(pnts[i][1])))
 
-    if comsl[len(comsl) - 1][0] != lonlat[0] and comsl[len(comsl) - 1][1] != lonlat[1]:
-        comsl.append((float(lonlat[0]), float(lonlat[1])))
+    if comslog[len(comslog) - 1][0] != lonlat[0] and comslog[len(comslog) - 1][1] != lonlat[1]:
+        comslog.append((float(lonlat[0]), float(lonlat[1])))
         if debug:
             print "inserted"
 
-    # comsl.append(lonlat)??????????????????????????
+    # comslog.append(lonlat)??????????????????????????
 
     commuter.geolocation = lonlat
     
     commuter.direction = calculate_initial_compass_bearing(
-            (comsl[len(comsl) - 2][0],
-             float(comsl[len(comsl) - 2][1])),
-            (comsl[len(comsl) - 1][0],
-             float(comsl[len(comsl) - 1][1])))
+            (comslog[len(comslog) - 2][0],
+             float(comslog[len(comslog) - 2][1])),
+            (comslog[len(comslog) - 1][0],
+             float(comslog[len(comslog) - 1][1])))
 
     if debug:
         print "last bearing : " + commuter.direction
@@ -2401,11 +2416,11 @@ def turn_to(commuterName, roadName, direction = None):
             return [] # Do we want to return an error instead?
         elif nextPoint[0] == 1:
             direction = nextPoint[3][0]
-            commuterNmae.direction = direction
+            commuter.direction = direction
             return nextPoint[3]
         elif nextPoint[0] == 2:
             direction = nextPoint[3][0]
-            commuters_dict.get(str(commuter))[3] = direction
+            commuter.direction = direction
             return nextPoint[3]
 
     else:
@@ -2417,13 +2432,11 @@ def turn_to(commuterName, roadName, direction = None):
             direction = int(direction)
         else:
             # If it is not a number, process it
-            print commuter.direction
             direction = orient_to(commuter, direction)
 
         # Set new direction
         commuter.direction = direction
 
-        print str(commuter)
         # Debugging 
         # print roadName
         # print direction
