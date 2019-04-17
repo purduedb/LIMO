@@ -928,7 +928,8 @@ def get(name, description, geomType):
                         query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all where name like  '" + name + "'"
                         
                 db_results = query_db(query)
-                
+                #print len(db_results)
+                #print
                 # Return the first result. Behavior copied from old code. Is there a better way to do this?
                 # Check if anything returned?
                 return extract_polygon(str(db_results[0]))
@@ -968,11 +969,13 @@ def get(name, description, geomType):
                         # print query
                                
                 db_results = query_db(query)
+                
                 if len(db_results) > 1:
                     lonlatList = []
                     for result in db_results: 
                         lonlatList.append(extract_polyline(str(result)))
-                        return lonlatList
+                    return lonlatList
+                
                 else:
                     raise Exception("get(" + name + ", " + description + ", " + geomType + ") returned NULL\n\tFailed query: " + query)
                     return "NULL"
@@ -1424,12 +1427,11 @@ def get_fill(ArrayofDensity):
 # adds shape on map
 def display_shape(shape):
     instruction = create_geostring(shape)
+    #print instruction
     ExampleServiceImpl.setResultString(instruction)
     # f = open("visualize.txt", 'a')
     # f.write(instruction)
     # f.close()
-
-
 
 # creates a string of geocoordinates: lon1;lat,lon;lat,...
 def create_geostring(geoList, Fill=0):
