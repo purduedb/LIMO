@@ -67,24 +67,43 @@ def query_db(query):
 
 # trying to add a function that will see if the elevation data is in the dataset
 def elevation_at_point(long, lat):
-    #  query = "select ST_AsText(the_geom) from tiger_data.in_roads where fullname = '" + name + "'"
-    str_lat = str(lat) 
-    str_long = str(long)
     
-    query = "Select elevation from tiger_data.in_elev_temp where lat = '" + str_lat + "' and long = '" + str_long + "'"
+        # we need this because the way I downloaded the elevation data set
+    precision_error = 0.000025
+    
+    # getting the bounds for the long and lat
+    long_n = str(long - precision_error)
+    long_p = str(long + precision_error)
+    lat_n = str(lat - precision_error)
+    lat_p = str(lat + precision_error)
+    
+    query = "Select elevation from tiger_data.in_elev_temp where (long BETWEEN '" + long_n + "' and '" + long_p + "') and (lat BETWEEN '" + lat_n + "' and '" + lat_p + "')" 
     db_results = query_db(query)
             
-    # lonlatList = list(db_results)
-    if len(db_results) >= 1:
-        return str(db_results)
-    return "ERROR: Elevation not found"
+    if len(db_results) == 0:
+        return "ERROR: Elevation not found"
+
+    # this is converting the list, by removing the unnecessary characters
+    tolist = []
+    for num in db_results:  
+        ring = str(num) 
+        a = ring.replace("(", "")
+        a = a.replace(")", "")
+        a = a.replace(",", "")
+        tolist.append(a)
+        
+    # since we have a precision error, its best to return the average
+    average = calsum(tolist) / len(tolist)
+
+    return average
 
 def elevation_at_address(address):
     geolocation = geocode_address(address)
     
-    precision_error = 0.00005
+    # we need this because the way I downloaded the elevation data set
+    precision_error = 0.000025
     
-    
+    # getting the bounds for the long and lat
     long_n = str(geolocation[0] - precision_error)
     long_p = str(geolocation[0] + precision_error)
     lat_n = str(geolocation[1] - precision_error)
@@ -92,13 +111,30 @@ def elevation_at_address(address):
     
     query = "Select elevation from tiger_data.in_elev_temp where (long BETWEEN '" + long_n + "' and '" + long_p + "') and (lat BETWEEN '" + lat_n + "' and '" + lat_p + "')" 
 #     query = "Select elevation from tiger_data.in_elev_temp where lat = '" + str(geolocation[0]) + "' and long = '" + str(geolocation[1]) + "'"
-
+    
 #     return query
     db_results = query_db(query)
     if len(db_results) == 0:
         return "ERROR: Elevation not found"
-    
-    return db_results[0]
+
+    # this is converting the list, by removing the unnecessary characters
+    tolist = []
+    for num in db_results:  
+        ring = str(num) 
+        a = ring.replace("(", "")
+        a = a.replace(")", "")
+        a = a.replace(",", "")
+        tolist.append(a)
+        
+    # since we have a precision error, its best to return the average
+    average = calsum(tolist) / len(tolist)
+
+    return average
+
+# this calculates the sum of a list of strings (used for elevation_at_address)
+def calsum(l): 
+    # returning sum of list using List comprehension 
+    return  sum([float(i) for i in l]) 
 
 # globals
 # bearing = 0

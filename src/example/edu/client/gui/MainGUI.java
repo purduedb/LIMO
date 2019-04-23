@@ -1866,6 +1866,9 @@ public class MainGUI extends Composite {
 	    multiBox.addItem("get_road_names");
 	    multiBox.addItem("get_road_names_in");
 	    
+	    // adding the uses for Elevation functions
+	    multiBox.addItem("elevation_at_point");
+	    multiBox.addItem("elevation_at_address");
 	    
 	    multiBox.addChangeHandler(new ChangeHandler()
 	    {
@@ -1956,6 +1959,12 @@ public class MainGUI extends Composite {
 				else if (selectedIndex == 25)
 					instructionTextArea.setText("get_road_names_in(location1, location2, location3, location4)"
 							+ "\n\nReturns all road names within the rectangle formed by the four given locations.");
+				else if (selectedIndex == 26)
+					instructionTextArea.setText("elevation_at_point(longitude, latitude)"
+							+ "\n\nReturns elevation at the point. Parameters are in decimal degrees.");
+				else if (selectedIndex == 27)
+					instructionTextArea.setText("elevation_at_address(address)"
+							+ "\n\nReturns elevation at the address.");
 				
 					
 			}
