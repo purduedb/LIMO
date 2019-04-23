@@ -1420,6 +1420,8 @@ public class MainGUI extends Composite {
         samples.addItem("Sample 14");
         samples.addItem("Sample 15");
 		samples.addItem("Sample 16");
+		samples.addItem("Sample Elevation 1");
+		samples.addItem("Sample Elevation 2");
 		
 		samples.addChangeHandler(new ChangeHandler()
 	    {
@@ -1786,6 +1788,18 @@ public class MainGUI extends Composite {
 							+ "\nairport_list = get_all_in_range(\"AIRPORT\",Indiana_cities)"
 							+ "\ncount  = get_count(airport_list)"
 							+ "\ndisplay_Count (Indiana_cities, count)");
+
+				} else if (selectedIndex == 17) {
+					setEditorValue("# Program Elevation 1: Prints elevation at given point"
+							+ "\nvar = elevation_at_point(-86.6854935, 40.3124275)"
+							+ "\nprint var");
+
+				}  else if (selectedIndex == 18) {
+					setEditorValue("# Program Elevation 2: Prints elevation at given address"
+							+ "\naddress = read_address(\"748 E 700 S\", \"Lafayette\", \"IN\",  \"47909\")"
+							+ "\ndisplay_message(\"21 Petals\", address)" 
+							+ "\n\nvar = elevation_at_address(address)"
+							+ "\nprint var");
 
 				}
 			}
