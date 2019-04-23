@@ -65,6 +65,40 @@ def query_db(query):
     
     return toreturn
 
+# trying to add a function that will see if the elevation data is in the dataset
+def elevation_at_point(long, lat):
+    #  query = "select ST_AsText(the_geom) from tiger_data.in_roads where fullname = '" + name + "'"
+    str_lat = str(lat) 
+    str_long = str(long)
+    
+    query = "Select elevation from tiger_data.in_elev_temp where lat = '" + str_lat + "' and long = '" + str_long + "'"
+    db_results = query_db(query)
+            
+    # lonlatList = list(db_results)
+    if len(db_results) >= 1:
+        return str(db_results)
+    return "ERROR: Elevation not found"
+
+def elevation_at_address(address):
+    geolocation = geocode_address(address)
+    
+    precision_error = 0.00005
+    
+    
+    long_n = str(geolocation[0] - precision_error)
+    long_p = str(geolocation[0] + precision_error)
+    lat_n = str(geolocation[1] - precision_error)
+    lat_p = str(geolocation[1] + precision_error)
+    
+    query = "Select elevation from tiger_data.in_elev_temp where (long BETWEEN '" + long_n + "' and '" + long_p + "') and (lat BETWEEN '" + lat_n + "' and '" + lat_p + "')" 
+#     query = "Select elevation from tiger_data.in_elev_temp where lat = '" + str(geolocation[0]) + "' and long = '" + str(geolocation[1]) + "'"
+
+#     return query
+    db_results = query_db(query)
+    if len(db_results) == 0:
+        return "ERROR: Elevation not found"
+    
+    return db_results[0]
 
 # globals
 # bearing = 0
