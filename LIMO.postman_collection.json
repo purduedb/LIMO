@@ -30,7 +30,7 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/"
 					},
 					{
 						"key": "X-GWT-Permutation",
@@ -38,7 +38,7 @@
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}"
 					},
 					{
 						"key": "User-Agent",
@@ -54,7 +54,7 @@
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html"
 					},
 					{
 						"key": "Accept-Encoding",
@@ -71,7 +71,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "7|0|6|http://127.0.0.1:8888/gwtmaps/|2340FA9687BBBA633B8360439C75EB4C|example.edu.client.service.ExampleService|runScript|java.lang.String/2004016611|# Program 1: Hello World\n# This program prints Hello World at a given address.\naddress = read_address(\"305 N University St\", \"West Lafayette\", \"IN\",  \"47907\")\ndisplay_message(\"Hello World\", address)|1|2|3|4|1|5|6|"
+					"raw": "7|0|6|{{URL}}/gwtmaps/|2340FA9687BBBA633B8360439C75EB4C|example.edu.client.service.ExampleService|runScript|java.lang.String/2004016611|# Program 1: Hello World\n# This program prints Hello World at a given address.\naddress = read_address(\"305 N University St\", \"West Lafayette\", \"IN\",  \"47907\")\ndisplay_message(\"Hello World\", address)|1|2|3|4|1|5|6|"
 				},
 				"url": {
 					"raw": "{{URL}}/gwtmaps/exampleservice",
@@ -110,7 +110,7 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/"
 					},
 					{
 						"key": "X-GWT-Permutation",
@@ -118,7 +118,7 @@
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}"
 					},
 					{
 						"key": "User-Agent",
@@ -134,7 +134,7 @@
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html"
 					},
 					{
 						"key": "Accept-Encoding",
@@ -190,7 +190,7 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/"
 					},
 					{
 						"key": "X-GWT-Permutation",
@@ -198,7 +198,7 @@
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}"
 					},
 					{
 						"key": "User-Agent",
@@ -214,7 +214,7 @@
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html"
 					},
 					{
 						"key": "Accept-Encoding",
@@ -270,7 +270,7 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/"
 					},
 					{
 						"key": "X-GWT-Permutation",
@@ -278,7 +278,7 @@
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}"
 					},
 					{
 						"key": "User-Agent",
@@ -294,7 +294,7 @@
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html"
 					},
 					{
 						"key": "Accept-Encoding",
@@ -350,7 +350,7 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/"
 					},
 					{
 						"key": "X-GWT-Permutation",
@@ -358,7 +358,7 @@
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}"
 					},
 					{
 						"key": "User-Agent",
@@ -374,7 +374,7 @@
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html"
 					},
 					{
 						"key": "Accept-Encoding",
@@ -432,7 +432,7 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/"
 					},
 					{
 						"key": "X-GWT-Permutation",
@@ -440,7 +440,7 @@
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}"
 					},
 					{
 						"key": "User-Agent",
@@ -458,7 +458,7 @@
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html"
 					},
 					{
 						"key": "Accept-Encoding",
@@ -594,43 +594,53 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/",
+						"type": "text"
 					},
 					{
 						"key": "X-GWT-Permutation",
-						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD",
+						"type": "text"
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}",
+						"type": "text"
 					},
 					{
 						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
-						"value": "text/x-gwt-rpc; charset=UTF-8"
+						"value": "text/x-gwt-rpc; charset=UTF-8",
+						"type": "text"
 					},
 					{
 						"key": "Accept",
-						"value": "*/*"
+						"value": "*/*",
+						"type": "text"
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Encoding",
-						"value": "gzip, deflate, br"
+						"value": "gzip, deflate, br",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Language",
-						"value": "en-US,en;q=0.9"
+						"value": "en-US,en;q=0.9",
+						"type": "text"
 					},
 					{
 						"key": "Cookie",
-						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -674,43 +684,53 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/",
+						"type": "text"
 					},
 					{
 						"key": "X-GWT-Permutation",
-						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD",
+						"type": "text"
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}",
+						"type": "text"
 					},
 					{
 						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
-						"value": "text/x-gwt-rpc; charset=UTF-8"
+						"value": "text/x-gwt-rpc; charset=UTF-8",
+						"type": "text"
 					},
 					{
 						"key": "Accept",
-						"value": "*/*"
+						"value": "*/*",
+						"type": "text"
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Encoding",
-						"value": "gzip, deflate, br"
+						"value": "gzip, deflate, br",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Language",
-						"value": "en-US,en;q=0.9"
+						"value": "en-US,en;q=0.9",
+						"type": "text"
 					},
 					{
 						"key": "Cookie",
-						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -754,43 +774,53 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/",
+						"type": "text"
 					},
 					{
 						"key": "X-GWT-Permutation",
-						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD",
+						"type": "text"
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}",
+						"type": "text"
 					},
 					{
 						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
-						"value": "text/x-gwt-rpc; charset=UTF-8"
+						"value": "text/x-gwt-rpc; charset=UTF-8",
+						"type": "text"
 					},
 					{
 						"key": "Accept",
-						"value": "*/*"
+						"value": "*/*",
+						"type": "text"
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Encoding",
-						"value": "gzip, deflate, br"
+						"value": "gzip, deflate, br",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Language",
-						"value": "en-US,en;q=0.9"
+						"value": "en-US,en;q=0.9",
+						"type": "text"
 					},
 					{
 						"key": "Cookie",
-						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -835,43 +865,53 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/",
+						"type": "text"
 					},
 					{
 						"key": "X-GWT-Permutation",
-						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD",
+						"type": "text"
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}",
+						"type": "text"
 					},
 					{
 						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
-						"value": "text/x-gwt-rpc; charset=UTF-8"
+						"value": "text/x-gwt-rpc; charset=UTF-8",
+						"type": "text"
 					},
 					{
 						"key": "Accept",
-						"value": "*/*"
+						"value": "*/*",
+						"type": "text"
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Encoding",
-						"value": "gzip, deflate, br"
+						"value": "gzip, deflate, br",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Language",
-						"value": "en-US,en;q=0.9"
+						"value": "en-US,en;q=0.9",
+						"type": "text"
 					},
 					{
 						"key": "Cookie",
-						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -915,43 +955,53 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/",
+						"type": "text"
 					},
 					{
 						"key": "X-GWT-Permutation",
-						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD",
+						"type": "text"
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}",
+						"type": "text"
 					},
 					{
 						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
-						"value": "text/x-gwt-rpc; charset=UTF-8"
+						"value": "text/x-gwt-rpc; charset=UTF-8",
+						"type": "text"
 					},
 					{
 						"key": "Accept",
-						"value": "*/*"
+						"value": "*/*",
+						"type": "text"
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Encoding",
-						"value": "gzip, deflate, br"
+						"value": "gzip, deflate, br",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Language",
-						"value": "en-US,en;q=0.9"
+						"value": "en-US,en;q=0.9",
+						"type": "text"
 					},
 					{
 						"key": "Cookie",
-						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -995,43 +1045,53 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/",
+						"type": "text"
 					},
 					{
 						"key": "X-GWT-Permutation",
-						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD",
+						"type": "text"
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}",
+						"type": "text"
 					},
 					{
 						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
-						"value": "text/x-gwt-rpc; charset=UTF-8"
+						"value": "text/x-gwt-rpc; charset=UTF-8",
+						"type": "text"
 					},
 					{
 						"key": "Accept",
-						"value": "*/*"
+						"value": "*/*",
+						"type": "text"
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Encoding",
-						"value": "gzip, deflate, br"
+						"value": "gzip, deflate, br",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Language",
-						"value": "en-US,en;q=0.9"
+						"value": "en-US,en;q=0.9",
+						"type": "text"
 					},
 					{
 						"key": "Cookie",
-						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -1075,43 +1135,53 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/",
+						"type": "text"
 					},
 					{
 						"key": "X-GWT-Permutation",
-						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD",
+						"type": "text"
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}",
+						"type": "text"
 					},
 					{
 						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
-						"value": "text/x-gwt-rpc; charset=UTF-8"
+						"value": "text/x-gwt-rpc; charset=UTF-8",
+						"type": "text"
 					},
 					{
 						"key": "Accept",
-						"value": "*/*"
+						"value": "*/*",
+						"type": "text"
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Encoding",
-						"value": "gzip, deflate, br"
+						"value": "gzip, deflate, br",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Language",
-						"value": "en-US,en;q=0.9"
+						"value": "en-US,en;q=0.9",
+						"type": "text"
 					},
 					{
 						"key": "Cookie",
-						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -1155,43 +1225,53 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/",
+						"type": "text"
 					},
 					{
 						"key": "X-GWT-Permutation",
-						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD",
+						"type": "text"
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}",
+						"type": "text"
 					},
 					{
 						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
-						"value": "text/x-gwt-rpc; charset=UTF-8"
+						"value": "text/x-gwt-rpc; charset=UTF-8",
+						"type": "text"
 					},
 					{
 						"key": "Accept",
-						"value": "*/*"
+						"value": "*/*",
+						"type": "text"
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Encoding",
-						"value": "gzip, deflate, br"
+						"value": "gzip, deflate, br",
+						"type": "text"
 					},
 					{
 						"key": "Accept-Language",
-						"value": "en-US,en;q=0.9"
+						"value": "en-US,en;q=0.9",
+						"type": "text"
 					},
 					{
 						"key": "Cookie",
-						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -1223,7 +1303,9 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"pm.test(\"Body is correct\", function () {",
-							"    pm.response.to.have.body(\"//OK[4,2,3,2,2,1,[\\\"java.util.ArrayList/4159755760\\\",\\\"java.lang.String/2004016611\\\",\\\"\\\",\\\"MARKER,-086.2839503,+39.9030256\\\\nMARKER,-089.1526108,+40.1028754\\\\nMARKER,-085.2929801,+37.5336844\\\\nMARKER,-082.7119975,+40.4149297\\\\nMARKER,-089.7119299,+44.6284840\\\\nMARKER,-092.4567826,+38.3507500\\\\n\\\"],0,7]\");",
+							"    //pm.response.to.have.body(\"//OK[4,2,3,2,2,1,[\\\"java.util.ArrayList/4159755760\\\",\\\"java.lang.String/2004016611\\\",\\\"\\\",\\\"MARKER,-086.2839503,+39.9030256\\\\nMARKER,-089.1526108,+40.1028754\\\\nMARKER,-085.2929801,+37.5336844\\\\nMARKER,-082.7119975,+40.4149297\\\\nMARKER,-089.7119299,+44.6284840\\\\nMARKER,-092.4567826,+38.3507500\\\\n\\\"],0,7]\");",
+							"    ",
+							"    pm.response.to.have.body('//OK[4,2,3,2,2,1,[\"java.util.ArrayList/4159755760\",\"java.lang.String/2004016611\",\"\",\"FullPOLYGON,#FFFFFF,-86.945563;40.448617,-86.94327;40.450884,-86.942021;40.446048,-86.938597;40.446055,-86.938642;40.45093,-86.942939;40.450887,-86.943229;40.464765,-86.937427;40.465245,-86.935495;40.462941,-86.936405;40.464977,-86.933866;40.464996,-86.93387;40.466768,-86.934065;40.472789,-86.939001;40.472781,-86.938906;40.475371,-86.915689;40.476183,-86.915724;40.479003,-86.906206;40.47898,-86.906253;40.482365,-86.911015;40.482376,-86.91114;40.489602,-86.898728;40.489575,-86.897956;40.486097,-86.887288;40.487499,-86.887203;40.474916,-86.895086;40.47492,-86.896676;40.470948,-86.899254;40.470512,-86.899529;40.467829,-86.901306;40.467819,-86.901442;40.459896,-86.898818;40.460595,-86.90075;40.45844,-86.897369;40.458427,-86.900213;40.451203,-86.898642;40.444704,-86.896244;40.444453,-86.898809;40.443342,-86.898576;40.440141,-86.896559;40.43982,-86.896509;40.435135,-86.897999;40.43442,-86.896312;40.434137,-86.89756;40.425679,-86.901097;40.426709,-86.902579;40.424297,-86.897585;40.424846,-86.897214;40.421713,-86.899929;40.416899,-86.901739;40.415905,-86.924268;40.416983,-86.923093;40.420687,-86.916729;40.420504,-86.916497;40.417399,-86.913821;40.417338,-86.913729;40.424134,-86.910337;40.424019,-86.910386;40.428046,-86.913979;40.43136,-86.916111;40.431344,-86.916666;40.424187,-86.919603;40.424216,-86.920031;40.432395,-86.915065;40.431444,-86.915626;40.437035,-86.917271;40.438892,-86.924613;40.438817,-86.924504;40.446114,-86.92177;40.446006,-86.926419;40.451746,-86.931721;40.451703,-86.931741;40.453329,-86.93487;40.453376,-86.933883;40.44244,-86.943289;40.442334,-86.945563;40.448617\\\\nFullPOLYGON,#0000f5,-86.925993;40.396947,-86.910109;40.403135,-86.898709;40.415535,-86.896009;40.421035,-86.893469;40.451439,-86.884801;40.450729,-86.884196;40.455624,-86.880392;40.455617,-86.880396;40.45427,-86.876426;40.454252,-86.877631;40.449477,-86.874465;40.449652,-86.872604;40.447525,-86.866813;40.446381,-86.865446;40.445204,-86.868303;40.443999,-86.86267;40.44131,-86.854799;40.448194,-86.857331;40.44111,-86.851839;40.441112,-86.848949;40.443199,-86.848938;40.439557,-86.838452;40.439586,-86.834092;40.431839,-86.824382;40.420716,-86.818576;40.420793,-86.818622;40.42293,-86.814723;40.423354,-86.814777;40.417735,-86.809937;40.41777,-86.809791;40.410236,-86.814181;40.4103,-86.809369;40.407195,-86.80942;40.403129,-86.803382;40.403392,-86.796513;40.395771,-86.78948;40.395842,-86.790294;40.387862,-86.78545;40.381198,-86.790362;40.381195,-86.790512;40.373803,-86.831005;40.374295,-86.828994;40.36971,-86.828606;40.3711,-86.811619;40.356356,-86.818922;40.356366,-86.818953;40.359979,-86.82974;40.359926,-86.833203;40.358205,-86.833236;40.359659,-86.838003;40.361695,-86.838088;40.367006,-86.856955;40.366997,-86.856897;40.36135,-86.86067;40.363988,-86.864132;40.364105,-86.862823;40.357711,-86.875681;40.357125,-86.87569;40.355757,-86.894101;40.356082,-86.893605;40.359799,-86.890009;40.359774,-86.890114;40.3668,-86.904557;40.366856,-86.904534;40.37413,-86.923709;40.374322,-86.923909;40.395335,-86.926025;40.394723,-86.925993;40.396947\\\\nFullPOLYGON,#FFFFFF,-86.585385;39.149753,-86.582619;39.149756,-86.582616;39.149481,-86.587156;39.149476,-86.585385;39.149753\\\\nFullPOLYGON,#0000d7,-87.636902;37.978608,-87.622397;37.978806,-87.619577;37.976442,-87.619362;37.982994,-87.627612;37.986673,-87.62746;37.992684,-87.61832;37.994971,-87.618219;37.998922,-87.609727;37.996949,-87.607788;37.998461,-87.610199;38.00318,-87.602805;38.000753,-87.588048;38.000106,-87.584872;38.003189,-87.586899;38.006943,-87.588267;38.036688,-87.582143;38.035959,-87.573727;38.039955,-87.574012;38.041225,-87.569001;38.039782,-87.569015;38.037563,-87.570474;38.037206,-87.564209;38.035718,-87.562153;38.033729,-87.559583;38.033828,-87.555397;38.037572,-87.546603;38.03782,-87.538478;38.041942,-87.536975;38.049279,-87.539872;38.050175,-87.536514;38.050201,-87.536897;38.053783,-87.531543;38.053702,-87.529684;38.051757,-87.531224;38.050054,-87.520582;38.049919,-87.518852;38.051268,-87.519635;38.053199,-87.518084;38.053554,-87.521228;38.05492,-87.51486;38.054831,-87.513362;38.057094,-87.504854;38.056048,-87.505016;38.049731,-87.512585;38.049277,-87.51451;38.03678,-87.516786;38.036719,-87.516816;38.035303,-87.526775;38.035436,-87.53263;38.027976,-87.519358;38.027928,-87.519476;38.022479,-87.514929;38.022433,-87.515045;38.015109,-87.510478;38.014682,-87.510931;38.013201,-87.501396;38.013124,-87.497204;38.010985,-87.49459;38.013667,-87.49273;38.020666,-87.470111;38.020346,-87.466769;38.013125,-87.450153;38.012992,-87.45057;37.955037,-87.488206;37.954975,-87.48824;37.95333,-87.480701;37.948663,-87.480708;37.947734,-87.48494;37.949484,-87.484965;37.947756,-87.492948;37.94779,-87.492959;37.939183,-87.514372;37.939961,-87.533543;37.935811,-87.54886;37.940897,-87.556031;37.946713,-87.566471;37.951006,-87.573219;37.950227,-87.573605;37.951642,-87.576663;37.952353,-87.574096;37.95931,-87.575729;37.967778,-87.579181;37.971533,-87.587105;37.975401,-87.594964;37.97528,-87.59991;37.972926,-87.603396;37.966932,-87.607212;37.967068,-87.610141;37.963193,-87.609672;37.957723,-87.617035;37.95316,-87.63754;37.953751,-87.636902;37.978608\\\\n\"],0,7]');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -1235,7 +1317,7 @@
 				"header": [
 					{
 						"key": "X-GWT-Module-Base",
-						"value": "http://127.0.0.1:8888/gwtmaps/"
+						"value": "{{URL}}/gwtmaps/"
 					},
 					{
 						"key": "X-GWT-Permutation",
@@ -1243,7 +1325,7 @@
 					},
 					{
 						"key": "Origin",
-						"value": "http://127.0.0.1:8888"
+						"value": "{{URL}}"
 					},
 					{
 						"key": "User-Agent",
@@ -1259,7 +1341,7 @@
 					},
 					{
 						"key": "Referer",
-						"value": "http://127.0.0.1:8888/GWTMaps.html"
+						"value": "{{URL}}/GWTMaps.html"
 					},
 					{
 						"key": "Accept-Encoding",
@@ -1276,7 +1358,97 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "7|0|6|http://127.0.0.1:8888/gwtmaps/|2340FA9687BBBA633B8360439C75EB4C|example.edu.client.service.ExampleService|runScript|java.lang.String/2004016611|# Program 16: Count\r\n# This program calculates the count of each polygon in a list of polygons\r\nIndiana_cities = []\r\nWL_pol = get(\"West Lafayette\", \"CITY\", \"POLYGON\")\r\nIndiana_cities.append(WL_pol)\r\nLaf_pol = get(\"Lafayette\", \"CITY\", \"POLYGON\")\r\nIndiana_cities.append(Laf_pol)\r\nIndianapolis_pol = get(\"Indianapolis\", \"CITY\", \"POLYGON\")\r\nIndiana_cities.append(Indianapolis_pol)\r\nEV_pol = get(\"Evansville\", \"CITY\", \"POLYGON\")\r\nIndiana_cities.append(EV_pol)\r\nairport_list = get_all_in_range(\"AIRPORT\",Indiana_cities)\r\ncount  = get_count(airport_list)\r\ndisplay_Count (Indiana_cities, count)|1|2|3|4|1|5|6|"
+					"raw": "7|0|6|http://127.0.0.1:8888/gwtmaps/|2340FA9687BBBA633B8360439C75EB4C|example.edu.client.service.ExampleService|runScript|java.lang.String/2004016611|# Program 16: Count\r\n# This program calculates the count of each polygon in a list of polygons\r\nIndiana_cities = []\r\nWL_pol = get(\"West Lafayette\", \"CITY\", \"POLYGON\")\r\nIndiana_cities.append(WL_pol)\r\nLaf_pol = get(\"Lafayette\", \"CITY\", \"POLYGON\")\r\nIndiana_cities.append(Laf_pol)\r\nBlm_pol = get(\"Bloomington\", \"CITY\", \"POLYGON\")\r\nIndiana_cities.append(Blm_pol)\r\nEV_pol = get(\"Evansville\", \"CITY\", \"POLYGON\")\r\nIndiana_cities.append(EV_pol)\r\nairport_list = get_all_in_range(\"AIRPORT\",Indiana_cities)\r\ncount  = get_count(airport_list)\r\ndisplay_Count (Indiana_cities, count)|1|2|3|4|1|5|6|"
+				},
+				"url": {
+					"raw": "{{URL}}/gwtmaps/exampleservice",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"gwtmaps",
+						"exampleservice"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Multi Commuter Test [WL & Indy]",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "be7a384b-9290-4d27-82ee-4d7ef8215252",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body('//OK[4,2,3,2,2,1,[\"java.util.ArrayList/4159755760\",\"java.lang.String/2004016611\",\"\",\"MARKER,-86.9228921858,40.4400029306\\\\nMARKER,-86.1857121722,39.7674189584\\\\nMARKER,-86.917928,40.427255\\\\nMARKER,-86.202514,39.809859\\\\nPOLYLINE,-86.9228921858;40.4400029306,-86.9228937544;40.4399128402,-86.921984;40.439897,-86.921574;40.439904,-86.921538;40.439905,-86.921216;40.439921,-86.920866;40.439954,-86.920623;40.439983,-86.92047;40.440002,-86.919897;40.440096,-86.919656;40.440136,-86.919357;40.440186,-86.919069;40.440235,-86.918462;40.440336,-86.918373;40.440352,-86.918269;40.440382,-86.918168;40.440406,-86.918056;40.440436,-86.918009;40.44045,-86.91775;40.440534,-86.917725;40.440545,-86.91762;40.440593,-86.917221;40.44037,-86.91715;40.44033,-86.916993;40.440281,-86.916805;40.440241,-86.91669;40.440227,-86.916482;40.440226,-86.916276;40.440241,-86.916137;40.440241,-86.916034;40.440229,-86.91588;40.440195,-86.915664;40.440147,-86.915588;40.440141,-86.91543;40.440143,-86.9153;40.440188,-86.915277;40.440193,-86.914899;40.440268,-86.914603;40.440328,-86.914344;40.440364,-86.914135;40.44038,-86.913682;40.440391,-86.913347;40.440407,-86.913269;40.440418,-86.913196;40.44043,-86.912894;40.440501,-86.912741;40.440553,-86.912439;40.440638,-86.912342;40.440658,-86.912293;40.440669,-86.912184;40.440679,-86.911148;40.440681,-86.911105;40.44068,-86.910693;40.440678,-86.910693;40.440571,-86.910694;40.440251,-86.910695;40.440145,-86.910697;40.439967,-86.910702;40.439701,-86.910704;40.439433,-86.910706;40.439256,-86.910703;40.43902,-86.910698;40.438627,-86.910693;40.438315,-86.910693;40.438263,-86.910685;40.43808,-86.910681;40.437829,-86.910655;40.437095,-86.910647;40.436849,-86.910643;40.436769,-86.910638;40.436585,-86.910633;40.436334,-86.910618;40.436144,-86.9106;40.435796,-86.910587;40.435533,-86.910575;40.435256,-86.910542;40.434427,-86.910531;40.434151,-86.910523;40.433966,-86.9105;40.433413,-86.910493;40.433229,-86.91049;40.433137,-86.910481;40.432862,-86.910478;40.432771,-86.910476;40.432671,-86.910476;40.432658,-86.910461;40.432374,-86.910456;40.432276,-86.910451;40.432176,-86.9104428801;40.4319879925,-86.9104513049;40.4313224342,-86.910654;40.431325,-86.911366;40.431337,-86.911604;40.431341,-86.911841;40.431345,-86.91221;40.431353,-86.912552;40.431358,-86.91279;40.431362,-86.912987;40.431365,-86.913258;40.431371,-86.913421;40.431369,-86.91358;40.431373,-86.913653;40.431375,-86.913778;40.431369,-86.913818;40.431367,-86.913938;40.431361,-86.913979;40.43136,-86.914095;40.431355,-86.914347;40.431343,-86.914375;40.431342,-86.914828;40.431327,-86.914843;40.431327,-86.915308;40.431325,-86.915453;40.431328,-86.915822;40.431337,-86.916111;40.431344,-86.916709;40.431353,-86.917962;40.431377,-86.918208;40.431381,-86.918949;40.431396,-86.919196;40.4314,-86.919188;40.431354,-86.919182;40.431272,-86.919181;40.431178,-86.919176;40.430627,-86.919175;40.430512,-86.919174;40.43029,-86.919172;40.430093,-86.919167;40.429503,-86.919166;40.429307,-86.919164;40.429107,-86.919163;40.428845,-86.919159;40.42851,-86.919157;40.428311,-86.919155;40.428105,-86.919152;40.42749,-86.919151;40.427285,-86.919147;40.427078,-86.9191466627;40.4270537169,-86.9191419464;40.4272848152,-86.918906;40.42728,-86.918304;40.427268,-86.918172;40.427263,-86.917928;40.427255\\\\nPOLYLINE,-86.1857121722;39.7674189584,-86.185718424;39.7673289322,-86.185777;39.767333,-86.185813;39.767333,-86.185893;39.767338,-86.186065;39.767339,-86.186136;39.767335,-86.186172;39.767331,-86.186244;39.767327,-86.186279;39.767327,-86.186356;39.767319,-86.186857;39.767264,-86.186948;39.767256,-86.187035;39.767243,-86.187332;39.767218,-86.188264;39.767121,-86.18921;39.767024,-86.189676;39.766977,-86.19014;39.766926,-86.190765;39.766868,-86.192062;39.766733,-86.192625;39.766673,-86.193281;39.76661,-86.194098;39.766526,-86.194491;39.766488,-86.194858;39.766446,-86.195318;39.766399,-86.195531;39.766378,-86.196901;39.766239,-86.196904;39.766802,-86.196902;39.766888,-86.196896;39.766982,-86.196889;39.767068,-86.196886;39.767154,-86.196895;39.768586,-86.196899;39.769028,-86.196902;39.769523,-86.196909;39.77106,-86.196909;39.771159,-86.196912;39.771906,-86.196917;39.772898,-86.196922;39.773785,-86.196929;39.7747,-86.198297;39.774682,-86.199677;39.774669,-86.201047;39.774656,-86.20241;39.774643,-86.203792;39.77463,-86.205201;39.774612,-86.206012;39.774609,-86.206474;39.774603,-86.20657;39.774604,-86.207675;39.774566,-86.2077;39.774566,-86.208763;39.77452,-86.209206;39.774496,-86.209683;39.774481,-86.210641;39.774442,-86.211302;39.774415,-86.212208;39.774376,-86.213425;39.774331,-86.213909;39.774307,-86.214031;39.774303,-86.21478;39.774277,-86.216128;39.774223,-86.216129;39.774763,-86.21613;39.775444,-86.216132;39.775791,-86.216131;39.776146,-86.21613;39.77634,-86.216132;39.777147,-86.216133;39.777813,-86.216133;39.778444,-86.216133;39.778656,-86.216135;39.780066,-86.21613;39.780124,-86.216123;39.780178,-86.216113;39.780237,-86.216099;39.780295,-86.216067;39.780408,-86.216023;39.78052,-86.215846;39.780861,-86.215833;39.780884,-86.21582;39.780911,-86.215788;39.780991,-86.215778;39.781018,-86.215762;39.781072,-86.215748;39.781126,-86.215738;39.78118,-86.215731;39.781234,-86.215727;39.781293,-86.215726;39.781347,-86.215735;39.781964,-86.21574;39.782361,-86.215763;39.784127,-86.215788;39.785893,-86.215812;39.78783,-86.215823;39.78838,-86.21584;39.790065,-86.215837;39.790146,-86.215835;39.790173,-86.215834;39.790209,-86.215853;39.791628,-86.215852;39.791655,-86.215845;39.791696,-86.215838;39.791718,-86.215832;39.791741,-86.215828;39.791763,-86.215825;39.791786,-86.215843;39.793214,-86.215846;39.793309,-86.215848;39.793363,-86.215848;39.793408,-86.21587;39.795048,-86.215872;39.79507,-86.215876;39.795097,-86.215881;39.79512,-86.215889;39.795147,-86.215896;39.795165,-86.215901;39.795187,-86.215905;39.79521,-86.215908;39.795246,-86.215911;39.795462,-86.215922;39.79644,-86.215941;39.798071,-86.215948;39.798603,-86.215984;39.801644,-86.215992;39.802337,-86.215997;39.802603,-86.2160376663;39.8050876142,-86.2160276469;39.8050982121,-86.216038;39.805108,-86.216931;39.805988,-86.220529;39.809549,-86.22055;39.809567,-86.220569;39.80959,-86.220589;39.809612,-86.220606;39.809635,-86.220571;39.809639,-86.22054;39.809648,-86.220509;39.809648,-86.220476;39.809652,-86.219661;39.80966,-86.217585;39.809691,-86.216112;39.809704,-86.214798;39.809722,-86.214686;39.809721,-86.213184;39.809738,-86.212446;39.809747,-86.211104;39.80976,-86.209743;39.809778,-86.208491;39.809792,-86.207285;39.809806,-86.206623;39.809811,-86.204856;39.809835,-86.203628;39.809849,-86.2025799533;39.809858408,-86.2025799533;39.809858408,-86.202514;39.809859\\\\n\"],0,7]');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-GWT-Module-Base",
+						"value": "{{URL}}/gwtmaps/",
+						"type": "text"
+					},
+					{
+						"key": "X-GWT-Permutation",
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD",
+						"type": "text"
+					},
+					{
+						"key": "Origin",
+						"value": "{{URL}}",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "text/x-gwt-rpc; charset=UTF-8",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "*/*",
+						"type": "text"
+					},
+					{
+						"key": "Referer",
+						"value": "{{URL}}/GWTMaps.html",
+						"type": "text"
+					},
+					{
+						"key": "Accept-Encoding",
+						"value": "gzip, deflate, br",
+						"type": "text"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-US,en;q=0.9",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "7|0|6|http://127.0.0.1:8888/gwtmaps/|2340FA9687BBBA633B8360439C75EB4C|example.edu.client.service.ExampleService|runScript|java.lang.String/2004016611|# Program 2: Sequential \r\n# This program moves a Commuter from one location to another showing the route traveled.\r\naddressWL = read_address(\"1156 Hillcrest Rd\", \"West Lafayette\", \"IN\", \"47906\")\r\naddressIN = read_address(\"1200 W Washington St\", \"Indianapolis\", \"IN\", \"46222\")\r\ndisplay_marker(addressWL)\r\ndisplay_marker(addressIN)\r\nstart_at(\"com1\", addressWL,\"EAST\")\r\nstart_at(\"com2\", addressIN, \"EAST\")\r\nmove_until(\"com1\", \"N Grant St\")\r\nmove_until(\"com2\", \"N Belmont Ave\")\r\nturn_to(\"com1\", \"N Grant St\", \"right\")\r\nturn_to(\"com2\", \"N Belmont Ave\", \"right\")\r\nmove_distance(\"com1\", 0.6)\r\nmove_until(\"com2\", \"W Michigan St\")\r\nturn_to(\"com1\", \"W Stadium Ave\", \"right\")\r\nturn_to(\"com2\", \"W Michigan St\", \"left\")\r\nmove_until(\"com1\", \"Russell St\")\r\nmove_until(\"com2\", \"N Tibbs Ave\")\r\nturn_to(\"com1\", \"Russell St\", \"left\")\r\nturn_to(\"com2\", \"N Tibbs Ave\", \"right\")\r\nmove_distance(\"com1\", 0.3)\r\nmove_distance(\"com2\", 2.1)\r\nturn_to(\"com1\", \"3rd St\", \"left\")\r\nturn_to(\"com2\", \"Lafayette Rd\", \"left\")\r\nmove_to_next_intersection(\"com1\")\r\nmove_until(\"com2\", \"W 30th St\")\r\nturn_to(\"com2\", \"W 30th St\", \"right\")\r\nmove_distance(\"com2\", 0.96)\r\nmove_to_next_intersection(\"com2\")\r\n\r\nlast_locationWL = get_current_point(\"com1\")\r\nlast_locationIN = get_current_point(\"com2\")\r\ndisplay_marker(last_locationWL)\r\ndisplay_marker(last_locationIN)\r\nshow_on_map(\"com1\")\r\nshow_on_map(\"com2\")\r\n|1|2|3|4|1|5|6|"
 				},
 				"url": {
 					"raw": "{{URL}}/gwtmaps/exampleservice",
