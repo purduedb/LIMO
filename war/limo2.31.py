@@ -928,8 +928,6 @@ def get(name, description, geomType):
                         query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all where name like  '" + name + "'"
                         
                 db_results = query_db(query)
-                #print len(db_results)
-                #print
                 # Return the first result. Behavior copied from old code. Is there a better way to do this?
                 # Check if anything returned?
                 return extract_polygon(str(db_results[0]))
@@ -1414,8 +1412,10 @@ def display_Count(ArrayofShape, ArrayofDensity):
             else:
                 ArrayofShape[i].insert(1, get_fill(ArrayofDensity[i]))    
             instruction = create_geostring(ArrayofShape[i], 1)
-          #  print ArrayofShape[i][1]
+            #print ArrayofShape[i][1]
             ExampleServiceImpl.setResultString(instruction)
+    else:
+        raise Exception("display_Count() failed. ArrayofShape and ArrayofDensity not equal length\n len(ArrayofShape): " + len(ArrayofShape) + "\nlen(ArrayofDensity): " + len(ArrayofDensity))
 
         
 def get_fill(ArrayofDensity):
