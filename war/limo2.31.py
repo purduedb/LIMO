@@ -72,10 +72,10 @@ def elevation_at_point(long, lat):
     precision_error = 0.000025
     
     # getting the bounds for the long and lat
-    long_n = str(long - precision_error)
-    long_p = str(long + precision_error)
-    lat_n = str(lat - precision_error)
-    lat_p = str(lat + precision_error)
+    long_n = str(float(long) - precision_error)
+    long_p = str(float(long) + precision_error)
+    lat_n = str(float(lat) - precision_error)
+    lat_p = str(float(lat) + precision_error)
     
     query = "Select elevation from tiger_data.in_elev_temp where (long BETWEEN '" + long_n + "' and '" + long_p + "') and (lat BETWEEN '" + lat_n + "' and '" + lat_p + "')" 
     db_results = query_db(query)
