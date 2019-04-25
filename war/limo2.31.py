@@ -65,6 +65,143 @@ def query_db(query):
     
     return toreturn
 
+def elevation_at_point(long, lat):
+    
+    # set precision. Necessary due to the way elevation set was downloaded
+    precision_error = 0.000025
+    
+    # getting the bounds for the long and lat
+    long_n = str(float(long) - precision_error)
+    long_p = str(float(long) + precision_error)
+    lat_n = str(float(lat) - precision_error)
+    lat_p = str(float(lat) + precision_error)
+    
+    query = "Select elevation from tiger_data.in_elev_temp where (long BETWEEN '" + long_n + "' and '" + long_p + "') and (lat BETWEEN '" + lat_n + "' and '" + lat_p + "')" 
+    db_results = query_db(query)
+            
+    if len(db_results) == 0:
+        raise Exception("Elevation_at_point( " + long + " , " + lat + " ) failed\n\tFailed query: " + query)
+        return "NULL"
+
+    # converting the list to be readable by removing the unnecessary characters
+    tolist = []
+    for num in db_results:  
+        ring = str(num) 
+        a = ring.replace("(", "")
+        a = a.replace(")", "")
+        a = a.replace(",", "")
+        tolist.append(a)
+        
+    # due to the precision error, its best to return the average
+    average = sumListOfFloats(tolist) / len(tolist)
+
+    return average
+
+def elevation_at_address(address):
+    geolocation = geocode_address(address)
+
+    # set precision. Necessary due to the way elevation set was downloaded    
+    precision_error = 0.000025
+    
+    # getting the bounds for the long and lat
+    long_n = str(geolocation[0] - precision_error)
+    long_p = str(geolocation[0] + precision_error)
+    lat_n = str(geolocation[1] - precision_error)
+    lat_p = str(geolocation[1] + precision_error)
+    
+    query = "Select elevation from tiger_data.in_elev_temp where (long BETWEEN '" + long_n + "' and '" + long_p + "') and (lat BETWEEN '" + lat_n + "' and '" + lat_p + "')" 
+    
+#     return query
+    db_results = query_db(query)
+    if len(db_results) == 0:
+        raise Exception("Elevation_at_address( " + address + " ) failed\n\tFailed query: " + query)
+        return "NULL"
+    
+    # converting the list to be readable by removing the unnecessary characters
+    tolist = []
+    for num in db_results:  
+        ring = str(num) 
+        a = ring.replace("(", "")
+        a = a.replace(")", "")
+        a = a.replace(",", "")
+        tolist.append(a)
+        
+    # due to the precision error, its best to return the average
+    average = sumListOfFloats(tolist) / len(tolist)
+
+    return average
+
+# calculates the sum of a list of strings
+def sumListOfFloats(list): 
+    # returning sum of list using List comprehension 
+    return  sum([float(i) for i in list]) 
+        
+# returns the largest slope [slope, (long, lat), (long, lat)]       
+def find_largest_slope(commuterName):        
+    geoList = commuters.get(str(commuterName))[0]
+    
+    toList = list(geoList)
+    
+    if len(toList) == 0:
+        raise Exception("find_largest_slope( " + commuterName + " ) failed\n\tInvalid input: " + query)
+        return "NULL"
+    
+    to_return = []
+    
+    # these hold the values that will be returned
+    globalMaxSlope = 0
+    globalLatLong1 = 0
+    globalLatLong2 = 0
+    
+    counter = 0
+    
+    # variable to hold the previous point
+    previous_point = 0
+    for curr_point in toList:
+        if counter < 2:
+            previous_point = curr_point
+            counter = counter + 1
+            continue
+        
+        # may want to do all db calls in one go   
+        elev_prev = elevation_at_point(previous_point[0], previous_point[1])
+        elev_curr = elevation_at_point(curr_point[0], curr_point[1])   
+        
+        distance = distance_decimal_to_feet(previous_point, curr_point)
+        
+        # calculates slope by (y2 - y1)/distance
+        currentSlope = float(elev_curr - elev_prev) / float(distance)
+        
+        # reset the previous point before continuing with the loop
+        previous_point = curr_point
+        
+        if currentSlope > globalMaxSlope:
+            globalMaxSlope = currentSlope
+            globalLatLong1 = previous_point
+            globalLatLong2 = curr_point
+        
+    to_return.append(globalMaxSlope)
+    to_return.append(globalLatLong1)
+    to_return.append(globalLatLong2)
+        
+    return to_return 
+
+# using (https://stackoverflow.com/questions/639695/how-to-convert-latitude-or-longitude-to-meters), the decimal degrees will be converted to meters to feet
+def distance_decimal_to_feet(geo1, geo2):
+    rOfEarth = 6378.137
+    metersToFeet = 3.28084
+    long1 = geo1[0]
+    lat1 = geo1[1]
+    long2 = geo2[0]
+    lat2 = geo2[1]
+    
+    distanceLat = lat2 * math.pi / 180 - lat1 * math.pi / 180
+    distanceLong = long2 * math.pi / 180 - long1 * math.pi / 180
+    
+    a = math.sin(distanceLat/2) * math.sin(distanceLat/2) + math.cos(lat1 * math.pi / 180) * math.cos(lat2 * math.pi / 180) * math.sin(distanceLong/2) * math.sin(distanceLong/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d = rOfEarth * c
+    return d * 1000 * metersToFeet
 
 # globals
 # bearing = 0
