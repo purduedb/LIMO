@@ -12,6 +12,10 @@ from example.edu.server import ExampleServiceImpl
 
 import math
 from copy import deepcopy
+from org.w3c.dom import NameList
+import new
+from org.apache.http.conn.ssl import AllowAllHostnameVerifier
+
 
 earth_radius = 3960.0
 degrees_to_radians = math.pi / 180.0
@@ -34,7 +38,6 @@ CITY = ""
 STATE = ""
 ZIP = ""
 CONNECT_STRING = "jdbc:postgresql://" + IP + ":" + PORT + "/" + DB
-
 
 # Function query_db
 # query_db( query, results_opt)
@@ -64,6 +67,77 @@ def query_db(query):
     db.close()
     
     return toreturn
+
+# Address class. Created using read_address(...)
+# could this be better as a dict or another structure?
+class address:
+    # addr init
+    def __init__(self,street, city, state, zipcode):
+        self.street = street
+        self.city = city
+        self.zipcode = zipcode
+    # return formatted address for use with tiger_data and other dbs 
+    def formatted_address(self):
+        return self.street + "," + self.city + "," + self.state + "," + self.zipcode 
+
+# Commuter class. Created by the user using standard object creation
+# new_commuter = commuter(name, geolocation, direction, street)
+# name: name of the commuter. Required
+# geolocation: initial start of the commuter in geolocation format. Optional
+# direction: commuter's initial facing direction. Optional
+# street: commuter's initial facing street. Optional 
+class commuter:
+    # Commuter init. Sets name and default values 
+    def __init__(self, name, direction = -1, street = -1, city = -1, state = -1, zipcode = -1):
+        # Name of the commuter
+        self.name = name
+        
+        # Set all current states to 0. Create another constructor that sets these?
+        # Equivalent to commuterName[1]
+        self.geolocation = -1
+        # Equivalent to commuterName[3] 
+        self.direction = direction
+        # Equivalent to commuterName[2] 
+        self.street = street
+        
+        self.city = ""
+        self.state = ""
+        self.zipcode = ""
+        
+        # Log of all movements before turning?
+        # Needs a better name once we figure out what it does
+        # Equivalent to commuterName[0]
+        self.streetlog = []
+        # log of last street's movements and final position
+        # Equivalent to commuterName[4]
+        self.laststreetlog = []
+        
+    def flushlog(self):
+        self.laststreetlog = [self.streetlog, self.geolocation, self.street, self.direction]
+        # self.streetlog = []
+
+
+    def __str__(self):
+        return "Object: `Commuter` Name: `" + str(self.name)\
+                + "` Direction: `"          + str(self.direction)\
+                + "` Street: `"             + str(self.street)\
+                + "` City: `"               + str(self.city)\
+                + "` State: `"              + str(self.state)\
+                + "` Zipcode: `"            + str(self.zipcode) + "`"
+
+# List of all  commuters_dict
+# commuters_dict are structured as following:
+# dict key: string representation of the commuter's name
+# commuters_dict.get(commuterName)[0] -> array log of all previous geolocations on this street
+# commuters_dict.get(commuterName)[1] -> current geolocation
+# commuters_dict.get(commuterName)[2] -> current street
+# commuters_dict.get(commuterName)[3] -> current facing direction
+# commuters_dict.get(commuterName)[4] -> array log of all previous geolocations
+commuters_dict = dict()
+# globals
+# bearing = 0
+commuters = dict()
+debug = 0
 
 def elevation_at_point(long, lat):
     
@@ -203,31 +277,20 @@ def distance_decimal_to_feet(geo1, geo2):
     d = rOfEarth * c
     return d * 1000 * metersToFeet
 
-# globals
-# bearing = 0
-commuters = dict()
-debug = 0
 
-depth = 0
+# Called by itself and cover_all_roads_within only. waiting to convert to commuter obj
+# CommutersAsObj tofix
+def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):#, previousCommuterName):
+    return "TBI"
 
 
-def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):  # , previousCommuterName):
-
-    global depth
-    print "==================================================== DEPTH ",
-    print depth
-    depth += 1
-
-    # if depth > 1:
-    #     return 0
-
+    commuter = commuters_dict[commuterName]
+    
     # get how many roads / ways I have
-
-    roadNames = get_road_names(get_current_point(str(commuterName)))
+    point = commuter.geolocation
+    roadNames = get_road_names(point)
     print "all road names : ",
     print roadNames
-
-    point = commuters.get(str(commuterName))[1]
     print "current point : ",
     print point
 
@@ -241,7 +304,7 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
     print "roadnames after : ",
     print roadNames
 
-    # nextPoint = move_along_street(point[0], point[1], roadNames[0], ZIP, commuters.get(str(commuterName))[3], 0.01)
+    # nextPoint = move_along_street(point[0], point[1], roadNames[0], ZIP, commuters_dict.get(str(commuterName))[3], 0.01)
     # print "next point : ",
     # print nextPoint
 
@@ -260,7 +323,7 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
         newCoveredRoads = deepcopy(coveredRoads)
         newCoveredRoads.append(str(roadNames[i]))
 
-        nextPoint = move_along_street(point[0], point[1], roadNames[i], ZIP, commuters.get(str(commuterName))[3], 0.01)    
+        nextPoint = move_along_street(point[0], point[1], roadNames[i], commuter.zipcode, commuter.direction, 0.01)    
 
         print "nextPoint : "
         print nextPoint
@@ -394,7 +457,7 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
             else:
                 print "showonmap1-L on ==="
                 # print intersection[0]
-                # print commuters.get(str(intersection[1]))[2]
+                # print commuters_dict.get(str(intersection[1]))[2]
                 # lastLength = maxLength - display_distance(str(intersection[2]))
                 # print "length : ",
                 # print lastLength
@@ -427,7 +490,7 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
             else:
                 print "showonmap2-L on ==="
                 # print intersection[0]
-                # print commuters.get(str(intersection[1]))[2]
+                # print commuters_dict.get(str(intersection[1]))[2]
                 # lastLength = maxLength - display_distance(str(intersection[2]))
 
                 lastCommuterName = str(intersection[1]) + "-L"
@@ -448,11 +511,14 @@ def find_all_roads_within(commuterName, currentLength, maxLength, coveredRoads):
                 show_on_map(lastCommuterName)
 
 
+# Not called by any other methods or provided in LIMO documentation. Waiting to convert to commuter obj
 def cover_all_roads_within(commuterName, length):
+    return "TBI"
+    
     coveredRoads = []
     # get current road name based on the point
 
-    point = commuters.get(str(commuterName))[1]
+    point = commuters_dict.get(str(commuterName))[1]
     print "point ",
     print point
 
@@ -462,30 +528,40 @@ def cover_all_roads_within(commuterName, length):
     find_all_roads_within(str(commuterName) + "_1", 0, length, coveredRoads)  # , str(commuterName))
 
 
+# Called by find_all_roads_within method only. Holding off conversion to commuter obj
 def rollback_commuter(commuterName):
-    commuters.get(str(commuterName))[0] = commuters.get(str(commuterName))[4][0]
-    commuters.get(str(commuterName))[1] = commuters.get(str(commuterName))[4][1]
-    commuters.get(str(commuterName))[2] = commuters.get(str(commuterName))[4][2]
-    commuters.get(str(commuterName))[3] = commuters.get(str(commuterName))[4][3]
+    return "TBI"
+    
+    commuters_dict.get(str(commuterName))[0] = commuters_dict.get(str(commuterName))[4][0]
+    commuters_dict.get(str(commuterName))[1] = commuters_dict.get(str(commuterName))[4][1]
+    commuters_dict.get(str(commuterName))[2] = commuters_dict.get(str(commuterName))[4][2]
+    commuters_dict.get(str(commuterName))[3] = commuters_dict.get(str(commuterName))[4][3]
+    
 
-
-def start_at(commuterName, address=None, direction=0):
+def start_at(commuterName, address = None, direction = 0):
+    # Start_at: Starts the commuter at a given location
+    # User Function
     # commuterName: String name for the commuter we are about to create
     # address: csv representation of the address. Typically input from read_address(). Default value: none
     # direction: representation of direction. use strings "NORTH", "EAST", "SOUTH", "WEST", etc
-
-    # recieve global `commuters` so we can modify it
-    global commuters
-
-    # is the address an address or an intersection of roads(?)
-    # .find(String) is a python string method.
-
-    x = address.find("intersection,")
+         
+    # Check to see if commuter is already in our collection of commuters_dict
+    # If so, use that one
+    if commuters_dict.has_key(commuterName) :
+        commuterToStart = commuters_dict[commuterName]
+    else:
+        # Create a new commuter and add it to the dict
+        commuterToStart = commuter(commuterName)
+        commuters_dict[commuterName] = commuterToStart
+      
+    
+     
     addressList = []
 
-    # If this is a traditional address?
-    if x == 0:
-
+    # If this is an address of form "Intersection, road1, road2"
+    # str.find() returns the index of the string specified
+    if address.find("intersection,") == 0:
+        
         # Slice address starting at the 13th element?
         # a[start:end] # items start through end-1
         # a[start:]    # items start through the rest of the array
@@ -504,41 +580,32 @@ def start_at(commuterName, address=None, direction=0):
             addressList[i] = addressList[i].rstrip()
             addressList[i] = addressList[i].lstrip()
 
-        # Set globals CITY, STATE, ZIP
-        # Sets locale/scope??
-        global CITY
-        CITY = addressList[3]
-        global STATE
-        STATE = addressList[2]
-        global ZIP
-        ZIP = addressList[4]
-
-    # If address is not of form "Intersection of Russel St and University Ave"???
+        # Set CITY, STATE, ZIP 
+        commuterToStart.city = addressList[3]
+        commuterToStart.state = addressList[2]
+        commuterToStart.zipcode = addressList[4]
+    
+    # If address is not of form "Intersection of Russel St and University Ave"
+    # Assumed to be a traditional address 
     else:
-        # Split into array by `,`s. Why?
+        # Split into array by `,`s.
         addressList = address.split(',')
-
+        
         # Trim leading and trailing characters
         for i in range(len(addressList)):
             addressList[i] = addressList[i].rstrip()
             addressList[i] = addressList[i].lstrip()
-
-        # Set globals CITY, STATE, ZIP
-        # TODO: Set these per commuters
-        global CITY
-        CITY = addressList[1]
-        global STATE
-        STATE = addressList[2]
-        global ZIP
-        ZIP = addressList[3]
-
+        
+        
+        # TODO: Set these per commuters_dict
+        # Set CITY, STATE, ZIP 
+        commuterToStart.city = addressList[1]
+        commuterToStart.state = addressList[2]
+        commuterToStart.zipcode = addressList[3]
+        
     # Get the long/lat of the given address
     geolocation = geocode_address(address)
 
-    # commuter = [set of Points / current point / current st. name / direction]
-
-    # get only st. name
-    commuterName = str(commuterName)
     stName = addressList[0]
     items = stName.split(" ")
 
@@ -547,48 +614,24 @@ def start_at(commuterName, address=None, direction=0):
         stName += items[i] + " "
 
     stName = stName[0:-1]
-    # print stName
+    
     # get direction (bearing)
     if str(direction).isdigit():
         direction = int(direction)
     else:
         direction = orient_to(commuterName, direction)
-
-    # set commuter
-    if str(commuterName) in commuters:
-        commuters.get(commuterName)[0].append(geolocation)
-        commuters.get(commuterName)[1] = geolocation
-        commuters.get(commuterName)[2] = stName
-        commuters.get(commuterName)[3] = direction
-        commuters.get(commuterName)[4] = []
-    else:
-        commuters[commuterName] = [[], "", "", 0, []]
-        commuters.get(commuterName)[0].append(geolocation)
-        commuters.get(commuterName)[1] = geolocation
-        commuters.get(commuterName)[2] = stName
-        commuters.get(commuterName)[3] = direction
-        commuters.get(commuterName)[4] = []
+    
+    commuterToStart.streetlog.append(geolocation)
+    commuterToStart.geolocation = geolocation
+    commuterToStart.street = stName
+    commuterToStart.direction = direction
 
     return geolocation
     # commuter = [set of Points / current point / current st. name / direction]
 
-def test():
-    return "say something"
-
-
-def setCity(c):
-    CITY = c
-
-
-def setState(s):
-    STATE = s
-
-
-def setZipCode(z):
-    ZIP = z
-
 
 # prompts the user to input the address
+# User Function
 def read_address(street, city, state, zipcode):
     address = street + "," + city + "," + state + "," + zipcode
     return address
@@ -596,13 +639,14 @@ def read_address(street, city, state, zipcode):
 
 
 # prompts the user to input the address as intersection
+# Should be a User Function?
 def read_intersection(street1, street2, city, state, zipcode):
     address = "intersection," + street1 + "," + street2 + "," + state + "," + city + "," + zipcode
     return address
 
 # adds a marker on a address by creating a row in visualize file: MARKER,lon,lat
 # returns the geolocation of the marker
-
+# User Function
 def display_marker (address):
     if type(address) is str:
         geolocation = geocode_address(address)
@@ -619,6 +663,7 @@ def display_marker (address):
 
 
 # displays a message on address by making a row in visualize file: MSG,message,lon,lat
+# User Function
 def display_message(message, address):
 
     if type(address) is str:
@@ -679,9 +724,12 @@ def geocode_address(address):
 
 
 
-# extract the point from the geocode string using ST_AsText(geomout): (u'POINT(-86.882223 40.423635)',)
+# extract the point from the geocode string using ST_AsText(geomout): (u'POINT(-86.882223 40.423635)',) or POINT(-86.882223 40.423635)
 def extract_point(geo_output):
-    geo_output = geo_output[3:len(geo_output)]
+    
+    if geo_output[0:3] == "(u'" :
+        geo_output = geo_output[3:len(geo_output)]
+        
     start = geo_output.find('(')
     end = geo_output.find(')')
     geo_output = geo_output[start + 1:end]
@@ -691,41 +739,10 @@ def extract_point(geo_output):
     lonLat[1] = eval(lonLat[1])
 
     return lonLat
-
-
-
-# extract the point from the geocode string using ST_AsText(geomout): POINT(-86.882223 40.423635)
-
-def extract_point_v2(geo_output):
-    start = geo_output.find('(')
-    end = geo_output.find(')')
-    geo_output = geo_output[start + 1:end]
-    lonLat = geo_output.split(' ')
-    lonLat[0] = eval(lonLat[0])
-    lonLat[1] = eval(lonLat[1])
-
-    return lonLat
-
-
-# extract polygon points from geo_output string using ST_AsText(ST_Simplify(the_geom, 0.05)): (u'MULTIPOLYGON((( geo_point1, ... )))',)
-def extract_polygon(geo_output):
-
-    end = geo_output.find(')')
-    geo_output = geo_output[18:end]
-
-    geoList = geo_output.split(',')
-    outputList = []
-    outputList.append("POLYGON")
-    for i in range(len(geoList)):
-        geoSubList = geoList[i].split(" ")
-        outputList.append(geoSubList)
-
-    return outputList
-
 
 
 # extract polygon points from geo_output string using ST_AsText(ST_Simplify(the_geom, 0.05)): (u'POLYGON((( geo_point1, ... )))',)
-def extract_polygon_v2(geo_output):
+def extract_polygon(geo_output):
 
     end = geo_output.find(')')
     geo_output = geo_output[12:end]
@@ -789,123 +806,52 @@ def extract_line_string2(geo_output):
 
 
 def copy_commuter(commuterName, copyName):
-    commuters[str(copyName)] = deepcopy(commuters.get(str(commuterName)))
-    return commuters[str(copyName)]
+    commuters_dict[str(copyName)] = deepcopy(commuters_dict.get(str(commuterName)))
+    return commuters_dict[str(copyName)]
 
 
 def show_commuter(commuterName):
-    print "Name: " + str(commuterName)
+    if(commuters_dict.has_key(commuterName)):
+        commuter  = commuters_dict[commuterName]
+    else:
+        commuter = commuterName
+        
+    print "Name: " + commuter.name
 
     print "Path: ",
-    print commuters.get(str(commuterName))[0]
+    print commuter.streetlog
 
     print "Last Point: ",
-    print commuters.get(str(commuterName))[1]
+    print commuter.geolocation
 
     print "Current Road Name: ",
-    print commuters.get(str(commuterName))[2]
+    print commuter.street
 
     print "Bearing: ",
-    print commuters.get(str(commuterName))[3]
+    print commuter.direction
 
-
-# sets the commuters start location and returns [lon,lat]
-# also sets the global variables: CITY, STATE, and ZIP associated with commuter
-# def start_at(commuterName, address):
-#         global commuters
-#         x = address.find("intersection,")
-#         addressList = []
-
-#         if x == 0:
-#                 addr = address [13:]
-#                 addressList = addr.split(',')
-#                 global CITY
-#                 CITY = addressList[3]
-#                 global STATE
-#                 STATE = addressList[2]
-#                 global ZIP
-#                 ZIP = addressList[4]
-
-#         else:
-#                 addressList = address.split(',')
-#                 global CITY
-#                 CITY = addressList[1]
-#                 global STATE
-#                 STATE = addressList[2]
-#                 global ZIP
-#                 ZIP = addressList[3]
-
-#         geolocation = geocode_address(address)
-#         #commuter_points.append(geolocation)
-#         #commuter.append(geolocation)
-
-#         # commuter = [set of Points / current point / current st. name / direction]
-#         commuterName = str(commuterName)
-#         stName = addressList[0]
-#         items = stName.split(" ")
-
-#         stName = ""
-#         for i in (1,len(items)-1):
-#             stName += items[i] + " "
-
-#         stName = stName[0:-1]
-
-#         if str(commuterName) in commuters:
-#             commuters.get(commuterName)[0].append(geolocation)
-#             commuters.get(commuterName)[1] = geolocation
-#             commuters.get(commuterName)[2] = stName
-#             commuters.get(commuterName)[3] = 0
-#             commuters.get(commuterName)[4] = []
-#         else:
-#             commuters[commuterName] = [[], "", "", 0, []]
-#             commuters.get(commuterName)[0].append(geolocation)
-#             commuters.get(commuterName)[1] = geolocation
-#             commuters.get(commuterName)[2] = stName
-#             commuters.get(commuterName)[3] = 0
-#             commuters.get(commuterName)[4] = []
-
-#         if debug:
-#             print "start_at() : "
-#             print commuters.get(commuterName)
-#         ########################################################################################
-
-#         return geolocation
-
-# sets the commuters start location and returns [lon,lat]
+    
+# sets the commuters_dict start location and returns [lon,lat]
 # also sets the global variables: CITY, STATE, and ZIP associated with commuter
 def get_location(address):
-    geolocation = geocode_address(address)
-    return geolocation
-
-# returns the distnace between two geocoordinates
-# def compute_distance(geoloc1, geoloc2):
-#    distance = 0.0
-#    retuen distance
+        geolocation = geocode_address(address)
+        return geolocation
 
 
 def move_until(commuterName, street2):
-
-    commuter = commuters.get(str(commuterName))[0]
-    street1 = commuters.get(str(commuterName))[2]
-    currentPoint = commuters.get(str(commuterName))[1]
-
-    commuters.get(str(commuterName))[4] = []
-    tmp = deepcopy(commuters.get(str(commuterName))[0])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    tmp = deepcopy(commuters.get(str(commuterName))[1])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    tmp = deepcopy(commuters.get(str(commuterName))[2])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    tmp = deepcopy(commuters.get(str(commuterName))[3])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    lonlat = geocode_intersection2(street1, street2)
-
-    global ZIP
-    pnts = get_lines_between_two_points(currentPoint, lonlat, street1, ZIP)
+    commuter = commuters_dict[commuterName]
+    
+    street1 = commuter.street
+    
+    currentPoint = commuter.geolocation
+    
+    comslog = commuter.streetlog
+    
+    commuter.flushlog()
+    
+    lonlat = geocode_intersection2(street1, street2, commuter.city, commuter.state, commuter.zipcode)
+   
+    pnts = get_lines_between_two_points(currentPoint, lonlat, street1, commuter.zipcode)
 
     if pnts == None:
         if debug:
@@ -914,22 +860,25 @@ def move_until(commuterName, street2):
 
     if len(pnts) > 1:
         pnts = pnts[1:]
-
+    
+    
     f = distFrom(
-        float(commuter[len(commuter) - 1][0]),
-        float(commuter[len(commuter) - 1][1]), float(pnts[0][0]),
+        float(comslog[len(comslog) - 1][0]),
+        float(comslog[len(comslog) - 1][1]),
+        float(pnts[0][0]),
         float(pnts[0][1]))
     l = distFrom(
-        float(commuter[len(commuter) - 1][0]),
-        float(commuter[len(commuter) - 1][1]), float(pnts[len(pnts) - 1][0]),
+        float(comslog[len(comslog) - 1][0]),
+        float(comslog[len(comslog) - 1][1]),
+        float(pnts[len(pnts) - 1][0]),
         float(pnts[len(pnts) - 1][1]))
 
     if f > l:
         pnts.reverse()
 
     lastPoint = [
-        float(commuter[len(commuter) - 1][0]),
-        float(commuter[len(commuter) - 1][1])
+        float(comslog[len(comslog) - 1][0]),
+        float(comslog[len(comslog) - 1][1])
     ]
 
     delIndex = 0
@@ -956,29 +905,27 @@ def move_until(commuterName, street2):
         print pnts
 
     for i in range(len(pnts)):
-        commuter.append((float(pnts[i][0]), float(pnts[i][1])))
+        commuter.streetlog.append((float(pnts[i][0]), float(pnts[i][1])))
 
 
-    if commuter[len(commuter) - 1][0] != lonlat[0] and commuter[len(commuter) - 1][1] != lonlat[1]:
-        commuter.append((float(lonlat[0]), float(lonlat[1])))
+    if commuter.streetlog[len(commuter.streetlog) - 1][0] != lonlat[0] and commuter.streetlog[len(commuter.streetlog) - 1][1] != lonlat[1]:
+        commuter.streetlog.append((float(lonlat[0]), float(lonlat[1])))
         if debug:
             print "inserted"
 
     # commuter.append(lonlat)??????????????????????????
 
-    commuters.get(str(commuterName))[1] = lonlat
-    # commuters.get(str(commuterName))[2] = str(street2)
+    commuter.geolocation = lonlat
 
-    commuters.get(
-        str(commuterName))[3] = calculate_initial_compass_bearing(
-            (commuter[len(commuter) - 2][0],
-             float(commuter[len(commuter) - 2][1])),
-            (commuter[len(commuter) - 1][0],
-             float(commuter[len(commuter) - 1][1])))
+    commuter.direction = calculate_initial_compass_bearing(
+            (commuter.streetlog[len(commuter.streetlog) - 2][0],
+             float(commuter.streetlog[len(commuter.streetlog) - 2][1])),
+            (commuter.streetlog[len(commuter.streetlog) - 1][0],
+             float(commuter.streetlog[len(commuter.streetlog) - 1][1])))
 
     if debug:
-        print "last bearing : " + str(commuters.get(str(commuterName))[3])
-        print commuters.get(str(commuterName))[0]
+        print "last bearing : " + commuter.direction
+        print commuter.streetlog
 
     return lonlat
 
@@ -1045,8 +992,8 @@ def get_intersections2(street, start_geo, end_geo):
         return output
 
      
-def geocode_intersection(street1, street2):
-        query = "SELECT ST_AsText(geomout) FROM geocode_intersection('" + street1 + "','" + street2 + "','" + STATE + "','" + CITY + "','" + ZIP + "',1)"
+def geocode_intersection(street1, street2, city, state, zip):
+        query = "SELECT ST_AsText(geomout) FROM geocode_intersection('" + street1 + "','" + street2 + "','" + state + "','" + city + "','" + zip + "',1)"
 
         db_results = query_db(query)
     
@@ -1057,8 +1004,8 @@ def geocode_intersection(street1, street2):
             return "NULL"     
 
 
-def geocode_intersection2(street1, street2):
-        query = "SELECT ST_AsText(geomout) FROM geocode_intersection('" + street1 + "','" + street2 + "','" + STATE + "','" + CITY + "','" + ZIP + "',1)"
+def geocode_intersection2(street1, street2, city, state, zip):
+        query = "SELECT ST_AsText(geomout) FROM geocode_intersection('" + street1 + "','" + street2 + "','" + state + "','" + city + "','" + zip + "',1)"
 
         # print query
         db_results = query_db(query)
@@ -1066,7 +1013,7 @@ def geocode_intersection2(street1, street2):
         if len(db_results) == 1:
             return extract_point(str(db_results[0]))
         else:
-            print "geocode_intersection(2" + street1 + ", " + street2 + ") returned NULL\n\tFailed query: " + query
+            print "geocode_intersection2(" + street1 + ", " + street2 + ") returned NULL\n\tFailed query: " + query
             return "NULL"     
 
 
@@ -1081,7 +1028,9 @@ def draw_line(geo1, geo2):
 
 # display the the list of coordinates on map
 def show_on_map(commuterName):
-        geoList = commuters.get(str(commuterName))[0]
+        commuter = commuters_dict[commuterName]
+        
+        geoList = commuter.streetlog
 
         instruction = "POLYLINE,"
         for i in range(len(geoList)):
@@ -1121,10 +1070,9 @@ def get(name, description, geomType):
                         query = "SELECT ST_AsText(ST_SimplifyPreserveTopology(st_geometryn(the_geom,1), 0.05)) FROM tiger_data.county_all where name like  '" + name + "'"
                         
                 db_results = query_db(query)
-                
                 # Return the first result. Behavior copied from old code. Is there a better way to do this?
                 # Check if anything returned?
-                return extract_polygon_v2(str(db_results[0]))
+                return extract_polygon(str(db_results[0]))
                 
         # If a geopoint/lonlat was requested
         elif geomType == "POINT":
@@ -1161,11 +1109,13 @@ def get(name, description, geomType):
                         # print query
                                
                 db_results = query_db(query)
+                
                 if len(db_results) > 1:
                     lonlatList = []
                     for result in db_results: 
                         lonlatList.append(extract_polyline(str(result)))
-                        return lonlatList
+                    return lonlatList
+                
                 else:
                     raise Exception("get(" + name + ", " + description + ", " + geomType + ") returned NULL\n\tFailed query: " + query)
                     return "NULL"
@@ -1188,7 +1138,7 @@ def get_all(description, geomType):
             if len(db_results) > 1:
                 # convert each item in the result list to a polygon
                 for i in range(len(db_results)):
-                    db_results[i] = extract_polygon_v2(str(db_results[i]))
+                    db_results[i] = extract_polygon(str(db_results[i]))
                
                 return db_results
             
@@ -1296,11 +1246,24 @@ def getPolygonRange (geoList):
             Range.append(minLat)
         return Range
 
-        
+# Get k number of nearest neighbors        
 def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
-    # print description , NumberOfItems  
-    # print Currentpoint
+    # get_kNN_optimized(description,Currentpoint,NumberOfItems,dist,Range):
+    # description: State, County, or other mtfcc
+    # Currentpoint: geocode/[lon, lat] of current position
+    # NumberOfItems: max number of items to find. None is valid
+    # dist: Distance from the current point to look
+    # Range: Array of 4 floats? None is valid.
+
+    # Open the database connection
+    db = zxJDBC.connect(CONNECT_STRING, DB_USER, PASSWORD, "org.postgresql.Driver")
+    c = db.cursor()
+
+    #print description , NumberOfItems  
+    #print Currentpoint
+    # If range is not provided (It is optional??)
     if Range == None:
+        # Create 3 sets of points based on the current pos and the desired distance away
         my_lat = Currentpoint[1]
         my_lon = Currentpoint[0]
         lon1 = my_lon - dist / abs(math.cos(math.radians(my_lat)) * 69)
@@ -1310,40 +1273,45 @@ def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
 
         lat2 = my_lat + (dist / 69.0)
     else:
-        # print "in"
         lon2 = float(Range[0])
         lon1 = float(Range[1])
         lat2 = float(Range[2])
         lat1 = float(Range[3])
-        my_lat = (float(lat1) + float(lat2)) / 2
-        my_lon = (float(lon1) + float(lon2)) / 2
-        # print lon1 ,lon2 , lat1 , lat2,  my_lat , my_lon
-    query = ""
-
+        my_lat = (float(lat1)+float(lat2))/2
+        my_lon = (float(lon1)+float(lon2))/2
+        #print lon1 ,lon2 , lat1 , lat2,  my_lat , my_lon
+    query = None
+    
+    # TODO: Explore bulding the query in a string-builder style since they are so similar
+    # If we are looking in states
     if description == "STATE":
         if NumberOfItems == None:
             query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance "
         else:
             query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.state_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance limit " + str(NumberOfItems)
+
+    # If we are looking at counties
     elif description == "COUNTY":
         if NumberOfItems == None:
             query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance "
         else:
             query = "SELECT intptlon, intptlat, name ,3958.75* 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(intptlat::numeric)) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(intptlat::numeric) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  intptlon::numeric) *pi()/180 / 2), 2) )) as distance from tiger_data.county_all  WHERE intptlat::numeric between " + str(lat1) + " and " + str(lat2) + "AND intptlon::numeric between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance limit " + str(NumberOfItems)  
+
+   # Check for mtfcc code for non stat/county 
     else:
        mtfcc = get_mtfcc(description)
        if mtfcc != "NULL":
         if NumberOfItems == None:
-            # print "in 2"
             query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'  AND ST_Y(the_geom) between " + str(lat1) + " and " + str(lat2) + " AND ST_X(the_geom) between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance"
         else:
             query = "SELECT ST_X(the_geom),ST_Y(the_geom), fullname ,3958.75    * 2 * ASIN(SQRT(POWER(SIN((" + str(my_lat) + "- abs(ST_Y(the_geom))) * pi()/180 / 2),2) + COS(" + str(my_lat) + " * pi()/180 ) * COS(abs(ST_Y(the_geom)) *pi()/180) * POWER(SIN((" + str(my_lon) + " -  ST_X(the_geom)) *pi()/180 / 2), 2) )) as distance FROM tiger_data.in_pointlm where mtfcc = '" + mtfcc + "'  AND ST_Y(the_geom) between " + str(lat1) + " and " + str(lat2) + " AND ST_X(the_geom) between " + str(lon1) + " and " + str(lon2) + " ORDER BY distance limit " + str(NumberOfItems)
-    
-    if query is not "":
-        db_results = query_db(query)
         
-        if len(db_results) > 0:
-            maxDistance = 0
+    # If query was successfully built
+    if(query is not None):
+        db_results = query_db(query)
+        maxDistance = 0
+        # Assemble long/lat pairs of each item
+        if len(db_results) > 0 :
             lonlatList = []
             for result in db_results:
                 # Could this be improved?
@@ -1353,6 +1321,7 @@ def get_kNN_optimized(description, Currentpoint, NumberOfItems, dist, Range):
                 lonlat.append(result[2])
                 lonlat.append(result[3])
                 lonlatList.append(lonlat)
+            # Return list of lonlats
             return lonlatList
     
     # Either the query returned null or there was no query set
@@ -1501,7 +1470,6 @@ def get_mtfcc(description):
        
     # print return_value
     return return_value
-      
 
 # get_closest_point Returning point of ck
 def get_closest_point(description, Currentpoint, NumberOfItems):
@@ -1586,8 +1554,10 @@ def display_Count(ArrayofShape, ArrayofDensity):
             else:
                 ArrayofShape[i].insert(1, get_fill(ArrayofDensity[i]))    
             instruction = create_geostring(ArrayofShape[i], 1)
-          #  print ArrayofShape[i][1]
+            #print ArrayofShape[i][1]
             ExampleServiceImpl.setResultString(instruction)
+    else:
+        raise Exception("display_Count() failed. ArrayofShape and ArrayofDensity not equal length\n len(ArrayofShape): " + len(ArrayofShape) + "\nlen(ArrayofDensity): " + len(ArrayofDensity))
 
         
 def get_fill(ArrayofDensity):
@@ -1599,12 +1569,11 @@ def get_fill(ArrayofDensity):
 # adds shape on map
 def display_shape(shape):
     instruction = create_geostring(shape)
+    #print instruction
     ExampleServiceImpl.setResultString(instruction)
     # f = open("visualize.txt", 'a')
     # f.write(instruction)
     # f.close()
-
-
 
 # creates a string of geocoordinates: lon1;lat,lon;lat,...
 def create_geostring(geoList, Fill=0):
@@ -1777,7 +1746,7 @@ def distFrom(lat1, lng1, lat2, lng2):
 # calculate the distance commuted
 def caculate_distance_commuted2(commuter):
     result = 0
-    # commuter = commuters.get(str(commuterName))[0]
+    # commuter = commuters_dict.get(str(commuterName))[0]
     for i in range(len(commuter) - 1):
         result = result + calculate_distance(commuter[i], commuter[i + 1])
     return round(result, 2)
@@ -1785,16 +1754,20 @@ def caculate_distance_commuted2(commuter):
 
 def caculate_distance_commuted(commuterName):
     result = 0
-    commuter = commuters.get(str(commuterName))[0]
-    for i in range(len(commuter) - 1):
-        result = result + calculate_distance(commuter[i], commuter[i + 1])
+    if commuters_dict.has_key(commuterName):
+        commuter = commuters_dict[commuterName]
+    else:
+        commuter = commuterName
+    
+    comslog = commuter.streetlog
+     
+    for i in range(len(comslog) - 1):
+        result = result + calculate_distance(comslog[i], comslog[i + 1])
     return round(result, 2)
 
-
-# calculate the distance commuted
+#calculate the distance commuted
 def display_distance(commuterName):
-    return caculate_distance_commuted(commuterName)
-
+        return caculate_distance_commuted(commuterName)
 
 def get_road_names(point):
     if len(point) != 2:
@@ -1807,23 +1780,20 @@ def get_road_names(point):
     return names
 
 
-# move to the next intersection within specified distance
+
+#move to the next intersection within specified distance
+
 def move_to_next_intersection(commuterName):
-    commuter = commuters.get(str(commuterName))[0]
-    currentPoint = commuters.get(str(commuterName))[1]
-    current_street = commuters.get(str(commuterName))[2]
-    bearing = commuters.get(str(commuterName))[3]
+    commuter = commuters_dict[commuterName]
+    
+    currentPoint = commuter.geolocation
+    current_street = commuter.street
+    bearing = commuter.direction
 
-    global ZIP
     next = get_next_intersection(currentPoint[0], currentPoint[1],
-                                 current_street, ZIP, bearing)
-
-    # print "----"
-    # print str(currentPoint[0]) + " + " + str(currentPoint[1])
-    # print show_commuter(commuterName)
+                                 current_street, commuter.zipcode, bearing)
 
     move_until(commuterName, next[0])
-
 
 def distance_all_roads_in(geo1, geo2, geo3, geo4):
     line = ((geo1, geo2, geo3, geo4))
@@ -1872,7 +1842,6 @@ def distance_all_roads_in(geo1, geo2, geo3, geo4):
     # print sum
 
     return sum
-
 
 def draw_all_roads_in(geo1, geo2, geo3, geo4):
     line = ((geo1, geo2, geo3, geo4))
@@ -1936,7 +1905,6 @@ def draw_all_roads_in(geo1, geo2, geo3, geo4):
 def get_road_names_in(geo1, geo2, geo3, geo4):
     return findAllIntersectionRoads2((geo1, geo2, geo3, geo4))
 
-
 def get_angle_between(a1, a2):
     a = 180 - abs(abs(a1 - a2) - 180)
     return a
@@ -1979,7 +1947,6 @@ def findAllIntersectionRoads2(testCommuter):
 
     return roads
 
-
 def findAllIntersectionRoads(currentPoint, eps):
 
     currentSquare = [
@@ -2014,8 +1981,8 @@ def findAllIntersectionRoads(currentPoint, eps):
     return roads
 
 
-def get_next_intersection(lon, lat, street, ZIP, bearing):
-    fraction = get_current_fraction_on_the_street(lon, lat, street, ZIP)
+def get_next_intersection(lon, lat, street, zip, bearing):
+    fraction = get_current_fraction_on_the_street(lon, lat, street, zip)
 
     # print "fraction, lon, lat = ",
     # print fraction
@@ -2023,9 +1990,9 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
     # print lat
 
     inter1 = get_all_intersection_name_and_point_on_the_road_with_fraction(
-        0, fraction, street, ZIP)
+        0, fraction, street, zip)
     inter2 = get_all_intersection_name_and_point_on_the_road_with_fraction(
-        fraction, 1, street, ZIP)
+        fraction, 1, street, zip)
 
     # get smallest distance for each inters
 
@@ -2090,11 +2057,11 @@ def get_next_intersection(lon, lat, street, ZIP, bearing):
         return st2
 
 
-def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
+def get_lines_between_two_points(currentPoint, nextPoint, street, zip):
     fr1 = get_current_fraction_on_the_street(
-        float(currentPoint[0]), float(currentPoint[1]), street, ZIP)
+        float(currentPoint[0]), float(currentPoint[1]), street, zip)
     fr2 = get_current_fraction_on_the_street(
-        float(nextPoint[0]), float(nextPoint[1]), street, ZIP)
+        float(nextPoint[0]), float(nextPoint[1]), street, zip)
 
     if fr1 > fr2:
         temp = fr2
@@ -2104,7 +2071,7 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
 
     query = "select ST_AsText(ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fr1) + ", " + str(fr2) + ")) line\
             from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  \
-                (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b            \
+                (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "') as b            \
             where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1"
 
     db_results = query_db(query)
@@ -2134,16 +2101,18 @@ def get_lines_between_two_points(currentPoint, nextPoint, street, ZIP):
     return extract_line_string2(line)
 
 
-def get_total_length_of_street(street, ZIP):
-    query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(
-        ZIP
-    ) + "') as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
+def get_total_length_of_street(street, zip):
+    query = "select (ST_Length(ST_Transform(ST_LineMerge(st_geometryn(a.the_geom,1)),2877))/5280)\
+            from (select the_geom from tiger_data.in_roads where fullname = '" + street + "')\
+            as a, (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "')\
+            as b where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) "
 
     # print query
     db_results = query_db(query)
     
+    
     if len(db_results) == 0:
-        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        raise Exception("get_total_length_of_street(" + street + ", " + zip + ") returned NULL\n\tFailed query: " + query)
         return "NULL"     
     
 
@@ -2160,22 +2129,21 @@ def get_total_length_of_street(street, ZIP):
 
     return totalLength
 
+def get_current_fraction_on_the_street(lon, lat, street, zip):
 
-def get_current_fraction_on_the_street(lon, lat, street, ZIP):
-
-    query = "select ST_Line_Locate_Point(\
-                (select ST_LineMerge(st_geometryn(a.the_geom,1)) \
-                from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,\
-                (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b \
-                where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1), \
-            ST_GeomFromText('POINT (" + str(lon) + " " + str(lat) + ")',4269))"
+    query = "select ST_Line_Locate_Point("\
+                "(select ST_LineMerge(st_geometryn(a.the_geom,1)) "\
+                "from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,"\
+                "(select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "') as b "\
+                "where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) order by ST_Length(ST_LineMerge(st_geometryn(a.the_geom,1))) desc LIMIT 1), "\
+            "ST_GeomFromText('POINT (" + str(lon) + " " + str(lat) + ")',4269))"
     
     # print query
     
     db_results = query_db(query)
     
-    if len(db_results) == 0:
-        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+    if len(db_results) == 0 or str(db_results[0][0]) == "None":
+        raise Exception("get_current_fraction_on_the_street(" + str(lon) + ", " + str(lat) + ", " + str(street) + ", " + str(zip) + ") failed\n\tFailed query: " + query)
         return "NULL"
     
     ret = []
@@ -2185,28 +2153,28 @@ def get_current_fraction_on_the_street(lon, lat, street, ZIP):
 
     if len(ret) == 0:
         return None
-
+    
     fraction = float(ret[0])
 
     return fraction
 
 
-def get_all_intersection_name_and_point_on_the_road(street, ZIP):
+def get_all_intersection_name_and_point_on_the_road(street, zip):
     query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point from\
             ( select ST_LineMerge(a.the_geom) geom\
                 from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  \
-                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b            \
+                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "') as b            \
                 where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,\
             ( select ST_LineMerge(c.the_geom) geom, fullname \
                 from (select the_geom, fullname from tiger_data.in_roads) as c,  \
-                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as d   \
+                    (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "') as d   \
                 where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2\
         where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'"\
 
     db_results = query_db(query)
     
     if len(db_results) == 0:
-        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        raise Exception("get_all_intersecton_name_and_point_on_the_road(" + street + ", " + zip + ") returned NULL\n\tFailed query: " + query)
         return "NULL"
     
     ret = []
@@ -2216,23 +2184,23 @@ def get_all_intersection_name_and_point_on_the_road(street, ZIP):
     return ret
 
 
-def get_all_intersection_name_and_point_on_the_road_with_fraction(fractionFrom, fractionTo, street, ZIP):
+def get_all_intersection_name_and_point_on_the_road_with_fraction(fractionFrom, fractionTo, street, zip):
     query = "select T2.fullname fullname, ST_AsText(ST_Intersection(T1.geom, T2.geom)) point\
                 from \
                 ( select ST_Line_SubString(ST_LineMerge(a.the_geom), " + str(fractionFrom) + ", " + str(fractionTo) + ") geom\
                     from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,  \
-                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as b            \
+                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "') as b            \
                     where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) ) as T1,\
                 ( select ST_LineMerge(c.the_geom) geom, fullname \
                     from (select the_geom, fullname from tiger_data.in_roads) as c,  \
-                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(ZIP) + "') as d   \
+                        (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + str(zip) + "') as d   \
                     where ST_Intersects(c.the_geom, ST_Simplify(d.the_geom,0.001))) as T2\
             where ST_Intersects(T1.geom, T2.geom) and ST_GeometryType(ST_Intersection(T1.geom, T2.geom)) = 'ST_Point'";
 
     db_results = query_db(query)
     
     if len(db_results) == 0:
-        raise Exception("distance_all_roads_in(" + geo1 + ", " + geo2 + ", " + geo3 + ", " + geo4 + ") returned NULL\n\tFailed query: " + query)
+        raise Exception("get_all_intersection_name_and_point_on_the_road_with_fraction(" + fractionFrom + ", " + FractionTo + ", " + street + ", " + zip + ") returned NULL\n\tFailed query: " + query)
         return "NULL"
     
     ret = []
@@ -2243,14 +2211,13 @@ def get_all_intersection_name_and_point_on_the_road_with_fraction(fractionFrom, 
 
     return ret
 
-
-def move_along_street(lon, lat, street, ZIP, bearing, distance):
-
-    totalLength = get_total_length_of_street(street, ZIP)
+def move_along_street(lon, lat, street, zip, bearing, distance):
+    
+    totalLength = get_total_length_of_street(street, zip)
 
     if debug:
         print "total length : " + str(totalLength)
-    startFraction = get_current_fraction_on_the_street(lon, lat, street, ZIP)
+    startFraction = get_current_fraction_on_the_street(lon, lat, street, zip)
 
     if debug:
         print "startFraction " + str(startFraction)
@@ -2281,7 +2248,7 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
     if 0 <= nextFraction1 and nextFraction1 <= 1:
         query = "select ST_AsText(ST_Line_Interpolate_Point(\
             (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b \
+            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + zip + "') as b \
             where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction1) + "))"
         # print query
         results = query_db(query)
@@ -2301,7 +2268,7 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
     if 0 <= nextFraction2 and nextFraction2 <= 1:
         query = "select ST_AsText(ST_Line_Interpolate_Point(\
             (select ST_LineMerge(a.the_geom) from (select the_geom from tiger_data.in_roads where fullname = '" + street + "') as a,\
-            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + ZIP + "') as b \
+            (select the_geom from tiger_data.in_zcta5 where zcta5ce = '" + zip + "') as b \
             where ST_Intersects(a.the_geom, ST_Simplify(b.the_geom,0.001)) LIMIT 1), " + str(nextFraction2) + "))"
 
         
@@ -2317,7 +2284,7 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
         
 
     nextPoint = [0, (), [], []]
-    try:
+    try: 
         if nextPoint1 == "" and nextPoint2 == "":
             if debug:
                 print "Have no"
@@ -2372,29 +2339,20 @@ def move_along_street(lon, lat, street, ZIP, bearing, distance):
 
     return nextPoint
 
-
+# CommutersAsObjects - TOFIX
 def move_distance(commuterName, distance, direction=None):
+    commuter = commuters_dict[commuterName]
+    
+    comslog = commuter.streetlog
+    
+    commuter.flushlog()
 
-    commuter = commuters.get(str(commuterName))[0]
-    currentPoint = commuters.get(str(commuterName))[1]
+    currentPoint = commuter.geolocation
 
-    street = commuters.get(str(commuterName))[2]
-
-    commuters.get(str(commuterName))[4] = []
-    tmp = deepcopy(commuters.get(str(commuterName))[0])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    tmp = deepcopy(commuters.get(str(commuterName))[1])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    tmp = deepcopy(commuters.get(str(commuterName))[2])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    tmp = deepcopy(commuters.get(str(commuterName))[3])
-    commuters.get(str(commuterName))[4].append(tmp)
+    street = commuter.street
 
     if direction == None:
-        bearing = commuters.get(str(commuterName))[3]
+        bearing = commuter.direction
     else:
         if str(direction).isdigit():
             bearing = float(direction)
@@ -2402,7 +2360,7 @@ def move_distance(commuterName, distance, direction=None):
             bearing = orient_to(commuterName, direction)
     
     # get the previous commuter geo-coordinate    
-    lonlat = move_along_street(currentPoint[0], currentPoint[1], street, ZIP, bearing, distance)
+    lonlat = move_along_street(currentPoint[0], currentPoint[1], street, commuter.zipcode, bearing, distance)
 
     if lonlat == None:
         return None
@@ -2420,7 +2378,7 @@ def move_distance(commuterName, distance, direction=None):
     pnts = []
     if lonlat[3][0] != 0.0:
         lonlat = lonlat[1]
-        pnts = get_lines_between_two_points(currentPoint, lonlat, street, ZIP)
+        pnts = get_lines_between_two_points(currentPoint, lonlat, street, commuter.zipcode)
     else:
         return None
 
@@ -2432,22 +2390,25 @@ def move_distance(commuterName, distance, direction=None):
     if len(pnts) > 1:
         pnts = pnts[1:]
 
+    #print pnts
     f = distFrom(
-        float(commuter[len(commuter) - 1][0]),
-        float(commuter[len(commuter) - 1][1]), float(pnts[0][0]),
+        float(comslog[len(comslog) - 1][0]),
+        float(comslog[len(comslog) - 1][1]),
+        float(pnts[0][0]),
         float(pnts[0][1]))
     l = distFrom(
-        float(commuter[len(commuter) - 1][0]),
-        float(commuter[len(commuter) - 1][1]), float(pnts[len(pnts) - 1][0]),
+        float(comslog[len(comslog) - 1][0]),
+        float(comslog[len(comslog) - 1][1]),
+        float(pnts[len(pnts) - 1][0]),
         float(pnts[len(pnts) - 1][1]))
 
     if f > l:
         pnts.reverse()
 
     lastPoint = [
-        float(commuter[len(commuter) - 1][0]),
-        float(commuter[len(commuter) - 1][1])
-    ]
+        float(comslog[len(comslog) - 1][0]),
+        float(comslog[len(comslog) - 1][1])
+        ]
 
     delIndex = 0
     for i in pnts:
@@ -2468,32 +2429,31 @@ def move_distance(commuterName, distance, direction=None):
 
     if debug:
         print "commuter "
-        print commuter
+        print str(commuter)
         print "attatch "
         print pnts
 
     for i in range(len(pnts)):
-        commuter.append((float(pnts[i][0]), float(pnts[i][1])))
+        comslog.append((float(pnts[i][0]), float(pnts[i][1])))
 
-    if commuter[len(commuter) - 1][0] != lonlat[0] and commuter[len(commuter) - 1][1] != lonlat[1]:
-        commuter.append((float(lonlat[0]), float(lonlat[1])))
+    if comslog[len(comslog) - 1][0] != lonlat[0] and comslog[len(comslog) - 1][1] != lonlat[1]:
+        comslog.append((float(lonlat[0]), float(lonlat[1])))
         if debug:
             print "inserted"
 
-    # commuter.append(lonlat)??????????????????????????
+    # comslog.append(lonlat)??????????????????????????
 
-    commuters.get(str(commuterName))[1] = lonlat
-    # commuters.get(str(commuterName))[2] = str(street2)
-    commuters.get(
-        str(commuterName))[3] = calculate_initial_compass_bearing(
-            (commuter[len(commuter) - 2][0],
-             float(commuter[len(commuter) - 2][1])),
-            (commuter[len(commuter) - 1][0],
-             float(commuter[len(commuter) - 1][1])))
+    commuter.geolocation = lonlat
+    
+    commuter.direction = calculate_initial_compass_bearing(
+            (comslog[len(comslog) - 2][0],
+             float(comslog[len(comslog) - 2][1])),
+            (comslog[len(comslog) - 1][0],
+             float(comslog[len(comslog) - 1][1])))
 
     if debug:
-        print "last bearing : " + str(commuters.get(str(commuterName))[3])
-        print commuters.get(str(commuterName))[0]
+        print "last bearing : " + commuter.direction
+        print commuter.direction
 
     return lonlat
 
@@ -2513,8 +2473,8 @@ def verify_street_point(street, nextLonLat):
                 for i in range (rowcount):
                         line = []
                         row = result[i]
-                        start = extract_point_v2(row[0])
-                        end = extract_point_v2(row[1])
+                        start = extract_point(row[0])
+                        end = extract_point(row[1])
                         line.append(start)
                         line.append(end)
                         lines_table.append(line)
@@ -2566,60 +2526,65 @@ def compute_next_point(lon1, lat1, brng, dist):
     return [lon2, lat2]
 
 def get_current_point(commuterName):
-    return commuters.get(str(commuterName))[1]
+    commuter = commuters_dict[commuterName]
+    return commuter.geolocation
 
-
-def turn_to(commuterName, roadName, direction=None):
-
-    commuters.get(str(commuterName))[4] = []
-    tmp = deepcopy(commuters.get(str(commuterName))[0])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    tmp = deepcopy(commuters.get(str(commuterName))[1])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    tmp = deepcopy(commuters.get(str(commuterName))[2])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    tmp = deepcopy(commuters.get(str(commuterName))[3])
-    commuters.get(str(commuterName))[4].append(tmp)
-
-    global ZIP
+def turn_to(commuterName, roadName, direction = None):
+    # "Re-orient Commuter towards a new direction, 
+    # e.g., right or left when direction is not empty and Re-orient Commuter towards a road when no direction is given."
+    
+    # Turn_to() Turn the commuter so that it is facing the road? or the direction?
+    # commuterName: String representative of the name of desired commuter object
+    # roadName: String representation of a nearby road (how close in nearby?)
+    # direction: Typically string representation of a cardinal direction (Only cardinal?)
+    if commuters_dict.has_key(commuterName):
+        commuter = commuters_dict[commuterName]
+    else:
+        # Assume commuterName is of type commuter
+        commuter = commuterName
+    
+    commuter.flushlog()
+    
+    # If direction was not specified
     if direction == None:
-        commuters.get(str(commuterName))[2] = str(roadName)
+        # Set current street to roadName argument
+        commuter.street = str(roadName)
 
-        nextPoint = move_along_street(commuters.get(str(commuterName))[1][0], commuters.get(str(commuterName))[1][1], str(roadName)\
-                            , ZIP, commuters.get(str(commuterName))[3], 0.01)
-        # print "123"
-        # print nextPoint
-        # print "456"
+        # Move to this street
+        # def move_along_street(lon, lat, street, ZIP, bearing, distance):
+        nextPoint = move_along_street(commuter.geolocation[0], commuter.geolocation[1], commuter.street,
+                            commuter.zipcode, commuter.direction, 0.01)
+
+        # If the returned point does not exist
         if nextPoint == None:
-            return []
+            return [] # Do we want to return an error instead?
         elif nextPoint[0] == 1:
             direction = nextPoint[3][0]
-            commuters.get(str(commuterName))[3] = direction
+            commuter.direction = direction
             return nextPoint[3]
-
         elif nextPoint[0] == 2:
-
             direction = nextPoint[3][0]
-            commuters.get(str(commuterName))[3] = direction
+            commuter.direction = direction
             return nextPoint[3]
 
     else:
-        commuters.get(str(commuterName))[2] = str(roadName)
-
+        # If a direction was specified
+        commuter.street = str(roadName)
+        
+        # Check format of the direction. If a num, simply assign it
         if str(direction).isdigit():
             direction = int(direction)
         else:
-            direction = orient_to(commuterName, direction)
+            # If it is not a number, process it
+            direction = orient_to(commuter, direction)
 
-        commuters.get(str(commuterName))[3] = direction
+        # Set new direction
+        commuter.direction = direction
 
-        return [direction]
+        # Debugging 
         # print roadName
         # print direction
-        # print "3"
+        return [direction]
 
 
 # turn right will increase the bearing by 90 degrees
@@ -2661,7 +2626,7 @@ def update_commuter_turn(street, bearing, previous_bearing, commuter):
         if street == street2:
             return
 
-        new_point = geocode_intersection(street, street2)
+        new_point = geocode_intersection(street, street2, commuter.city, commuter.state, commuter.zip)
         # if street == "Oakhurst Dr":
             # print query
             # print new_point
@@ -2722,55 +2687,55 @@ def isReal(txt):
     except ValueError:
         return False
 
-
-#initialize the bearing, needed for relative instructions
+# Initialize the bearing, needed for relative instructions
 def orient_to(commuterName, direction):
-    global commuters
-    bearing = 0
+        # Orient_to(commuterName, direction)
+        # commuterName: commuter object to change bearing
+        # direction: Direction in degrees or cardinal directions
+        
+        # PRECONDITIONS:
+        # commuterName must be a valid commuter object
+        # direction must be a vaild bearing or a cardinal direction, or left/right
 
-    if isReal(direction):
-        if str(commuterName) in commuters:
-            commuters.get(str(commuterName))[3] = bearing
-        bearing = direction
-        return bearing
+        # Check to make sure commuter is the correct object
+        if(commuters_dict.has_key(commuterName)):
+            commuterName = commuters_dict[commuterName]
+        
+        # Verify the direction is valid
+        if not (direction in ["NORTH","EAST","SOUTH","WEST","LEFT","RIGHT"] or not (isReal(direction) and direction > 0 and direction < 360)):
 
-    if direction.upper() == "NORTH":
+            return -1
+        # Start with a bearing of due north
         bearing = 0
-    elif direction.upper() == "EAST":
-        bearing = 90
-    elif direction.upper() == "SOUTH":
-        bearing = 180
-    elif direction.upper() == "WEST":
-        bearing = 270
-    elif direction.upper() == "LEFT":
-        # print commuters.get(str(commuterName))[3]
-        # print str(commuterName)
-        # print commuters.keys()
-        if str(commuterName) in commuters:
-            commuters.get(str(commuterName))[3] = (
-                float(commuters.get(str(commuterName))[3]) - 90.0) % 360
-            # print "called1"
-
-        # print commuters.get(str(commuterName))[3]
-        return commuters.get(str(commuterName))[3]
-
-    elif direction.upper() == "RIGHT":
-        if str(commuterName) in commuters:
-            commuters.get(str(commuterName))[3] = (
-                float(commuters.get(str(commuterName))[3]) + 90.0) % 360
-        return commuters.get(str(commuterName))[3]
-
-    if str(commuterName) in commuters:
-        # print "called2"
-        commuters.get(str(commuterName))[3] = bearing
-
-    return bearing
-
-
+        
+        # if the direction is in degrees
+        # isReal tests is the obj is not NaN or inf. Is there a better way to do this?
+        if isReal(direction):
+            commuterName.direction = direction;
+            return direction
+       
+        # Set the bearing based on cardinal/relative dir
+        if direction.upper() == "NORTH":
+                bearing = 0
+        elif direction.upper() == "EAST":
+                bearing = 90
+        elif direction.upper() == "SOUTH":
+                bearing = 180
+        elif direction.upper() == "WEST":
+                bearing = 270
+        elif direction.upper() == "LEFT":
+                bearing = float(commuterName.direction - 90) % 360
+        elif direction.upper() == "RIGHT":
+                bearing = float(commuterName.direction + 90) % 360
+        
+        commuterName.direction = bearing;
+        return bearing
+                
 #turn on a specific angle clockwise
 def turn_angle(angle):
     global bearing
     bearing = (bearing + angle) % 360
+    
 # finds the distance (using the great circle distance) between two addresses or geo-coordinates
 def compute_distance(add1, add2):
     if type(add1) is str and type(add2) is str:
