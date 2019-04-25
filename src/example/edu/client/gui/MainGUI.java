@@ -1422,6 +1422,7 @@ public class MainGUI extends Composite {
 		samples.addItem("Sample 16");
 		samples.addItem("Sample Elevation 1");
 		samples.addItem("Sample Elevation 2");
+		samples.addItem("Sample Elevation 3");
 		
 		samples.addChangeHandler(new ChangeHandler()
 	    {
@@ -1796,11 +1797,33 @@ public class MainGUI extends Composite {
 
 				}  else if (selectedIndex == 18) {
 					setEditorValue("# Program Elevation 2: Prints elevation at given address"
-							+ "\naddress = read_address(\"748 E 700 S\", \"Lafayette\", \"IN\",  \"47909\")"
-							+ "\ndisplay_message(\"21 Petals\", address)" 
+							+ "\naddress = read_address(\"305 N University St\", \"West Lafayette\", \"IN\",  \"47906\")"
+							+ "\ndisplay_message(\"Lawson\", address)" 
 							+ "\n\nvar = elevation_at_address(address)"
 							+ "\nprint var");
 
+				} else if (selectedIndex == 19) {
+					setEditorValue("# Program Elevation 3: Largest Slope "
+							+ "\n# This program, similar to Program 2, will move a Commuter from one location to another showing the route traveled."
+							+ "\n# However, this time it will display the largest slope on the trip."
+							+ "\naddress = read_address(\"1156 Hillcrest Rd\", \"West Lafayette\", \"IN\", \"47906\")"
+							+ "\ndisplay_marker(address)"
+							+ "\nstart_at(\"com1\", address,\"EAST\")"
+							+ "\nmove_until(\"com1\", \"N Grant St\")"
+							+ "\nturn_to(\"com1\", \"N Grant St\", \"right\")"
+							+ "\nmove_distance(\"com1\", 0.6)"
+							+ "\nturn_to(\"com1\", \"W Stadium Ave\", \"right\")"
+							+ "\nmove_until(\"com1\", \"Russell St\")"
+							+ "\nturn_to(\"com1\", \"Russell St\", \"left\")"
+							+ "\nmove_distance(\"com1\", 0.3)"
+							+ "\nturn_to(\"com1\", \"3rd St\", \"left\")"
+							+ "\nmove_to_next_intersection(\"com1\")"
+							+ "\nlast_location = get_current_point(\"com1\")"
+							+ "\ndisplay_marker(last_location)"
+							+ "\nshow_on_map(\"com1\")"
+							+ "\nvar = find_largest_slope(\"com1\")" 
+							+ "\ndisplay_message(\"slope = \" + str(var[0]), var[1])"
+							+ "\nprint var");
 				}
 			}
 	    
@@ -1883,6 +1906,7 @@ public class MainGUI extends Composite {
 	    // adding the uses for Elevation functions
 	    multiBox.addItem("elevation_at_point");
 	    multiBox.addItem("elevation_at_address");
+	    multiBox.addItem("find_largest_slope");
 	    
 	    multiBox.addChangeHandler(new ChangeHandler()
 	    {
@@ -1979,6 +2003,9 @@ public class MainGUI extends Composite {
 				else if (selectedIndex == 27)
 					instructionTextArea.setText("elevation_at_address(address)"
 							+ "\n\nReturns elevation at the address.");
+				else if (selectedIndex == 28)
+					instructionTextArea.setText("find_largest_slope(commuterName)"
+							+ "\n\nReturns the largest slope of the commuter's trip.");
 				
 					
 			}
