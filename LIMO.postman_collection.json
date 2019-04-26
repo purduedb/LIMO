@@ -1462,6 +1462,276 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "LIMO Elevation 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "be7a384b-9290-4d27-82ee-4d7ef8215252",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body('//OK[4,2,3,2,2,1,[\"java.util.ArrayList/4159755760\",\"java.lang.String/2004016611\",\"770.998341878\\\\n\",\"\"],0,7]');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-GWT-Module-Base",
+						"type": "text",
+						"value": "{{URL}}/gwtmaps/"
+					},
+					{
+						"key": "X-GWT-Permutation",
+						"type": "text",
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+					},
+					{
+						"key": "Origin",
+						"type": "text",
+						"value": "{{URL}}"
+					},
+					{
+						"key": "User-Agent",
+						"type": "text",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "text/x-gwt-rpc; charset=UTF-8"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "*/*"
+					},
+					{
+						"key": "Referer",
+						"type": "text",
+						"value": "{{URL}}/GWTMaps.html"
+					},
+					{
+						"key": "Accept-Encoding",
+						"type": "text",
+						"value": "gzip, deflate, br"
+					},
+					{
+						"key": "Accept-Language",
+						"type": "text",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "Cookie",
+						"type": "text",
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "7|0|6|http://127.0.0.1:8888/gwtmaps/|2340FA9687BBBA633B8360439C75EB4C|example.edu.client.service.ExampleService|runScript|java.lang.String/2004016611|# Program Elevation 1: Prints elevation at given point\r\nvar = elevation_at_point(-86.6854935, 40.3124275)\r\nprint var|1|2|3|4|1|5|6|"
+				},
+				"url": {
+					"raw": "{{URL}}/gwtmaps/exampleservice",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"gwtmaps",
+						"exampleservice"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LIMO Elevation 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "be7a384b-9290-4d27-82ee-4d7ef8215252",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body('//OK[4,2,3,2,2,1,[\"java.util.ArrayList/4159755760\",\"java.lang.String/2004016611\",\"618.767501831\\\\n\",\"MSG,Lawson,-86.9168058978,40.4273633314\\\\n\"],0,7]');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-GWT-Module-Base",
+						"type": "text",
+						"value": "{{URL}}/gwtmaps/"
+					},
+					{
+						"key": "X-GWT-Permutation",
+						"type": "text",
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+					},
+					{
+						"key": "Origin",
+						"type": "text",
+						"value": "{{URL}}"
+					},
+					{
+						"key": "User-Agent",
+						"type": "text",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "text/x-gwt-rpc; charset=UTF-8"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "*/*"
+					},
+					{
+						"key": "Referer",
+						"type": "text",
+						"value": "{{URL}}/GWTMaps.html"
+					},
+					{
+						"key": "Accept-Encoding",
+						"type": "text",
+						"value": "gzip, deflate, br"
+					},
+					{
+						"key": "Accept-Language",
+						"type": "text",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "Cookie",
+						"type": "text",
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "7|0|6|http://127.0.0.1:8888/gwtmaps/|2340FA9687BBBA633B8360439C75EB4C|example.edu.client.service.ExampleService|runScript|java.lang.String/2004016611|# Program Elevation 2: Prints elevation at given address\r\naddress = read_address(\"305 N University St\", \"West Lafayette\", \"IN\",  \"47906\")\r\ndisplay_message(\"Lawson\", address)\r\n\r\nvar = elevation_at_address(address)\r\nprint var|1|2|3|4|1|5|6|"
+				},
+				"url": {
+					"raw": "{{URL}}/gwtmaps/exampleservice",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"gwtmaps",
+						"exampleservice"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LIMO Elevation 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "be7a384b-9290-4d27-82ee-4d7ef8215252",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body('//OK[4,2,3,2,2,1,[\"java.util.ArrayList/4159755760\",\"java.lang.String/2004016611\",\"[0.10824647492797909, (-86.914603, 40.440328), (-86.914603, 40.440328)]\\\\n\",\"MARKER,-86.9228921858,40.4400029306\\\\nMARKER,-86.917928,40.427255\\\\nPOLYLINE,-86.9228921858;40.4400029306,-86.9228937544;40.4399128402,-86.921984;40.439897,-86.921574;40.439904,-86.921538;40.439905,-86.921216;40.439921,-86.920866;40.439954,-86.920623;40.439983,-86.92047;40.440002,-86.919897;40.440096,-86.919656;40.440136,-86.919357;40.440186,-86.919069;40.440235,-86.918462;40.440336,-86.918373;40.440352,-86.918269;40.440382,-86.918168;40.440406,-86.918056;40.440436,-86.918009;40.44045,-86.91775;40.440534,-86.917725;40.440545,-86.91762;40.440593,-86.917221;40.44037,-86.91715;40.44033,-86.916993;40.440281,-86.916805;40.440241,-86.91669;40.440227,-86.916482;40.440226,-86.916276;40.440241,-86.916137;40.440241,-86.916034;40.440229,-86.91588;40.440195,-86.915664;40.440147,-86.915588;40.440141,-86.91543;40.440143,-86.9153;40.440188,-86.915277;40.440193,-86.914899;40.440268,-86.914603;40.440328,-86.914344;40.440364,-86.914135;40.44038,-86.913682;40.440391,-86.913347;40.440407,-86.913269;40.440418,-86.913196;40.44043,-86.912894;40.440501,-86.912741;40.440553,-86.912439;40.440638,-86.912342;40.440658,-86.912293;40.440669,-86.912184;40.440679,-86.911148;40.440681,-86.911105;40.44068,-86.910693;40.440678,-86.910693;40.440571,-86.910694;40.440251,-86.910695;40.440145,-86.910697;40.439967,-86.910702;40.439701,-86.910704;40.439433,-86.910706;40.439256,-86.910703;40.43902,-86.910698;40.438627,-86.910693;40.438315,-86.910693;40.438263,-86.910685;40.43808,-86.910681;40.437829,-86.910655;40.437095,-86.910647;40.436849,-86.910643;40.436769,-86.910638;40.436585,-86.910633;40.436334,-86.910618;40.436144,-86.9106;40.435796,-86.910587;40.435533,-86.910575;40.435256,-86.910542;40.434427,-86.910531;40.434151,-86.910523;40.433966,-86.9105;40.433413,-86.910493;40.433229,-86.91049;40.433137,-86.910481;40.432862,-86.910478;40.432771,-86.910476;40.432671,-86.910476;40.432658,-86.910461;40.432374,-86.910456;40.432276,-86.910451;40.432176,-86.9104428801;40.4319879925,-86.9104513049;40.4313224342,-86.910654;40.431325,-86.911366;40.431337,-86.911604;40.431341,-86.911841;40.431345,-86.91221;40.431353,-86.912552;40.431358,-86.91279;40.431362,-86.912987;40.431365,-86.913258;40.431371,-86.913421;40.431369,-86.91358;40.431373,-86.913653;40.431375,-86.913778;40.431369,-86.913818;40.431367,-86.913938;40.431361,-86.913979;40.43136,-86.914095;40.431355,-86.914347;40.431343,-86.914375;40.431342,-86.914828;40.431327,-86.914843;40.431327,-86.915308;40.431325,-86.915453;40.431328,-86.915822;40.431337,-86.916111;40.431344,-86.916709;40.431353,-86.917962;40.431377,-86.918208;40.431381,-86.918949;40.431396,-86.919196;40.4314,-86.919188;40.431354,-86.919182;40.431272,-86.919181;40.431178,-86.919176;40.430627,-86.919175;40.430512,-86.919174;40.43029,-86.919172;40.430093,-86.919167;40.429503,-86.919166;40.429307,-86.919164;40.429107,-86.919163;40.428845,-86.919159;40.42851,-86.919157;40.428311,-86.919155;40.428105,-86.919152;40.42749,-86.919151;40.427285,-86.919147;40.427078,-86.9191466627;40.4270537169,-86.9191419464;40.4272848152,-86.918906;40.42728,-86.918304;40.427268,-86.918172;40.427263,-86.917928;40.427255\\\\nMSG,slope \\\\x3D 0.108246474928,-86.914603,40.440328\\\\n\"],0,7]');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-GWT-Module-Base",
+						"type": "text",
+						"value": "{{URL}}/gwtmaps/"
+					},
+					{
+						"key": "X-GWT-Permutation",
+						"type": "text",
+						"value": "4A974DBE2FF476CCD6AEFA48C03077DD"
+					},
+					{
+						"key": "Origin",
+						"type": "text",
+						"value": "{{URL}}"
+					},
+					{
+						"key": "User-Agent",
+						"type": "text",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "text/x-gwt-rpc; charset=UTF-8"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "*/*"
+					},
+					{
+						"key": "Referer",
+						"type": "text",
+						"value": "{{URL}}/GWTMaps.html"
+					},
+					{
+						"key": "Accept-Encoding",
+						"type": "text",
+						"value": "gzip, deflate, br"
+					},
+					{
+						"key": "Accept-Language",
+						"type": "text",
+						"value": "en-US,en;q=0.9"
+					},
+					{
+						"key": "Cookie",
+						"type": "text",
+						"value": "JSESSIONID=12heme03gr6fmxt9byj4ctmir"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "7|0|6|http://127.0.0.1:8888/gwtmaps/|2340FA9687BBBA633B8360439C75EB4C|example.edu.client.service.ExampleService|runScript|java.lang.String/2004016611|# Program Elevation 3: Largest Slope \r\n# This program, similar to Program 2, will move a Commuter from one location to another showing the route traveled.\r\n# However, this time it will display the largest slope on the trip.\r\naddress = read_address(\"1156 Hillcrest Rd\", \"West Lafayette\", \"IN\", \"47906\")\r\ndisplay_marker(address)\r\nstart_at(\"com1\", address,\"EAST\")\r\nmove_until(\"com1\", \"N Grant St\")\r\nturn_to(\"com1\", \"N Grant St\", \"right\")\r\nmove_distance(\"com1\", 0.6)\r\nturn_to(\"com1\", \"W Stadium Ave\", \"right\")\r\nmove_until(\"com1\", \"Russell St\")\r\nturn_to(\"com1\", \"Russell St\", \"left\")\r\nmove_distance(\"com1\", 0.3)\r\nturn_to(\"com1\", \"3rd St\", \"left\")\r\nmove_to_next_intersection(\"com1\")\r\nlast_location = get_current_point(\"com1\")\r\ndisplay_marker(last_location)\r\nshow_on_map(\"com1\")\r\nvar = find_largest_slope(\"com1\")\r\ndisplay_message(\"slope = \" + str(var[0]), var[1])\r\nprint var|1|2|3|4|1|5|6|"
+				},
+				"url": {
+					"raw": "{{URL}}/gwtmaps/exampleservice",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"gwtmaps",
+						"exampleservice"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
