@@ -12,10 +12,6 @@ from example.edu.server import ExampleServiceImpl
 
 import math
 from copy import deepcopy
-from org.w3c.dom import NameList
-import new
-from org.apache.http.conn.ssl import AllowAllHostnameVerifier
-
 
 earth_radius = 3960.0
 degrees_to_radians = math.pi / 180.0
