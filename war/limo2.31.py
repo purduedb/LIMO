@@ -212,7 +212,7 @@ def sumListOfFloats(list):
         
 # returns the largest slope [slope, (long, lat), (long, lat)]       
 def find_largest_slope(commuterName):        
-    geoList = commuters.get(str(commuterName))[0]
+    geoList = commuters_dict[commuterName].streetlog
     
     toList = list(geoList)
     
