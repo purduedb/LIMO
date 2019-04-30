@@ -38,18 +38,18 @@
   - One the LIMO's biggest issues in the code base is the lack of commenting. Please help fix this when you are exploring the code
 
 ## Testing
-- LIMO aims to use two methods of testing
-  - Postman is used for system and performance testing. This program sends POST requests to a running LIMO server instance
-    - To execute the Postman tests, please use the Postman test runner in the Postman GUI after importing the configurations found in the `tools` directory
-    - If you would like to execute these tests via CLI and $REPODIR is the directory where you cloned the repository, please execute `newman run $REPODIR/tools/postman/LIMO.postman_collection.json -e $REPODIR/tools/postman/LIMO\ Local.postman_environment.json`
-      - Make sure you have installed newman, the CLI version of postman while installing the LIMO dev environment
-  - pytest is used for python-specific unit tests
-    - In this context, unit tests will look at external and internal function definitions individually
-=======
-
-## Testing
-- LIMO aims to use two methods of testing
-  - Postman is used for system and performance testing. This program sends POST requests to a running LIMO server instance
-    - TODO: How to install and use
-  - pytest is used for python-specific unit tests
-    - In this context, unit tests will look at external and internal function definitions individually
+- LIMO utilizes Postman for the majority of it's testing. PyTest has been considered for python-specific unit tests but has not been implemented. This program sends POST requests to a running LIMO server instance
+- Executing Tests
+  - To execute the Postman tests, please use the Postman test runner in the Postman GUI after importing the configurations found in the `tools` directory
+  - If you would like to execute these tests via CLI and $REPODIR is the directory where you cloned the repository, please execute `newman run $REPODIR/tools/postman/LIMO.postman_collection.json -e $REPODIR/tools/postman/LIMO\ Local.postman_environment.json`
+  - Make sure you installed newman, the CLI version of postman while installing the LIMO dev environment
+- Creating new tests
+  - Duplicate an old test by selecting the test and pressing `Ctrl - D` or 3 Dots -> Duplicate
+  - Rename test as appropiate
+  - Open the LIMO web client in a web client and write the program you would like use as a test
+  - Open up your browser's site inspection tool and navigate to the "Network" tab. Clear all currently displayed requests
+  - Select "Run Script" in the LIMO web client and look for the "Exampleservice" request
+  - Copy content of "Request Payload" from the inspection window into the "Body" tab of Postman (See below)
+![LIMOInspect](https://user-images.githubusercontent.com/13039768/56989187-e6d08080-6b5f-11e9-8773-e0d0547659e8.PNG)
+  - Assuming the script executed as expected, copy content of "Response" into the `pm.response.to.have.body` method in the  Postman "Tests" tab. Double escape all newlines (`\n -> \\n`).
+  - Execute the script and verify correct execution
