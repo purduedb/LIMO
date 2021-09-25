@@ -198,8 +198,15 @@ private MainGUI maingui;
 			if (result != null)
 			{
 //				maingui.loadProgramList(result);
-				maingui.printConsole("saved:" + result);
-				maingui.callLoadProgramList();
+				if(result.equals("maxPrograms")) {
+					maingui.updateDashboardTextArea("ERROR: Maximum saving programs used, overwrite existing one.", true);
+				}
+				else {
+					maingui.updateDashboardTextArea("Saved: " + result, true);
+					maingui.printConsole("saved:" + result);
+					maingui.callLoadProgramList();
+				}
+				
 			}
 		}
 	}
@@ -231,7 +238,6 @@ private MainGUI maingui;
 			
 			if (result != null)
 			{
-
 				maingui.loadProgramScript(result);
 				maingui.printConsole("loaded:" + result);
 			}
@@ -265,7 +271,10 @@ private MainGUI maingui;
 			
 			if(result != null)
 			{
-				if(result.equals("hasID"))
+				if(result.equals("maxIDs")) {
+					maingui.getStatusLabel().setText("Registration closed!");
+				}
+				else if(result.equals("hasID"))
 				{
 					maingui.getStatusLabel().setText("ID already exists!");
 				}

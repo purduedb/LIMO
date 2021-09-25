@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
               http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
-	
+	version="2.5" xmlns="http://JAVA.sun.com/xml/ns/javaee">
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -29,8 +29,21 @@
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
-	
+
+	<security-constraint>
+    <web-resource-collection>
+        <web-resource-name>Include files</web-resource-name>
+        <description>No direct access to include files.</description>
+        <url-pattern>/*.py</url-pattern>
+        <http-method>POST</http-method>
+        <http-method>GET</http-method>
+    </web-resource-collection>
+    <auth-constraint>
+        <description>No direct browser access to include files.</description>
+        <role-name>NobodyHasThisRole</role-name>
+    </auth-constraint>
+	</security-constraint>
+
 	<!-- Servlets -->
 	<servlet>
 		<servlet-name>exampleServlet</servlet-name>
@@ -40,8 +53,9 @@
 	<servlet-mapping>
 		<servlet-name>exampleServlet</servlet-name>
 		<url-pattern>/gwtmaps/exampleservice</url-pattern>
+		<!-- <url-pattern>/exampleservice</url-pattern> -->
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>loginServlet</servlet-name>
 		<servlet-class>example.edu.server.LoginServiceImpl</servlet-class>
@@ -52,12 +66,12 @@
 		<url-pattern>/login/loginservice</url-pattern>
 	</servlet-mapping>
 
-	
-	
+
+
 	<!-- Default page to serve -->
 	<welcome-file-list>
-		
-		<welcome-file>Login.html</welcome-file>
+
+		<welcome-file>GWTMaps.html</welcome-file>
 		<!-- <welcome-file>GWTMaps.html</welcome-file> -->
 	</welcome-file-list>
 

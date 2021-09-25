@@ -24,10 +24,10 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import example.edu.client.gui.LimoPythonException;
 import example.edu.client.service.ExampleService;
- 
+
 public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleService{
  
-    private final String url = "jdbc:postgresql://ibnkhaldun.cs.purdue.edu:5439/gisdb2";
+    private final String url = "jdbc:postgresql://127.0.0.1:40999/limo-wiki";
     //private final String url = "jdbc:postgresql://localhost:5432/gisDBTest";
     //private final String url = "jdbc:postgresql://192.168.126.147:5432/gisDBTest";
      
@@ -302,6 +302,8 @@ public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleS
 	{
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		System.err.println(auth);
+		
 
 		return auth.getName();
 		
@@ -316,7 +318,7 @@ public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleS
             Class.forName("org.postgresql.Driver"); 
             //String url = "jdbc:postgresql://localhost:5432/gisDBTest";
              
-            conn = DriverManager.getConnection(url, "limo", "limo"); 
+            conn = DriverManager.getConnection(url, "limo-wiki", "limo-wiki"); 
              
             Statement s = conn.createStatement(); 
             ResultSet r = s.executeQuery("SELECT filename FROM login.programs WHERE username='"+userName+"'");
@@ -350,25 +352,38 @@ public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleS
             Class.forName("org.postgresql.Driver"); 
             //String url = "jdbc:postgresql://localhost:5432/gisDBTest";
              
-            conn = DriverManager.getConnection(url, "limo", "limo"); 
+            conn = DriverManager.getConnection(url, "limo-wiki", "limo-wiki"); 
              
             Statement s = conn.createStatement();
             
             ResultSet r = s.executeQuery("SELECT contents FROM login.programs WHERE username = '"
-            			+ username +"' AND filename = '" + filename + "'");
-            
-            if (!r.next()) 
-            {//then there are no rows.
-            	s.executeUpdate("INSERT INTO login.programs (username, filename, contents) VALUES('"
-						+ username + "','" + filename + "','" + script + "')");
+        			+ username +"' AND filename = '" + filename + "'");
+           
+			if (!r.next()) 
+	        {//then there are no rows.
+				ResultSet r0 = s.executeQuery("SELECT COUNT(*) FROM login.programs WHERE username = '" 
+	        			+ username + "'");
+	            
+	            if(r0.next()) {
+	            	if(Integer.parseInt(r0.getString(1)) >= 7) {
+	            		s.close();
+	            		conn.close();
+	            		return "maxPrograms";
+	            	}
+	            	else {
+	            		s.executeUpdate("INSERT INTO login.programs (username, filename, contents) VALUES('"
+	    						+ username + "','" + filename + "','" + script + "')");
+	            	}
+	            }
 			}
 			else 
 			{
 				s.executeUpdate("UPDATE login.programs SET contents = '"+ script +"'WHERE username = '"
 						+ username + "' AND filename = '" + filename + "'");
-
+	
 			}
-            
+	
+                        
             s.close(); 
             conn.close(); 
           } 
@@ -379,7 +394,7 @@ public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleS
 //        out = String.valueOf(lon)+"$"+String.valueOf(lat);
 //        System.out.println(out);
 		
-		return "ok";
+		return filename;
 	}
 	
 	@Override
@@ -391,7 +406,7 @@ public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleS
             Class.forName("org.postgresql.Driver"); 
             //String url = "jdbc:postgresql://localhost:5432/gisDBTest";
              
-            conn = DriverManager.getConnection(url, "limo", "limo"); 
+            conn = DriverManager.getConnection(url, "limo-wiki", "limo-wiki"); 
              
             Statement s = conn.createStatement(); 
             
@@ -426,15 +441,27 @@ public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleS
             Class.forName("org.postgresql.Driver"); 
             //String url = "jdbc:postgresql://localhost:5432/gisDBTest";
              
-            conn = DriverManager.getConnection(url, "limo", "limo"); 
+            conn = DriverManager.getConnection(url, "limo-wiki", "limo-wiki"); 
              
             Statement s = conn.createStatement();
+            
+            ResultSet r0 = s.executeQuery("SELECT COUNT(*) FROM login.users");
+            if(r0.next()) {
+            	if(Integer.parseInt(r0.getString(1)) >= 100) {
+            		r0.close();
+            		s.close(); 
+                    conn.close(); 
+                    return "maxIDs";
+            	}
+            }
             
             // check id exsist
             ResultSet r1 = s.executeQuery("SELECT username FROM login.users WHERE username = '" + id + "'");
             if (r1.next())
             {
             	r1.close();
+            	s.close(); 
+                conn.close(); 
             	return "hasID";
             }
             // check email exsist
@@ -442,8 +469,13 @@ public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleS
             if (r2.next())
             {
             	r2.close();
+            	s.close(); 
+                conn.close(); 
             	return "hasEmail";
             }
+            
+            
+            
         	//then there are no rows.
             
         	s.executeUpdate("INSERT INTO login.users (username, email, password, enabled) "

@@ -12,7 +12,7 @@ import example.edu.client.service.LoginService;
 
 public class LoginServiceImpl extends RemoteServiceServlet implements LoginService
 {
-	private final String url = "jdbc:postgresql://ibnkhaldun.cs.purdue.edu:5439/gisdb2";
+	private final String url = "jdbc:postgresql://127.0.0.1:40999/limo-wiki";
 
 	@Override
 	public String signupUser(String id, String email, String pw) 
@@ -26,7 +26,7 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             Class.forName("org.postgresql.Driver"); 
             //String url = "jdbc:postgresql://localhost:5432/gisDBTest";
              
-            conn = DriverManager.getConnection(url, "limo", "limo"); 
+            conn = DriverManager.getConnection(url, "limo-wiki", "limo-wiki"); 
              
             Statement s = conn.createStatement();
             

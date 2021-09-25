@@ -17,37 +17,37 @@
     <!-- Any title is fine                         -->
     <!--                                           -->
     <title>GWT Maps Prototype</title>
-    
+
     <!--                                           -->
     <!-- This script loads your compiled module.   -->
     <!-- If you add any GWT meta tags, they must   -->
     <!-- be added before this line.                -->
     <!--                                           -->
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" language="javascript" src="gwtmaps/gwtmaps.nocache.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
-	<script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
-	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://openlayers.org/api/2.13.1/OpenLayers.js"></script>
+	<script src="https://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
+
 	<script type="text/javascript" src="./jsTest.js"></script>
 	<script src="codemirror/lib/codemirror.js"></script>
 	<link rel="stylesheet" href="codemirror/lib/codemirror.css">
 	<link rel="stylesheet" href="codemirror/theme/eclipse.css">
 	<script src="codemirror/mode/python/python.js"></script>
-	
+
 	<link rel="stylesheet" href="./loading.css">
-	
-	<!-- <script> 
+
+	<!-- <script>
 		$(function(){
-		  $("#header").load("header.html"); 
+		  $("#header").load("header.html");
 		});
 	</script>  -->
-  
+
   </head>
 
 <body>
-	
+
 	<div id="circularG">
 		<div id="circularG_1" class="circularG"></div>
 		<div id="circularG_2" class="circularG"></div>
@@ -58,19 +58,19 @@
 		<div id="circularG_7" class="circularG"></div>
 		<div id="circularG_8" class="circularG"></div>
 	</div>
-	
+
 	<!-- <div id="header"></div> -->
-	
+
 	<div id="facade"></div>
 
 
 
 
 	<script>
-	
+
 		var editor = null;
 		function loadTextAreaFormat() {
-			
+
 			/* console.log(document.getElementById("code")); */
 			editor = CodeMirror.fromTextArea(document.getElementById("code"), {
 				autofocus: true,
@@ -83,36 +83,36 @@
 			    theme: "eclipse",
 			    lineWrapping: true,
 			    tabSize: 2
-			  }); 
+			  });
 		}
-		
+
 		function getEditorValue()
 		{
-			
+
 			return editor.getValue();
 		}
-		
+
 		function setEditorValue(contents)
 		{
-			
+
 			return editor.setValue(contents);
 		}
-		
+
 		function setEditorOption(key, value)
-		{	
+		{
 			editor.setOption(key, value);
 		}
-		
+
 		function showLoading()
 		{
 			$('#circularG').show();
 		}
-		
+
 		function hideLoading()
 		{
 			$('#circularG').hide();
 		}
-		
+
 	</script>
 
 </body>

@@ -17,11 +17,11 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://ibnkhaldun.cs.purdue.edu:5439/gisdb2" />
-		<property name="username" value="limo" />
-		<property name="password" value="limo" />
+		<property name="url" value="jdbc:postgresql://127.0.0.1:40999/limo-wiki" />
+		<property name="username" value="limo-wiki" />
+		<property name="password" value="limo-wiki" />
 	</bean>
-	
+
 	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="cacheSeconds" value="0"/>
 	</bean>
